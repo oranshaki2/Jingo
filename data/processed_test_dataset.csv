@@ -81,13 +81,13 @@ deutschland,atari-teenage-riot,Electronic,['None'],[]
 green-green-grass-of-home,bill-anderson,Country,['Body Parts'],"[[""arms"", ""lips"", ""hair"", ""arm""]]"
 old-weakness,diamond-rio,Country,['None'],[]
 spirit,caesar,Rock,['None'],[]
-alfie,cher,Rock,['None'],[]
+alfie,cher,Rock,['Emotions'],"[[""strong"", ""in love"", ""kind""]]"
 confidence,elvis-presley,Rock,['None'],[]
 no-parts-of-us,benzino,Hip-Hop,['Body Parts'],"[[""head"", ""brain"", ""wrist"", ""neck"", ""eyes"", ""ribs"", ""chest""]]"
 but-beautiful,frank-sinatra,Jazz,['None'],[]
 heavy-lifting,brendan-james,Folk,['None'],[]
 sticks-stones-and-techno,all-time-low,Rock,['None'],[]
-wishing,dj-drama,Hip-Hop,['None'],[]
+wishing,dj-drama,Hip-Hop,['Emotions'],"[[""strong"", ""in love"", ""tired""]]"
 the-rebel,dubliners,Folk,['Body Parts'],"[[""hands"", ""wrist"", ""eyes"", ""blood"", ""bone""]]"
 holy,baby-namboos,Electronic,['None'],[]
 black-machine,cirith-ungol,Metal,['None'],[]
@@ -346,7 +346,7 @@ shake-it-up,coolio,Hip-Hop,['Body Parts'],"[[""toes"", ""eyes"", ""skin"", ""hai
 sittin-here,dizzee-rascal,Hip-Hop,"['Emotions', 'Body Parts']","[[""strong"", ""depressed"", ""scared"", ""calm""], [""nerves"", ""feet"", ""eyes"", ""finger""]]"
 beyond-the-reef,andy-williams,Pop,['None'],[]
 shade-to-shade,born-ruffians,Rock,['None'],[]
-diet-song,bobby-bare,Country,['Food'],"[[""milk"", ""carrot"", ""pie"", ""fries"", ""potatoes"", ""butter"", ""cookies"", ""waffles"", ""ham"", ""sausage"", ""jam"", ""chocolate"", ""cake"", ""cauliflower"", ""tomato"", ""jelly"", ""lettuce"", ""coffee"", ""candy"", ""pizza"", ""water""]]"
+diet-song,bobby-bare,Country,['Food'],"[[""milk"", ""carrot"", ""pie"", ""fries"", ""potatoes"", ""butter"", ""cookies"", ""waffles"", ""ham"", ""sausage"", ""jam"", ""chocolate"", ""ice cream"", ""cake"", ""cauliflower"", ""tomato"", ""jelly"", ""lettuce"", ""coffee"", ""candy"", ""pizza"", ""water""]]"
 people-person,donnie,R&B,['None'],[]
 that-s-amore,dean-martin,Jazz,['Food'],"[[""pie"", ""pasta"", ""pizza""]]"
 little-pony-get-along,the-four-seasons,Rock,['Body Parts'],"[[""finger"", ""head"", ""toes"", ""hand""]]"
@@ -579,7 +579,7 @@ million-young,the-american-analog-set,Indie,['None'],[]
 preacher-on-a-sunday-morning,fat-joe,Hip-Hop,['None'],[]
 off-on,50-cent,Hip-Hop,['None'],[]
 fried-rice,g-eazy,Hip-Hop,['None'],[]
-do-it-all-night-long,curtis-mayfield,R&B,['None'],[]
+do-it-all-night-long,curtis-mayfield,R&B,['Emotions'],"[[""in love"", ""satisfied"", ""afraid""]]"
 pandora,cocteau-twins,Pop,['None'],[]
 where-are-you,b-o-b,Hip-Hop,['Body Parts'],"[[""blood"", ""ears"", ""eye""]]"
 rc-s-mom,dead-milkmen,Rock,['None'],[]
@@ -624,7 +624,7 @@ the-be-all-and-end-all,bic-runga,Pop,['None'],[]
 lose-the-dress-keep-the-shoes,david-lee-roth,Rock,['None'],[]
 banjo-man,genesis,Rock,['None'],[]
 blood-in-blood-out,bloodsimple,Metal,['None'],[]
-missing-you,babyface,R&B,['None'],[]
+missing-you,babyface,R&B,['Emotions'],"[[""in love"", ""kind"", ""amused""]]"
 illusion,alastis,Metal,['None'],[]
 i-want-you-back,colin-hay,Indie,['None'],[]
 subzero,the-gathering,Metal,['None'],[]
@@ -633,7 +633,7 @@ numb,airborne-toxic-event,Rock,['None'],[]
 love-isn-t-dead,disappear-fear,Folk,['None'],[]
 and-i-watch,extol,Metal,['None'],[]
 missisippi,afroman,Hip-Hop,['Body Parts'],"[[""toes"", ""mouth"", ""hair"", ""throat"", ""lip""]]"
-have-a-peanut-butter-sandwich,art-paul-schlosser,Folk,"['Food', 'Emotions']","[[""milk"", ""butter"", ""bananas"", ""cake"", ""peanut"", ""sandwiches"", ""sandwich"", ""bread""], [""worried"", ""bored"", ""depressed""]]"
+have-a-peanut-butter-sandwich,art-paul-schlosser,Folk,"['Food', 'Emotions']","[[""ice cream"", ""milk"", ""butter"", ""bananas"", ""cake"", ""peanut"", ""sandwiches"", ""sandwich"", ""bread""], [""worried"", ""bored"", ""depressed""]]"
 anchors,cry-of-the-afflicted,Metal,['None'],[]
 the-miracle,catman-cohen,Folk,['Body Parts'],"[[""head"", ""nails"", ""feet""]]"
 don-t-it-make-you-want-to-go-home,bobby-bare,Country,['None'],[]
@@ -685,7 +685,7 @@ be-a-child-at-christmas-time,doris-day,Jazz,['None'],[]
 shape-i-m-in,ambrosia,Rock,['None'],[]
 let-s-get-this-straight-from-the-start,dexys-midnight-runners,Pop,['None'],[]
 i-ll-be-alright,darin,Pop,['None'],[]
-can-this-be-love,blue-system,Pop,['None'],[]
+can-this-be-love,blue-system,Pop,['Emotions'],"[[""strong"", ""in love"", ""kind""]]"
 i-m-in-love-with-a-monster,fifth-harmony,Pop,['None'],[]
 truth-serum,dishwalla,Rock,['None'],[]
 i-took-a-year,coalesce,Metal,['None'],[]
@@ -1180,7 +1180,7 @@ how-it-came-to-be-this-way,autumn,Metal,['None'],[]
 tush-missy-elliott,ghostface-killah,Hip-Hop,"['Emotions', 'Body Parts']","[[""patient"", ""giddy"", ""determined""], [""nerve"", ""wrist"", ""lips"", ""hips""]]"
 you-can-get-it-if-you-really-want,desmond-decker,Rock,['None'],[]
 forget-that-day,the-go-go-s,Rock,['None'],[]
-attainable-love,christine-lavin,Folk,['Emotions'],"[[""kind"", ""nervous"", ""satisfied"", ""unhappy"", ""afraid""]]"
+attainable-love,christine-lavin,Folk,['Emotions'],"[[""in love"", ""kind"", ""nervous"", ""satisfied"", ""unhappy"", ""afraid""]]"
 mythology,fairground-attraction,Pop,['None'],[]
 her-love-is-innocence,devotchkas,R&B,['None'],[]
 sitting-on-top-of-the-world,alexandra-burke,Pop,['None'],[]
@@ -1572,7 +1572,7 @@ jack-caddy,dance-with-the-dead,Electronic,['None'],[]
 my-malakai,angus-julia-stone,Indie,"['Animals', 'Body Parts']","[[""pigs"", ""wolf"", ""dog""], [""hands"", ""lips"", ""lungs""]]"
 i-got-you,dwight-yoakam,Country,['None'],[]
 america-snoring,grant-lee-buffalo,Rock,['None'],[]
-reddi-wip,chris-brown,Hip-Hop,['None'],[]
+reddi-wip,chris-brown,Hip-Hop,['Food'],"[[""whipped cream"", ""cake"", ""cinnamon""]]"
 6-inch,beyonce,Pop,['Body Parts'],"[[""heels"", ""veins"", ""eyes""]]"
 i-won-t-be-the-one-to-let-go,barbra-streisand,Pop,['None'],[]
 the-mountains-of-mourne,charlie-landsborough,Country,['None'],[]
@@ -1595,7 +1595,7 @@ smash-or-be-smashed,earth-crisis,Metal,['None'],[]
 memories-at-the-window,black-oak-arkansas,Rock,['None'],[]
 the-humour-of-the-situation,barenaked-ladies,Rock,['None'],[]
 intrigued,epmd,Hip-Hop,['None'],[]
-bang-bang,b-a-robertson,Pop,['Emotions'],"[[""happy"", ""loved"", ""angry""]]"
+bang-bang,b-a-robertson,Pop,['Emotions'],"[[""happy"", ""loved"", ""in love"", ""angry""]]"
 winter-wonderland,al-jarreau,Jazz,['None'],[]
 wurr-da-git-it-gurlz-at,chingy,Hip-Hop,['Body Parts'],"[[""heels"", ""toes"", ""wrist"", ""knees"", ""nail"", ""bone""]]"
 sex-machine,e-rotic,Electronic,['None'],[]
@@ -1819,7 +1819,7 @@ where-is-my-castle,dallas-frazier,Country,['None'],[]
 the-laurels-of-erotomania,cold-cave,Pop,['None'],[]
 shadows-of-the-big-man,chris-rea,Rock,['None'],[]
 trapped,circle-jerks,Rock,['None'],[]
-by-the-time-you-get-this-message,flobots,Hip-Hop,"['Emotions', 'Body Parts']","[[""romantic"", ""jealous"", ""nervous"", ""unhappy""], [""cheek"", ""hand"", ""skin"", ""hair"", ""lung"", ""chin""]]"
+by-the-time-you-get-this-message,flobots,Hip-Hop,"['Emotions', 'Body Parts']","[[""romantic"", ""in love"", ""jealous"", ""nervous"", ""unhappy""], [""cheek"", ""hand"", ""skin"", ""hair"", ""lung"", ""chin""]]"
 falling-apart,bang-gang,Electronic,['None'],[]
 blue-rose,akb48,Pop,['None'],[]
 the-eulogy,esham,Hip-Hop,['None'],[]
@@ -1847,7 +1847,7 @@ almost-lost-my-mind,albert-king,R&B,['None'],[]
 christmas-is-starting-now,big-bad-voodoo-daddy,Jazz,['Food'],"[[""plums"", ""jelly"", ""sugar""]]"
 a-little-something,casual,Hip-Hop,['None'],[]
 steal-away,etta-james,R&B,['None'],[]
-i-m-the-one,gary-allan,Country,['None'],[]
+i-m-the-one,gary-allan,Country,['Emotions'],"[[""in love"", ""kind"", ""trusting""]]"
 funtime,david-bowie,Rock,['None'],[]
 pass-the-courvoisier,chamillionaire,Hip-Hop,['None'],[]
 would-it-make-any-difference-to-you,etta-james,R&B,['None'],[]
@@ -1989,7 +1989,7 @@ caught-in-a-mosh,anthrax,Metal,['None'],[]
 faithful-son,frank-turner,Indie,['None'],[]
 ibrahim,eric-bogle,Folk,['None'],[]
 are-you-red-y,the-clash,Rock,['None'],[]
-leave-a-tender-moment-alone,billy-joel,Rock,['Emotions'],"[[""shy"", ""quiet"", ""afraid""]]"
+leave-a-tender-moment-alone,billy-joel,Rock,['Emotions'],"[[""shy"", ""in love"", ""quiet"", ""afraid""]]"
 crazy,chris-brown,Hip-Hop,"['Animals', 'Clothing', 'Body Parts']","[[""crocodile"", ""monkey"", ""tiger""], [""pants"", ""watch"", ""shoes""], [""liver"", ""head"", ""hands"", ""mouth""]]"
 stand-up,bush,Rock,['None'],[]
 one-way-street,ann-peebles,R&B,['None'],[]
@@ -2125,7 +2125,7 @@ evening,beach-season,Electronic,['None'],[]
 hello-brooklyn,beastie-boys,Hip-Hop,['Body Parts'],"[[""hand"", ""finger"", ""hair""]]"
 with-oden-on-our-side,amon-amarth,Metal,['None'],[]
 angel-eyes,count-basie,Jazz,['None'],[]
-nervous-breakdown,carleen-anderson,Jazz,['Emotions'],"[[""loved"", ""nervous"", ""tired""]]"
+nervous-breakdown,carleen-anderson,Jazz,['Emotions'],"[[""loved"", ""in love"", ""nervous"", ""tired""]]"
 sunday-punch,blaudzun,Folk,['None'],[]
 castle-in-the-air,ashes-to-ashes,Metal,['None'],[]
 ya-slippin,boogie-down-productions,Hip-Hop,['Body Parts'],"[[""head"", ""muscles"", ""hands"", ""larynx""]]"
@@ -2715,7 +2715,7 @@ cut-in-half-blues-version-2,beck,Rock,['None'],[]
 give-it-everything,al-green,R&B,['None'],[]
 head-in-the-snow,asgeir,Indie,['None'],[]
 sometimes,donkeyboy,Pop,['None'],[]
-seasons,chase-coy,Indie,['None'],[]
+seasons,chase-coy,Indie,['Emotions'],"[[""patient"", ""loved"", ""in love""]]"
 victory,diddy,Hip-Hop,['Body Parts'],"[[""waist"", ""neck"", ""hands""]]"
 nemesis,emmure,Metal,['None'],[]
 chains,boom-shaka,Hip-Hop,['None'],[]
@@ -2876,7 +2876,7 @@ can-t-have-me-now,chlara,Pop,['None'],[]
 i-surrender,cazzette,Electronic,['None'],[]
 drop-ya-thangs,game,Hip-Hop,"['Clothing', 'Emotions']","[[""suits"", ""coat"", ""shoes""], [""happy"", ""tired"", ""scared""]]"
 of-this-land,clannad,Folk,['None'],[]
-the-bragging-song-the-great-historical-bum,chad-mitchell-trio,Folk,['Food'],"[[""cheese"", ""tea"", ""apple""]]"
+the-bragging-song-the-great-historical-bum,chad-mitchell-trio,Folk,"['Food', 'Emotions']","[[""cheese"", ""tea"", ""apple""], [""happy"", ""in love"", ""tired""]]"
 you-don-t-you-won-t,billy-gilman,Pop,['None'],[]
 kern-river,emmylou-harris,Country,['None'],[]
 cruisin-southern-germany,golden-earring,Rock,['None'],[]
@@ -2951,7 +2951,7 @@ and-so-are-you,emma-acs,Pop,['Body Parts'],"[[""head"", ""legs"", ""feet"", ""kn
 john-ed-sang-cowpoke,chris-ledoux,Country,['None'],[]
 y-n-r-e,asap-mob,Hip-Hop,['None'],[]
 no-one,2-unlimited,Electronic,['None'],[]
-even-hitler-had-a-girlfriend-mr-t-experience,emocapella,Indie,['None'],[]
+even-hitler-had-a-girlfriend-mr-t-experience,emocapella,Indie,['Emotions'],"[[""happy"", ""in love"", ""lonely""]]"
 secret-love,doris-day,Jazz,['None'],[]
 night-of-the-sinner,bewitched,Pop,['None'],[]
 lonely-town-lonely-street,bill-withers,R&B,['None'],[]
@@ -3341,7 +3341,7 @@ la-femme-fu00e9tal,digable-planets,Hip-Hop,['None'],[]
 at-last-i-am-free,chic,Electronic,['None'],[]
 best-i-never-had,the-downtown-fiction,Rock,['None'],[]
 what-were-we-thinking,disclosure,R&B,['None'],[]
-on-and-on,ghost,Electronic,"['Emotions', 'Body Parts']","[[""jealous"", ""quiet"", ""tired""], [""arms"", ""eyes"", ""skin""]]"
+on-and-on,ghost,Electronic,"['Emotions', 'Body Parts']","[[""in love"", ""jealous"", ""quiet"", ""tired""], [""arms"", ""eyes"", ""skin""]]"
 forever-young,b-charme,Electronic,['None'],[]
 alive,blaze,Metal,['None'],[]
 delerium-tremens,christy-moore,Folk,['None'],[]
@@ -3393,7 +3393,7 @@ it-s-you,dionne-warwick,Pop,['None'],[]
 y-u-mad,birdman,Hip-Hop,['Body Parts'],"[[""head"", ""hand"", ""blood""]]"
 under-the-grey-sky,endless,Metal,['None'],[]
 nowhere-massachusetts,black-prairie,Folk,['None'],[]
-can-t-stand,god-des-and-she,Hip-Hop,['Emotions'],"[[""ashamed"", ""embarrassed"", ""scared""]]"
+can-t-stand,god-des-and-she,Hip-Hop,['Emotions'],"[[""ashamed"", ""in love"", ""embarrassed"", ""scared""]]"
 jonestown,the-acacia-strain,Metal,['None'],[]
 amen,ernie-haase-signature-sound,Hip-Hop,['None'],[]
 before-hollywood,go-betweens,Indie,['None'],[]
@@ -3679,7 +3679,7 @@ slip-away,faktion,Rock,['None'],[]
 the-perverted-beast,darkane,Metal,['None'],[]
 my-cherie-amour-a-j-gill,american-idol,Pop,['None'],[]
 fully-blown,datsik,Electronic,['Body Parts'],"[[""brain"", ""hands"", ""chest""]]"
-memories,britney-spears,Pop,['None'],[]
+memories,britney-spears,Pop,['Emotions'],"[[""shy"", ""in love"", ""scared""]]"
 loving-you-baby,aretha-franklin,R&B,['None'],[]
 the-rip,the-brinks,Folk,['None'],[]
 afraid-to-care,ernest-tubb,Country,['None'],[]
@@ -4054,7 +4054,7 @@ round-the-world-with-the-rubber-duck,c-w-mccall,Country,"['Animals', 'Food']","[
 thinking-of-you,chris-rea,Rock,['None'],[]
 frozen-in-slow-motion,brett-dennen,Indie,['None'],[]
 sing-my-song,bob-sinclar,Electronic,['None'],[]
-there-was-a-boy,catman-cohen,Folk,['Body Parts'],"[[""head"", ""hand"", ""knees""]]"
+there-was-a-boy,catman-cohen,Folk,"['Emotions', 'Body Parts']","[[""hopeless"", ""in love"", ""kind""], [""head"", ""hand"", ""knees""]]"
 spoon,the-cadets,R&B,['None'],[]
 the-woodpecker-song,glenn-miller,Jazz,['None'],[]
 sacred,blind-guardian,Metal,['None'],[]
@@ -4277,7 +4277,7 @@ your-turn-to-cry,bettye-lavette,Jazz,['None'],[]
 life-is-a-honeymoon,florida-georgia-line,Country,['None'],[]
 by-the-light-of-the-silvery-moon,doris-day,Jazz,['None'],[]
 rambling-s-gonna-be-the-death-of-me,bert-jansch,Folk,['None'],[]
-caramel-sundae,dorrough,Hip-Hop,"['Food', 'Body Parts']","[[""caramel"", ""pecan"", ""banana"", ""butter"", ""nuts"", ""waffle"", ""chocolate"", ""cake"", ""cherry""], [""brain"", ""skin"", ""lips"", ""tongue"", ""bone""]]"
+caramel-sundae,dorrough,Hip-Hop,"['Food', 'Body Parts']","[[""caramel"", ""pecan"", ""banana"", ""butter"", ""nuts"", ""waffle"", ""chocolate"", ""ice cream"", ""cake"", ""cherry""], [""brain"", ""skin"", ""lips"", ""tongue"", ""bone""]]"
 the-torture,axis-of-advance,Metal,['Body Parts'],"[[""blood"", ""throat"", ""knees""]]"
 a-restless-heart-and-obsidian-skies,avantasia,Metal,['None'],[]
 i-still-lost-you,dolly-parton,Country,['None'],[]
@@ -4356,7 +4356,7 @@ can-t-break,atmosphere,Hip-Hop,['Body Parts'],"[[""head"", ""arms"", ""hand"", "
 malcolm,arrogant-worms,Folk,['None'],[]
 you,bic-runga,Pop,['None'],[]
 orphan-child,dry-branch-fire-squad,Folk,['None'],[]
-kind-woman,chris-smither,Jazz,['None'],[]
+kind-woman,chris-smither,Jazz,['Emotions'],"[[""kind"", ""in love"", ""lonely""]]"
 life-upon-the-wicked-stage,blossom-dearie,Jazz,['None'],[]
 nice-work-if-you-can-get-it,fred-astaire,Jazz,['None'],[]
 a-tiny-swallow-song,forgive-me-not,Metal,['None'],[]
@@ -4623,7 +4623,7 @@ searchin-for-celine,blue-oyster-cult,Rock,['None'],[]
 jane,the-dramatics,R&B,['None'],[]
 save-the-last-dance,the-drifters,R&B,['Body Parts'],"[[""arms"", ""hand"", ""eye"", ""arm""]]"
 wanna-be,dizzee-rascal,Hip-Hop,['None'],[]
-happy-street,charley-pride,Country,['None'],[]
+happy-street,charley-pride,Country,['Emotions'],"[[""happy"", ""in love"", ""lonely""]]"
 desperado,crucial-conflict,Hip-Hop,['Body Parts'],"[[""head"", ""hand"", ""skull"", ""hands""]]"
 love-s-gonna-live-here,emmylou-harris,Country,['None'],[]
 the-christmas-flip-flop,the-dan-band,Rock,['Body Parts'],"[[""eyes"", ""foot"", ""leg""]]"
@@ -4787,7 +4787,7 @@ mountain-time,gentle-giant,Rock,['None'],[]
 the-beast,angus-julia-stone,Indie,['None'],[]
 walking-on-the-dream,empire-of-the-sun,Pop,['None'],[]
 up-up-up,givers,Pop,['None'],[]
-hood-song,dorrough,Hip-Hop,"['Food', 'Body Parts']","[[""fries"", ""fish"", ""bread""], [""head"", ""hand"", ""wrist"", ""neck"", ""hair"", ""teeth""]]"
+hood-song,dorrough,Hip-Hop,"['Food', 'Body Parts']","[[""fries"", ""fish"", ""ice cream"", ""bread""], [""head"", ""hand"", ""wrist"", ""neck"", ""hair"", ""teeth""]]"
 christmas-waltz,david-benoit,Jazz,['None'],[]
 easy,barenaked-ladies,Rock,['None'],[]
 by-myself,carmen-mcrae,Jazz,['None'],[]
@@ -4926,7 +4926,7 @@ land-of-mercy,4-him,Pop,['None'],[]
 am-i-blue,barbra-streisand,Pop,['None'],[]
 born-in-mississippi,chris-ledoux,Country,['None'],[]
 good-love-gone-bad,billy-dean,Country,['None'],[]
-so-in-love,ed-sheeran,Pop,['Body Parts'],"[[""neck"", ""eyes"", ""shoulders"", ""hair""]]"
+so-in-love,ed-sheeran,Pop,"['Emotions', 'Body Parts']","[[""loved"", ""in love"", ""kind""], [""neck"", ""eyes"", ""shoulders"", ""hair""]]"
 shame,bt,Electronic,['None'],[]
 cowboys-and-angels,dustin-lynch,Country,['None'],[]
 stank-ass-hoe,cypress-hill,Hip-Hop,['Body Parts'],"[[""brain"", ""finger"", ""bone""]]"
@@ -4941,7 +4941,7 @@ wings-of-an-angel,angel-dust,Metal,['None'],[]
 certainly,erykah-badu,Jazz,['None'],[]
 viii-rukovet,cyrilika-slavic-chamber-choir,Folk,['None'],[]
 that-st-valentine-is-such-a-gossip,big-sixes,Indie,['Body Parts'],"[[""hands"", ""bones"", ""leg""]]"
-what-do-you-hear-in-these-sounds,dar-williams,Indie,['Emotions'],"[[""loved"", ""kind"", ""angry"", ""scared""]]"
+what-do-you-hear-in-these-sounds,dar-williams,Indie,['Emotions'],"[[""loved"", ""in love"", ""kind"", ""angry"", ""scared""]]"
 a-town-called-jubilee,elton-john,Rock,['None'],[]
 better,brian-mcknight,R&B,['None'],[]
 we-are-fighters,big-lou,Hip-Hop,['Body Parts'],"[[""hand"", ""finger"", ""blood""]]"
@@ -5037,10 +5037,10 @@ crown-of-thoughts,autumn,Metal,['None'],[]
 flat-river-mom,ferlin-husky,Country,['None'],[]
 itaeur-tm-s-alright,bang-gang,Electronic,['None'],[]
 ramblin-irishman,andy-m-stewart,Folk,['None'],[]
-i-m-missing-you,bea-alonzo,Folk,['None'],[]
+i-m-missing-you,bea-alonzo,Folk,['Emotions'],"[[""happy"", ""strong"", ""in love""]]"
 now-that-s-all-right-with-me,chris-ledoux,Country,['None'],[]
 they-used-2-dyke,dopetrackz,Hip-Hop,['None'],[]
-because-we-are-in-love-the-wedding-song,the-carpenters,Pop,"['Emotions', 'Body Parts']","[[""kind"", ""afraid"", ""lonely""], [""arms"", ""eyes"", ""eye""]]"
+because-we-are-in-love-the-wedding-song,the-carpenters,Pop,"['Emotions', 'Body Parts']","[[""in love"", ""kind"", ""afraid"", ""lonely""], [""arms"", ""eyes"", ""eye""]]"
 contrite,folly,Metal,['None'],[]
 block-lockdown-ludacris-infamous-20,funkmaster-flex,Hip-Hop,['None'],[]
 any-trouble,glen-campbell,Pop,['None'],[]
@@ -5096,7 +5096,7 @@ where-do-i-go-from-here-a-trucker-s-song,alan-jackson,Country,['Body Parts'],"[[
 all-the-way-down,etta-james,R&B,['None'],[]
 my-mother-had-a-brother,george-michael,Pop,['None'],[]
 what-s-on-my-mind-ii,dayton-family,Hip-Hop,['None'],[]
-different-kind-of-lady,benzino,Hip-Hop,['Emotions'],"[[""strong"", ""jealous"", ""kind""]]"
+different-kind-of-lady,benzino,Hip-Hop,['Emotions'],"[[""strong"", ""in love"", ""jealous"", ""kind""]]"
 you-should-be-layin-in-her-arms,charly-mcclain,Country,['None'],[]
 the-universe-expanded,franz-ferdinand,Rock,['None'],[]
 whisper-in-the-dark,dionne-warwick,Pop,['None'],[]
@@ -5175,7 +5175,7 @@ rampant-micro-life,alchemist,Metal,['None'],[]
 she-just-wants-to-dance,gary-u-s-bonds,R&B,['Body Parts'],"[[""fingers"", ""lips"", ""hips"", ""hair"", ""spine""]]"
 higher,big-sean,Hip-Hop,['None'],[]
 how-can-i-say-goodbye,barbara-lewis,R&B,['None'],[]
-tell-me,black-buddafly,Hip-Hop,['None'],[]
+tell-me,black-buddafly,Hip-Hop,['Emotions'],"[[""in love"", ""kind"", ""curious""]]"
 what-a-fool-believes,glenn-lewis,Jazz,['None'],[]
 dear-friends,a-cutthroat-kiss,R&B,['None'],[]
 free-yourself,berzerker,Metal,['None'],[]
@@ -5365,7 +5365,7 @@ postcards-from-io,charlene-soraia,Indie,['None'],[]
 heavy-traffic-ahead,earl-scruggs,Jazz,['None'],[]
 love-so-fine,eljay,Electronic,['None'],[]
 power-in-the-blood,alabama-3,Electronic,['None'],[]
-doctor-s-orders,aretha-franklin,R&B,['Emotions'],"[[""kind"", ""sentimental"", ""energized""]]"
+doctor-s-orders,aretha-franklin,R&B,['Emotions'],"[[""in love"", ""kind"", ""sentimental"", ""energized""]]"
 king-of-misrule,creepmime,Metal,['None'],[]
 the-memphis-blues,eartha-kitt,Jazz,['None'],[]
 have-faith,collide,Electronic,['None'],[]
@@ -5654,7 +5654,7 @@ strawberries,adina-howard,Hip-Hop,['None'],[]
 things-they-say,16-stitch,Folk,['Body Parts'],"[[""nerves"", ""hands"", ""eyes""]]"
 i-say-a-little-prayer,aretha-franklin,R&B,['None'],[]
 stranger-lover,ghostland-observatory,Electronic,['None'],[]
-traitor,count-raven,Metal,['None'],[]
+traitor,count-raven,Metal,['Emotions'],"[[""in love"", ""quiet"", ""afraid""]]"
 don-t-let-this-moment-end,gloria-estefan,Pop,['None'],[]
 beginning-to-feel-like-home,anne-murray,Pop,['None'],[]
 radio-sweetheart,carlene-carter,Country,['Body Parts'],"[[""head"", ""legs"", ""eyes"", ""shoulder""]]"
@@ -5834,7 +5834,7 @@ skin-deep,by-a-thread,Indie,['None'],[]
 here,cliff-richard,Rock,['None'],[]
 bleed-for-me,dismember,Metal,['None'],[]
 dragon,breathe-owl-breathe,Indie,['None'],[]
-rodeo-cowboy,chris-ledoux,Country,['None'],[]
+rodeo-cowboy,chris-ledoux,Country,['Emotions'],"[[""loved"", ""in love"", ""kind""]]"
 i-have-no-time,bert-jansch,Folk,['None'],[]
 past-the-point-of-rescue,dixie-chicks,Pop,['None'],[]
 sharp-dressed-man,brad-paisley,Country,['Clothing'],"[[""suit"", ""tie"", ""ring"", ""hat"", ""wallet"", ""watch"", ""coat"", ""shoes"", ""shirt"", ""cufflinks"", ""gloves""]]"
@@ -6102,7 +6102,7 @@ to-the-aisle,the-five-satins,R&B,['None'],[]
 pointless-beauty,ben-lee,Pop,['None'],[]
 emma-lee,buffy-sainte-marie,Folk,['None'],[]
 chammak-chulo,akon,Pop,['None'],[]
-poetry-of-the-deed,frank-turner,Indie,"['Emotions', 'Body Parts']","[[""loved"", ""bored"", ""afraid""], [""veins"", ""eyes"", ""throat""]]"
+poetry-of-the-deed,frank-turner,Indie,"['Emotions', 'Body Parts']","[[""loved"", ""in love"", ""bored"", ""afraid""], [""veins"", ""eyes"", ""throat""]]"
 respect,aretha-franklin,R&B,['None'],[]
 baby-love,diana-ross-the-supremes,Pop,['None'],[]
 fuck-you-i-m-edge,embrace-today,Metal,['None'],[]
@@ -6235,7 +6235,7 @@ lucky-clover,cocorosie,Indie,['Animals'],"[[""bee"", ""frog"", ""cats"", ""dog""
 the-veldt,deadmau5,Electronic,['None'],[]
 i-will-follow-you,bell-x1,Rock,['None'],[]
 too-bad,bad-company,Rock,['None'],[]
-the-price-i-pay,emmylou-harris,Country,['None'],[]
+the-price-i-pay,emmylou-harris,Country,['Emotions'],"[[""in love"", ""kind"", ""lonely""]]"
 a-french-love,anna-ternheim,Indie,['None'],[]
 sex-with-me-freestyle,am,Indie,['None'],[]
 infinity-x-infinity,dead-by-april,Metal,['None'],[]
@@ -6331,7 +6331,7 @@ seanchas,clannad,Folk,['None'],[]
 damn-i-wanna-be-your-lover,en-vogue,Pop,['None'],[]
 by-dark-glorious-thoughts,enthroned,Metal,['None'],[]
 greed,flotsam-and-jetsam,Metal,['Body Parts'],"[[""hands"", ""palms"", ""throat""]]"
-special-feeling,diddy,Hip-Hop,['None'],[]
+special-feeling,diddy,Hip-Hop,['Emotions'],"[[""passionate"", ""in love"", ""kind""]]"
 appetite-for-distinction,e-town-concrete,Metal,['None'],[]
 symmetrical,allen-stone,Pop,['None'],[]
 let-me-blow-ya-mind,eve,Hip-Hop,"['Emotions', 'Body Parts']","[[""strong"", ""kind"", ""scared""], [""bones"", ""eyes"", ""foot"", ""lips"", ""hair"", ""ear"", ""stomach"", ""spine"", ""teeth""]]"
@@ -6443,7 +6443,7 @@ enough-s-enough,alice-cooper,Rock,['None'],[]
 ooh-ahh,colby-o-donis,Pop,['None'],[]
 my-god-is-real,don-gibson,Country,['None'],[]
 bodies,the-gc5,Rock,['None'],[]
-i-will-always-be-your-friend,george-duke,Jazz,['None'],[]
+i-will-always-be-your-friend,george-duke,Jazz,['Emotions'],"[[""loved"", ""in love"", ""jealous""]]"
 crawl-to-your-cross,bathory,Metal,['None'],[]
 when-you-don-t-control-your-government,anti-flag,R&B,['None'],[]
 days-gone-by,eddy-arnold,Country,['None'],[]
@@ -6531,7 +6531,7 @@ the-baddest-click,chamillionaire,Hip-Hop,"['Clothing', 'Body Parts']","[[""gown"
 thou-art-lord,acheron,Metal,['None'],[]
 2-can-play-that-game,corey,Indie,['None'],[]
 good-girls,bobby-valentino,Hip-Hop,['None'],[]
-the-dip,goodie-mob,Hip-Hop,"['Food', 'Body Parts']","[[""eggs"", ""cheese"", ""waffle"", ""tea""], [""nerves"", ""head"", ""fingers"", ""feet"", ""eyes"", ""finger"", ""shoulders""]]"
+the-dip,goodie-mob,Hip-Hop,"['Food', 'Emotions', 'Body Parts']","[[""eggs"", ""cheese"", ""waffle"", ""tea""], [""in love"", ""calm"", ""lonely""], [""nerves"", ""head"", ""fingers"", ""feet"", ""eyes"", ""finger"", ""shoulders""]]"
 people-gotta-move,gino-vannelli,Pop,['None'],[]
 shallow,fred-eaglesmith,Country,['None'],[]
 hold-on,donna-hughes,Country,['None'],[]
@@ -6625,7 +6625,7 @@ the-man,golden-horn,Folk,['None'],[]
 honey-love,the-drifters,R&B,['Body Parts'],"[[""spine"", ""fingers"", ""arms""]]"
 go-away-man,gluecifer,Rock,['None'],[]
 the-star-of-the-county-down,the-chieftains,Folk,['None'],[]
-ghetto,august-alsina,R&B,['Emotions'],"[[""ashamed"", ""afraid"", ""worried""]]"
+ghetto,august-alsina,R&B,['Emotions'],"[[""ashamed"", ""in love"", ""afraid"", ""worried""]]"
 raining-on-the-moon,doc-walker,Country,['None'],[]
 hopeless,boiler-room,Metal,['None'],[]
 fuck-friendz,2pac,Hip-Hop,['Body Parts'],"[[""head"", ""hands"", ""eye"", ""thighs"", ""arm""]]"
@@ -6649,7 +6649,7 @@ nyc-beat,armand-van-helden,Electronic,['None'],[]
 day-dreamin,dj-drama,Hip-Hop,"['Food', 'Body Parts']","[[""shrimp"", ""steak"", ""cinnamon""], [""head"", ""eyes"", ""foot""]]"
 baila-senorita,enrique-iglesias,Pop,['None'],[]
 so-hard-to-say-goodbye,babyface,R&B,['None'],[]
-saturday-i-m-in-love,auryn,Metal,['None'],[]
+saturday-i-m-in-love,auryn,Metal,['Emotions'],"[[""happy"", ""in love"", ""quiet""]]"
 waiting-here-for-you,christy-nockels,Hip-Hop,['None'],[]
 be-near-me,abc,Pop,['None'],[]
 texas,damnwells,Rock,['None'],[]
@@ -6839,7 +6839,7 @@ the-rose,bonnie-tyler,Pop,['Emotions'],"[[""strong"", ""afraid"", ""lonely""]]"
 the-palace-of-auburn-hills-freestyle,drake,Hip-Hop,['None'],[]
 bullet-brain,fake-club,Rock,['None'],[]
 i-m-sorry,fresh-code,Electronic,['None'],[]
-why-ain-t-i-running,garth-brooks,Country,['None'],[]
+why-ain-t-i-running,garth-brooks,Country,['Emotions'],"[[""strong"", ""in love"", ""lonely""]]"
 control,alphaville,Pop,['None'],[]
 the-word-hurricane,air,Electronic,['None'],[]
 square-wave-in-unison,beastie-boys,Hip-Hop,['None'],[]
@@ -6876,7 +6876,7 @@ jeff,damhnait-doyle,Pop,['None'],[]
 2013,arctic-monkeys,Rock,['None'],[]
 laughter-forgetting,david-sylvian,Electronic,['Body Parts'],"[[""eyes"", ""feet"", ""knees"", ""hands""]]"
 superflash,chemical-brothers,Electronic,['None'],[]
-nothin-from-nothin,da-grym-reefer,Hip-Hop,['Emotions'],"[[""angry"", ""tired"", ""lonely""]]"
+nothin-from-nothin,da-grym-reefer,Hip-Hop,['Emotions'],"[[""in love"", ""angry"", ""tired"", ""lonely""]]"
 no-new-plan,damnation,Metal,['None'],[]
 waitress-song,first-aid-kit,Pop,['None'],[]
 rise-up,abby-dobson,Folk,['None'],[]
@@ -6921,7 +6921,7 @@ a-closure-in-infinity,goatwhore,Metal,['Body Parts'],"[[""head"", ""eyes"", ""bl
 big-chain-records-skit,disturbing-tha-peace,Hip-Hop,['None'],[]
 my-hometown,bowling-for-soup,Rock,['None'],[]
 margie-s-at-the-lincoln-park-inn,cal-smith,Country,['None'],[]
-where-did-we-go-wrong,babyface,R&B,['None'],[]
+where-did-we-go-wrong,babyface,R&B,['Emotions'],"[[""loved"", ""in love"", ""touched""]]"
 the-trinity-of-lust-shiva-s-tears,brainstorm,Rock,['None'],[]
 cadillac-walk,boz-scaggs,Rock,['Body Parts'],"[[""bones"", ""blood"", ""thigh"", ""chest""]]"
 to-the-border-and-beyond,collin-raye,Country,['None'],[]
@@ -6959,7 +6959,7 @@ now-that-you-re-gone,diana-ross,Pop,['None'],[]
 black-death,the-defiled,Metal,['None'],[]
 next-to-heaven,aaron-watson,Country,['None'],[]
 these-dreams,defari,Hip-Hop,['None'],[]
-infatuation-interlude,christina-aguilera,Pop,['Body Parts'],"[[""hand"", ""eyes"", ""finger"", ""skin"", ""hips"", ""blood"", ""arm""]]"
+infatuation-interlude,christina-aguilera,Pop,"['Emotions', 'Body Parts']","[[""strong"", ""in love"", ""lonely""], [""hand"", ""eyes"", ""finger"", ""skin"", ""hips"", ""blood"", ""arm""]]"
 outa-me-onto-you,ani-difranco,Rock,['None'],[]
 sugalumps,flight-of-the-conchords,Indie,['None'],[]
 mayflowers,ashley-monroe,Country,['None'],[]
@@ -7147,7 +7147,7 @@ a-month-today,ben-lee,Pop,['None'],[]
 getaway,dr-john,Jazz,['None'],[]
 under-this-ground,eldritch,Metal,['Body Parts'],"[[""head"", ""brain"", ""eyes""]]"
 euro-trash-girl,chicks-on-speed,Electronic,['None'],[]
-all-my-bitches,da-brat,Hip-Hop,"['Food', 'Body Parts']","[[""chips"", ""beef"", ""cheese""], [""head"", ""neck"", ""knees""]]"
+all-my-bitches,da-brat,Hip-Hop,"['Food', 'Emotions', 'Body Parts']","[[""chips"", ""beef"", ""cheese""], [""in love"", ""shy"", ""proud""], [""head"", ""neck"", ""knees""]]"
 if-you-aint-got-love,dolly-parton,Country,['None'],[]
 at-the-garden-of-eden,chastisement,Metal,['None'],[]
 the-look,celeste-kellogg,Country,['Body Parts'],"[[""nerve"", ""eyes"", ""arm""]]"
@@ -7509,7 +7509,7 @@ put-em-in-a-box-tie-em-with-a-ribbon-and-throw-em-in-the-deep-blue-sea,doris-day
 feeling-like-sh-t,bile,Metal,['Body Parts'],"[[""head"", ""wrist"", ""foot"", ""blood""]]"
 pretty-girl-at-the-airport,avett-brothers,Country,['None'],[]
 30-day-wonder,good-riddance,Rock,['None'],[]
-all-night-long,curtis-mayfield,R&B,['None'],[]
+all-night-long,curtis-mayfield,R&B,['Emotions'],"[[""in love"", ""satisfied"", ""afraid""]]"
 winnie-the-pooh,the-chieftains,Folk,['Animals'],"[[""bear"", ""donkey"", ""rabbit"", ""owl""]]"
 right-here-waiting,blue,Pop,['None'],[]
 millenium-sun,angra,Metal,['None'],[]
@@ -7526,7 +7526,7 @@ i-m-no-king,admiral-twin,Rock,['None'],[]
 jazzy-belle,babyface,R&B,"['Clothing', 'Body Parts']","[[""coat"", ""boots"", ""watch"", ""bra""], [""toes"", ""nails"", ""thighs""]]"
 w-w-w-what-a-wonderful-world,bob-sinclar,Electronic,['None'],[]
 he-s-gone,catherine-zeta-jones,Jazz,['None'],[]
-that-s-how-country-boys-roll,billy-currington,Country,['None'],[]
+that-s-how-country-boys-roll,billy-currington,Country,['Emotions'],"[[""shy"", ""in love"", ""proud""]]"
 centennial-legend,edenbridge,Metal,['Body Parts'],"[[""hands"", ""feet"", ""belly""]]"
 battlestations,george-michael,Pop,['None'],[]
 if-i-get-locked-up-tonight-with-dr-dre,eminem,Hip-Hop,"['Clothing', 'Emotions', 'Body Parts']","[[""pants"", ""watches"", ""jacket""], [""upset"", ""tired"", ""lonely""], [""head"", ""brain"", ""hand"", ""eyes"", ""mouth"", ""hair"", ""teeth"", ""chest""]]"
@@ -7538,7 +7538,7 @@ bitches-brew,crosses,Folk,['None'],[]
 drama-queen,bracket,Rock,['None'],[]
 sound-minds,farewell-to-freeway,Metal,['None'],[]
 go-time,down-with-webster,Hip-Hop,['None'],[]
-tender-is-the-night,celtic-thunder,Pop,['Emotions'],"[[""yearning"", ""touched"", ""lonely""]]"
+tender-is-the-night,celtic-thunder,Pop,['Emotions'],"[[""yearning"", ""in love"", ""touched"", ""lonely""]]"
 dinosaur,al-jarreau,Jazz,['None'],[]
 wasted-years,devildriver,Metal,['None'],[]
 s-wonderful,diana-krall,Jazz,['None'],[]
@@ -7640,7 +7640,7 @@ coma,alien-sex-fiend,Rock,['None'],[]
 lady-jane,eric-lindell,Rock,['None'],[]
 rudolph-the-red-nose-reindeer,barenaked-ladies,Rock,['None'],[]
 men-are-from-mars-women-are-from-venus,curve,Electronic,['None'],[]
-december,chase-coy,Indie,['None'],[]
+december,chase-coy,Indie,['Emotions'],"[[""loved"", ""in love"", ""lonely""]]"
 beneath,after-forever,Metal,['Emotions'],"[[""loved"", ""afraid"", ""bewildered""]]"
 just-a-little-talk-with-jesus,bill-monroe,Country,['None'],[]
 the-promised-future-aeons,dimmu-borgir,Metal,['None'],[]
@@ -7837,7 +7837,7 @@ prom-tux,chancellor-warhol,Hip-Hop,['None'],[]
 principle-of-speed,drifter,Metal,['None'],[]
 drunken-sailor,burl-ives,Folk,['None'],[]
 becoming-the-seed,bluetech,Electronic,['None'],[]
-chi-skit-adrenaline-phone-skit,cam-ron,Hip-Hop,"['Animals', 'Body Parts']","[[""duck"", ""fish"", ""gorillas""], [""head"", ""brain"", ""feet"", ""chest""]]"
+chi-skit-adrenaline-phone-skit,cam-ron,Hip-Hop,"['Animals', 'Emotions', 'Body Parts']","[[""duck"", ""fish"", ""gorillas""], [""happy"", ""touched"", ""in love""], [""head"", ""brain"", ""feet"", ""chest""]]"
 dead-man-walking,g-b-h,Rock,['None'],[]
 clear-blue-eyes,amos-lee,Folk,['None'],[]
 betta-listen,de-la-soul,Hip-Hop,['Animals'],"[[""deer"", ""rabbit"", ""dogs"", ""cat""]]"
