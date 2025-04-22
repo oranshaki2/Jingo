@@ -1,21 +1,21 @@
 # Define categories and associated words
 categories = {
     "Animals": [
-        "alligator", "alligators", "ant", "ants", "antelope", "antelopes", "bat", "bats", "bear", "bears",
-        "bee", "bees", "beetle", "beetles", "buffalo", "buffalos", "butterfly", "butterflies", "camel", "camels",
-        "cat", "cats", "caterpillar", "caterpillars", "cheetah", "cheetahs", "chicken", "chickens", "chimpanzee", "chimpanzees",
-        "cow", "cows", "crab", "crabs", "crocodile", "crocodiles", "deer", "dog", "dogs", "dolphin", "dolphins",
-        "donkey", "donkeys", "duck", "ducks", "eagle", "eagles", "elephant", "elephants", "falcon", "falcons", "ferret", "ferrets",
-        "fish", "flamingo", "flamingos", "fox", "foxes", "frog", "frogs", "giraffe", "giraffes", "goat", "goats",
-        "goose", "geese", "gorilla", "gorillas", "grasshopper", "grasshoppers", "hamster", "hamsters", "hawk", "hawks", "hedgehog", "hedgehogs",
-        "hippo", "hippos", "horse", "horses", "hyena", "hyenas", "jaguar", "jaguars", "jellyfish", "kangaroo", "kangaroos", "koala", "koalas",
-        "leopard", "leopards", "lion", "lions", "lizard", "lizards", "lobster", "lobsters", "llama", "llamas", "mole", "moles", "monkey", "monkeys",
-        "moose", "mosquito", "mosquitoes", "mouse", "mice", "octopus", "octopuses", "ostrich", "ostriches", "otter", "otters", "owl", "owls",
+        "animal", "animals", "alligator", "alligators", "alpaca", "alpacas", "anaconda", "anacondas", "ant", "ants", "antelope", "antelopes", "armadillo", "armadillos", "baboon", "baboons", "bat", "bats", "bear", "bears",
+        "beast", "bee", "bees", "beetle", "beetles", "buffalo", "buffalos", "butterfly", "butterflies", "camel", "camels",
+        "cat", "cats", "caterpillar", "caterpillars", "cheetah", "cheetahs", "chicken", "chickens", "chimpanzee", "chimpanzees", "chinchilla", "chinchillas", "chipmunk", "chipmunks",
+        "cow", "cows", "cobra", "cobras", "crab", "crabs", "cricket", "crickets", "crocodile", "crocodiles", "crow", "crows", "deer", "dog", "dogs", "dolphin", "dolphins",
+        "donkey", "donkeys", "dove", "doves", "dragon", "dragonfly", "dragonflies", "duck", "ducks", "dinosaur", "dinosaurs", "eagle", "eagles", "elephant", "elephants", "falcon", "falcons", "ferret", "ferrets",
+        "fish", "firefly", "fireflies", "flamingo", "flamingos", "fox", "foxes", "frog", "frogs", "giraffe", "giraffes", "goat", "goats",
+        "goose", "geese", "gorilla", "gorillas", "goldfish", "grasshopper", "grasshoppers", "grizzly", "hamster", "hamsters", "hawk", "hawks", "hedgehog", "hedgehogs",
+        "hippo", "hippos", "hippopotamus", "horse", "horses", "hyena", "hyenas", "ibex", "ibexes", "iguana", "iguanas", "jaguar", "jaguars", "jellyfish", "kangaroo", "kangaroos", "koala", "koalas",
+        "leopard", "leopards", "lemur", "lemurs", "lice", "lion", "lions", "lizard", "lizards", "lobster", "lobsters", "llama", "llamas", "mole", "moles", "monkey", "monkeys", "mongoose", "mongooses",
+        "moose", "mosquito", "mosquitoes", "moth", "mouse", "mice", "nightingale", "nightingales", "octopus", "octopuses", "ostrich", "ostriches", "otter", "otters", "owl", "owls",
         "ox", "oxen", "panda", "pandas", "parrot", "parrots", "peacock", "peacocks", "pelican", "pelicans", "penguin", "penguins", "pig", "pigs",
-        "pigeon", "pigeons", "platypus", "platypuses", "porcupine", "porcupines", "rabbit", "rabbits", "raccoon", "raccoons", "rat", "rats", "raven", "ravens",
-        "reindeer", "rhino", "rhinos", "seal", "seals", "seahorse", "seahorses", "shark", "sharks", "sheep", "skunk", "skunks", "sloth", "sloths",
-        "snail", "snails", "snake", "snakes", "sparrow", "sparrows", "spider", "spiders", "squid", "squids", "squirrel", "squirrels", "starfish", "stingray", "stingrays",
-        "swan", "swans", "termite", "termites", "tiger", "tigers", "toad", "toads", "toucan", "toucans", "turtle", "turtles", "walrus", "walruses",
+        "pigeon", "pigeons", "Penguin", "Penguins", "platypus", "platypuses", "porcupine", "porcupines", "rabbit", "rabbits", "raccoon", "raccoons", "rat", "rats", "raven", "ravens",
+        "reindeer", "rhino", "rhinos", "scorpion", "scorpions", "sea_lion", "sea_lions", "seal", "seals", "seahorse", "seahorses", "sea_urchin", "sea_urchins",  "seagull", "seagulls", "shark", "sharks", "sheep", "skunk", "skunks", "sloth", "sloths",
+        "snail", "snails", "snake", "snakey", "snakes", "songbird", "songbirds", "sparrow", "sparrows", "spider", "spiders", "squid", "squids", "squirrel", "squirrels", "starfish", "stingray", "stingrays",
+        "swan", "swans", "swordfish", "termite", "termites", "tiger", "tigers", "toad", "toads", "toucan", "toucans", "turtle", "turtles", "unicorn", "unicorns", "walrus", "walruses",
         "wasp", "wasps", "whale", "whales", "wolf", "wolves", "zebra", "zebras"
     ],
 
@@ -47,20 +47,41 @@ categories = {
     ],
 
     "Emotions": [
-    "afraid", "agitated", "alienated", "amused", "angry", "annoyed", "anxious", "apathetic", "apprehensive", "ashamed", "awe-struck",
-    "bewildered", "blissful", "bored", "brave", "calm", "caring", "cheerful", "compassionate", "confident", "confused", "cowardly",
-    "curious", "delighted", "depressed", "despairing", "determined", "discouraged", "disappointed", "distraught", "doubtful", 
-    "ecstatic", "elated", "embarrassed", "emotional", "energized", "enthusiastic", "envious", "excited", "exhausted", "exhilarated", 
-    "fearful", "flustered", "frustrated", "furious", "giddy", "gloomy", "grateful", "grumpy", "guilty", "happy", "heartbroken", 
-    "hesitant", "hopeful", "hopeless", "horrified", "hostile", "humiliated", "impatient", "in_love", "indignant", "indifferent", 
-    "insecure", "irritated", "jealous", "joyful", "jubilant", "kind", "lazy", "lively", "lonely", "loved", "melancholic", "meltdown", 
-    "miserable", "moody", "nervous", "nostalgic", "nurturing", "open-hearted", "optimistic", "overjoyed", "overwhelmed", 
-    "panicked", "panicky", "passionate", "patient", "peaceful", "pensive", "pessimistic", "pleased", "proud", "quiet", "regretful", 
-    "relaxed", "relieved", "resentful", "revulsed", "romantic", "satisfied", "scared", "sentimental", "serene", "shaken", "shy", 
-    "skeptical", "smug", "stern", "strong", "stunned", "surprised", "sympathetic", "tearful", "tense", "terrified", "thoughtful", 
-    "thrilled", "tired", "touched", "tranquil", "trusting", "uncomfortable", "unhappy", "uplifted", "upset", "vulnerable", "wistful", 
-    "worried", "yearning"
-    ],
+    "abandoned", "acrimonious", "addicted", "addicting", "addiction", "addict", "adoring", "adore", "affectionate", "afraid", "aggrieved",
+    "agitated", "agonized", "agony", "alarmed", "alienated", "aloof", "amazed", "ambivalent", "amorous", "amused", "angry", "anger", 
+    "anguished", "annoyed", "annoying", "anxious", "apathetic", "appalled", "appreciated", "apprehensive", "ardent", "ashamed", 
+    "astonished", "attracted", "awed", "awe-struck", "awkward", "awkwardness", "bashful", "bemused", "bereaved", "betrayed", 
+    "bewildered", "bitter", "blissful", "boastful", "bored", "boring", "brave", "broken_heart", "broken_hearted", "calm", 
+    "cantankerous", "captivated", "caring", "cautious", "cheerful", "cherished", "claustrophobic", "clingy", "comfortable", 
+    "compassionate", "complacent", "confident", "conflicted", "confused", "confusing", "contemplative", "contemptuous", "contrite", 
+    "courageous", "cowardly", "cranky", "craving", "curious", "cynical", "defiant", "dejected", "delighted", "demoralized", "dependent", 
+    "depressed", "depression", "deserted", "desirous", "desire", "despair", "despairing", "desperate", "desperation", "determined", 
+    "devastated", "devastating", "disappointed", "disappointing", "discontented", "discouraged", "disgruntled", "disgust", 
+    "disgusted", "disillusioned", "dismayed", "disoriented", "disparaged", "distracted", "distressed", "distraught", "disturbed", 
+    "doubt", "doubtful", "downtrodden", "dreamy", "dubious", "eager", "ecstatic", "elated", "embarrassed", "emboldened", "emotional", 
+    "empathetic", "enchanted", "encouraged", "energized", "energetic", "engrossed", "enraged", "enthusiastic", "enthralled", "envious", 
+    "euphoric", "exasperated", "excited", "excluded", "exhausted", "exhilarated", "exploited", "exposed", "exuberant", "fascinated", 
+    "fatigued", "fearful", "fearless", "feeling", "feel", "flustered", "forlorn", "fortunate", "frantic", "frightened", "frustrated", 
+    "fulfilled", "furious", "giddy", "gleeful", "gloomy", "gracefull", "gracefully", "grateful", "greedy", "grief_stricken", "grumpy", 
+    "guilt", "guilty", "happiness", "harassed", "hateful", "hated", "heartbroken", "helpless", "hesitant", "hopeful", "hopefully", 
+    "hopeless", "horrified", "hostile", "humiliated", "humorous", "hungry", "hunger", "hurt", "hurting", "hysterical", "hysteria", "impatient", "in_love", 
+    "indignant", "indifferent", "inferior", "infatuated", "insecure", "insignificant", "insulted", "intimidated", "intrigued", 
+    "irritated", "isolated", "jealous", "jealously", "jittery", "joyful", "jovial", "jubilant", "kind", "languid", "lazy", "lethargic", 
+    "liberated", "lively", "loathing", "lonely", "loneliness", "longful", "lost", "loved", "loving", "melancholic", "meltdown", 
+    "merciful", "merry", "mindful", "miserable", "mistrustful", "moody", "mortified", "mournful", "mystified", "nervous", "nostalgic", 
+    "numb", "obsessed", "offended", "open-hearted", "optimistic", "outraged", "overjoyed", "overwhelmed", "pacified", "panicked", 
+    "panicky", "paranoid", "passionate", "patient", "patiently", "peaceful", "pensive", "perplexed", "persecuted", "pessimistic", 
+    "petrified", "pining", "pitying", "playful", "pleased", "prideful", "privileged", "proud", "protective", "puzzled", "quiet", 
+    "rage", "rapturous", "reassured", "rebellious", "regretful", "rejected", "relaxed", "relieved", "reluctant", "remorseful", 
+    "resentful", "resigned", "respected", "restless", "revulsed", "ridiculous", "romantic", "sad", "sadness", "safe", "satisfied", 
+    "scared", "scary", "scornful", "secure", "self-conscious", "sentimental", "serene", "shaken", "shame", "shameful", "shameless", 
+    "shocked", "shy", "skeptical", "sleepy", "smug", "sorrow", "sorrowful", "spiteful", "startled", "stern", "stressed", "stressfull", 
+    "stressfully", "strong", "stunned", "stupefied", "successful", "sullen", "surprised", "suspicious", "sympathetic", "tearful", 
+    "tenacious", "tender", "tense", "tentative", "terrified", "thankful", "thoughtful", "threatened", "thrilled", "timid", "tired", 
+    "tiredness", "touched", "tranquil", "triumphant", "troubled", "trusting", "uncomfortable", "unconfident", "unfulfilled", "unhappy", 
+    "unnerved", "unsettled", "unstable", "uplifted", "upset", "valued", "vengeful", "vigilant", "vindicated", "vulnerable", "wary", 
+    "weary", "wistful", "withdrawn", "woeful", "worried", "worthless", "wounded", "wrathful", "yearning", "zestful"
+],
 
     "Body Parts": [
         "abdomen", "ankle", "ankles", "appendix", "arm", "arms", "artery", "arteries", "belly", "belly_button", "bladder", "blood", "bone", "bones", "brain",
@@ -76,5 +97,5 @@ categories = {
 
 # Define multi-word keywords to preserve as single tokens
 multi_word_keywords = [
-    "ice cream", "sweet potato", "whipped cream", "tank top", "tank tops", "in love", "belly button", "vocal cords"
+    "ice cream", "sweet potato", "whipped cream", "tank top", "tank tops", "in love", "belly button", "vocal cords", "broken hearted", "broken heart", "sea lion", "sea lions", "sea urchin", "sea urchins"
 ]
