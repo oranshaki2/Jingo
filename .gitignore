@@ -175,3 +175,5 @@ cython_debug/
 
 /jupyter-env
 /data/train.csv
+/data/processed_train_dataset.csv
+/data/processed_test_dataset.csv
