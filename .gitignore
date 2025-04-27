@@ -177,3 +177,10 @@ cython_debug/
 /data/train.csv
 /data/processed_train_dataset.csv
 /data/processed_test_dataset.csv
+/data/train_with_additional.csv
+/data/More_song_all.csv
+/data/More_song_test.csv
+/data/More_song_train.csv
+models/multi_label_classifier.pkl
+models/tfidf_vectorizer.pkl
+models/multi_label_classifier.pkl
