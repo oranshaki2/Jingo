@@ -161,8 +161,7 @@ categories = {
         "cargo_ship", "cargo_ships", "freight_train", "freight_trains", "bullet_train", "bullet_trains",
         "electric_car", "electric_cars", "hybrid_car", "hybrid_cars", "self-driving_car", "self-driving_cars",
         "electric_scooter", "electric_scooters", "electric_bike", "electric_bikes", "sail",
-        "drive", "driver", "drivers", "passenger", "passengers", "pilot", "pilots", "captain", 
-        "captains", "crew", "crews", "mechanic", "mechanics",
+        "drive", "driver", "drivers", "passenger", "passengers", "pilot", "pilots", "mechanic", "mechanics",
         "chauffeur", "chauffeurs", "navigator", "navigators",
         "station", "stations", "terminal", "terminals", "runway", "runways",
         "port", "ports", "harbor", "harbors", "garage", "garages", "highway", "highways",
@@ -177,7 +176,55 @@ categories = {
         "takeoff", "takeoffs", "boarding", "trip", "trips", "travel", "travels", "transit", 
         "route", "routes", "itinerary", "itineraries", "departure", "departures", "arrival", 
         "arrivals", "delay", "delays", "schedule", "schedules"
-    ]
+    ],
+
+    "Sports": [
+    "archer", "archers", "archery", "athlete", "athletes", "badminton",
+    "ball", "balls", "baseball", "baseballs", "bat", "bats",
+    "basket", "baskets", "basketball", "basketballs", "biker", "bikers",
+    "billiard", "billiards", "bleacher", "bleachers", "board", "boards",
+    "boat", "boats", "bow", "bows", "bowler", "bowlers",
+    "bowling", "boxer", "boxers", "boxing", "captain", "captains",
+    "canoe", "canoes", "canoeing", "catcher", "catchers", "champion",
+    "champions", "cheer", "cheerleader", "cheerleaders", "climber", "climbers",
+    "climbing", "crossfit", "coach", "coaches", "competition", "competitions",
+    "cricket", "crew", "crews", "cyclist", "cyclists", "cycling",
+    "dart", "darts", "diver", "divers", "diving", "dodgeball",
+    "equipment", "fencer", "fencers", "fencing", "field", "fields",
+    "fighter", "fighters", "fishing", "football", "footballs","game", "games", "goal",
+    "goals", "goalkeeper", "goalkeepers", "goggles", "golf", "golfs",
+    "golfer", "golfers", "gym", "gyms", "gymnast", "gymnasts",
+    "gymnastics", "helmet", "helmets", "hiker", "hikers", "hiking",
+    "hockey", "horse", "horses", "ice_hockey", "ice_skating", "javelin",
+    "javelins", "jogger", "joggers", "jogging", "judoka", "judokas",
+    "judo", "jump", "jumps", "judge", "jiujitsu", "karate",
+    "kayak", "kayaks", "kayaking", "kick", "kicks", "kicking",
+    "kicker", "kickers", "kitesurfing", "lacrosse", "league", "leagues",
+    "loser", "losers", "martial_art", "martial_arts", "match", "matches",
+    "medal", "medals", "mountain_biking", "net", "nets", "olympics",
+    "paddle", "paddles", "parachute", "parachutes", "paragliding", "parkour",
+    "penalty", "penalties", "player", "players", "poles", "practice",
+    "practices", "pilates", "ping_pong", "race", "races", "racer",
+    "racers", "racing", "referee", "referees", "rink", "rinks",
+    "rival", "rivals", "rower", "rowers", "rowing", "rugby",
+    "runner", "runners", "running", "sailing", "score", "scores",
+    "scorer", "scorers", "skate", "skates", "skateboard", "skateboards",
+    "skateboarding", "skater", "skaters", "ski", "skis", "skier",
+    "skiers", "skiing", "snowboard", "snowboards", "snowboarder", "snowboarders",
+    "snowboarding", "snorkeling", "soccer", "spectator", "spectators", "speed_skating",
+    "sport", "sports", "sportsman", "sportsmen", "sportswoman", "sportswomen",
+    "sprint", "stadium", "stadiums", "stick", "sticks", "strike",
+    "strikes", "surf", "surfs", "surfer", "surfers", "sumo",
+    "surfing", "swim", "swims", "swimmer", "swimmers", "swimming",
+    "table_tennis", "taekwondo", "target", "targets", "team", "teams",
+    "tennis", "throw", "throws", "thrower", "throwers", "track",
+    "trainer", "trainers", "triathlon", "trophy", "trophies", "umpire",
+    "umpires", "uniform", "uniforms", "victory", "victories", "volleyball",
+    "walker", "walkers", "walking", "weight", "weights", "weightlifter",
+    "weightlifters", "weightlifting", "win", "wins", "winner", "winners",
+    "winning", "winnings", "wrestler", "wrestlers", "wrestling", "yacht",
+    "yachts", "yachting", "yoga", "zumba"
+]
 
 }
 
@@ -211,7 +258,10 @@ multi_word_keywords = [
     "self-driving car", "self-driving cars", "electric scooter", "electric scooters",
     "electric bike", "electric bikes", "bike lane", "bike lanes",
     "boarding pass", "boarding passes", "traffic light", "traffic lights",
-    "stop sign", "stop signs"
+    "stop sign", "stop signs",
+
+    # Sports category
+    "ping pong", "table tennis", "speed skating", "martial arts", "martial art", "ice skating", "ice hockey"
 ]
 
 
