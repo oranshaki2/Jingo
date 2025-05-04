@@ -184,3 +184,4 @@ cython_debug/
 /data/More_song_train.csv
 /models/multi_label_classifier.pkl
 /models/tfidf_vectorizer.pkl
+/data/filtered_songs.csv
