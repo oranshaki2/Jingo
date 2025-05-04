@@ -145,7 +145,7 @@ categories = {
     ],
 
     "Transport": [
-        "car", "cars", "bus", "buses", "train", "trains", "truck", "trucks", "van", "vans",
+        "car", "cars", "bus", "buses", "train", "trains", "truck", "trucks", "van", "vans", "ambulance", "ambulances",
         "taxi", "taxis", "motorcycle", "motorcycles", "bike", "bikes", "bicycle", "bicycles",
         "scooter", "scooters", "skateboard", "skateboards", "subway", "subways",
         "tram", "trams", "metro", "metros", "ferry", "ferries", "boat", "boats",
@@ -169,7 +169,7 @@ categories = {
         "tunnel", "tunnels", "railway", "railways", "railroad", "railroads",
         "track", "tracks", "bike_lane", "bike_lanes", "flight", "flights",
         "boarding_pass", "boarding_passes", "ticket", "tickets", "fare", "fares",
-        "transport", "transportation", "logistics", "delivery", "deliveries", "freight",
+        "transport", "transportation","delivery", "deliveries", "freight",
         "cargo", "shipment", "shipments", "commute", "commutes", "journey", "journeys", "landing",
         "takeoff", "takeoffs", "boarding", "trip", "trips", "travel", "travels", "transit", 
         "route", "routes", "itinerary", "itineraries", "departure", "departures", "arrival", 
