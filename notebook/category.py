@@ -118,7 +118,7 @@ categories = {
         "greatgrandparents", "sister", "sisters", "brother", "brothers", "siblings", "stepsister", 
         "stepsisters", "stepbrother", "stepbrothers", "halfsister", "halfbrother", "twin", "twins", 
         "son", "daughter", "daughters", "child", "children", "stepson", "stepdaughter", 
-        "grandson", "granddaughter","greatgrandson", "greatgranddaughter", "uncle", "aunt", 
+        "grandson", "granddaughter","greatgrandson", "great-grandson", "greatgranddaughter", "great-granddaughter", "uncle", "aunt", 
         "auntie", "nephew", "niece", "greatuncle", "greataunt", "cousin", "husband","housewife","wife", "spouse", "partner", 
         "life_partner", "soulmate", "in-law", "mother-in-law", "father-in-law", "brother-in-law", 
         "sister-in-law", "son-in-law", "daughter-in-law", "family", "families", "relatives", 
@@ -181,13 +181,13 @@ categories = {
     "ball", "balls", "baseball", "baseballs", "bat", "bats",
     "basket", "baskets", "basketball", "basketballs", "biker", "bikers",
     "billiard", "billiards", "bleacher", "bleachers", "board", "boards",
-    "boat", "boats", "bow", "bows", "bowler", "bowlers",
+    "boat", "boats", "bow", "bows", 
     "bowling", "boxer", "boxers", "boxing", "captain", "captains",
-    "canoe", "canoes", "canoeing", "catcher", "catchers", "champion",
+    "catcher", "catchers", "champion",
     "champions", "cheer", "cheerleader", "cheerleaders", "climber", "climbers",
     "climbing", "crossfit", "coach", "coaches", "competition", "competitions",
-    "cricket", "crew", "crews", "cyclist", "cyclists", "cycling",
-    "dart", "darts", "diver", "divers", "diving", "dodgeball",
+    "crew", "crews", "cyclist", "cyclists", "cycling",
+    "dart", "darts", "diver", "divers", "diving",
     "equipment", "fencer", "fencers", "fencing", "field", "fields",
     "fighter", "fighters", "fishing", "football", "footballs","game", "games", "goal",
     "goals", "goalkeeper", "goalkeepers", "goggles", "golf", "golfs",
@@ -196,8 +196,8 @@ categories = {
     "hockey", "horse", "horses", "ice_hockey", "ice_skating", "javelin",
     "javelins", "jogger", "joggers", "jogging", "judoka", "judokas",
     "judo", "jump", "jumps", "judge", "jiujitsu", "karate",
-    "kayak", "kayaks", "kayaking", "kick", "kicks", "kicking",
-    "kicker", "kickers", "kitesurfing", "lacrosse", "league", "leagues",
+    "kick", "kicks", "kicking",
+    "kicker", "kickers", "lacrosse", "league", "leagues",
     "loser", "losers", "martial_art", "martial_arts", "match", "matches",
     "medal", "medals", "mountain_biking", "net", "nets", "olympics",
     "paddle", "paddles", "parachute", "parachutes", "paragliding", "parkour",
@@ -209,10 +209,10 @@ categories = {
     "scorer", "scorers", "skate", "skates", "skateboard", "skateboards",
     "skateboarding", "skater", "skaters", "ski", "skis", "skier",
     "skiers", "skiing", "snowboard", "snowboards", "snowboarder", "snowboarders",
-    "snowboarding", "snorkeling", "soccer", "spectator", "spectators", "speed_skating",
+    "snowboarding", "snorkeling", "soccer", "spectator", "spectators",
     "sport", "sports", "sportsman", "sportsmen", "sportswoman", "sportswomen",
     "sprint", "stadium", "stadiums", "stick", "sticks", "strike",
-    "strikes", "surf", "surfs", "surfer", "surfers", "sumo",
+    "strikes", "surf", "surfer", "surfers", "sumo",
     "surfing", "swim", "swims", "swimmer", "swimmers", "swimming",
     "table_tennis", "taekwondo", "target", "targets", "team", "teams",
     "tennis", "throw", "throws", "thrower", "throwers", "track",
@@ -220,8 +220,7 @@ categories = {
     "umpires", "uniform", "uniforms", "victory", "victories", "volleyball",
     "walker", "walkers", "walking", "weight", "weights", "weightlifter",
     "weightlifters", "weightlifting", "win", "wins", "winner", "winners",
-    "winning", "winnings", "wrestler", "wrestlers", "wrestling", "yacht",
-    "yachts", "yachting", "yoga", "zumba"
+    "winning", "winnings", "wrestler", "wrestlers", "wrestling", "yoga", "zumba"
 ]
 
 }
@@ -257,7 +256,7 @@ multi_word_keywords = [
     "stop sign", "stop signs",
 
     # Sports category
-    "ping pong", "table tennis", "speed skating", "martial arts", "martial art", "ice skating", "ice hockey"
+    "ping pong", "table tennis", "martial arts", "martial art", "ice skating", "ice hockey"
 ]
 
 
