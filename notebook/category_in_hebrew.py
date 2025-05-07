@@ -1322,7 +1322,7 @@ intended_hebrew = {
     'fatigued': 'עייף',
     'fearful': 'מפוחד',
     'fearless': 'חסר פחד',
-    'feeling': 'הרגשה',
+    'feeling': 'תחושה',
     'feelings': 'רגשות',
     'feel': 'להרגיש',
     'flustered': 'מבולבל',
