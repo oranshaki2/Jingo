@@ -1496,7 +1496,7 @@ intended_hebrew = {
     'skepticism': 'ספקנות',
     'sleepy': 'מנומנם',
     'smug': 'שחצן',
-    'sorrow': 'יגון',
+    'sorrow': 'צער',
     'sorrowful': 'עָצוּב',
     'spiteful': 'נקמני',
     'startled': 'נבהל',
