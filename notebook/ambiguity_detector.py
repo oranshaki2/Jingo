@@ -1,5 +1,3 @@
-# ambiguity_detector.py
-
 import requests
 import json
 import csv
@@ -9,6 +7,7 @@ import aiohttp
 import time
 import re
 import os
+from dotenv import load_dotenv
 
 async def check_ambiguity_async(lyrics, categories, category_words, api_key, session):
     """
@@ -163,7 +162,12 @@ def extract_sentences_and_tags(file_path):
     return results
 
 if __name__ == '__main__':
-    api_key = "xai-gEBMNRWxFbzqqbihsslwFNeVVmgfyPc916409CwAUHrc7Jtwifxgi37u0PKbR8MUIAGSsWcA5nCwohy2"
+    # Load environment variables from .env file
+    load_dotenv()
+    api_key = os.getenv('GROK3_API_KEY')
+    if not api_key:
+        raise ValueError("GROK3_API_KEY not found in .env file")
+    
     file_path = "../data/songs_for_api_tran4.csv"
     sentences_tags = extract_sentences_and_tags(file_path)
-    process_ambiguity(sentences_tags, api_key) 
+    process_ambiguity(sentences_tags, api_key)
