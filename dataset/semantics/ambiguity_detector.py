@@ -9,11 +9,18 @@ import re
 import os
 from dotenv import load_dotenv
 
-async def check_ambiguity_async(lyrics, categories, category_words, api_key, session):
-    """
+"""
     Use Grok-3 API to check which words in the lyrics match their respective categories.
-    Returns a list of lists, one list per category, containing only the words that clearly match the category's meaning in the lyrics.
+    Args:
+        lyrics (str): The song lyrics to analyze.
+        categories (list): List of category names.
+        category_words (list): List of lists containing words for each category.
+        api_key (str): API key for Grok-3 API authentication.
+        session (aiohttp.ClientSession): Async HTTP session for making API requests.
+    Returns:
+        list: List of lists, one per category, containing only words that clearly match the category's meaning in the lyrics.
     """
+async def check_ambiguity_async(lyrics, categories, category_words, api_key, session):
     category_word_pairs = [f"category '{cat}' with words [{', '.join(words)}]" for cat, words in zip(categories, category_words)]
     prompt = f"In the following lyrics: \n'{lyrics}'\n, you are given category-word pairs: {'; '.join(category_word_pairs)}. Return a modified list of category-word pairs where only the words that clearly match the meaning used in the lyrics remain in their respective categories. Remove any word that does not fit the category based on its usage in the lyrics. Format your answer strictly as a list of lists—one list per category, in the same order as the input, with all words as quoted strings (e.g., [['word1', 'word2'], ['word3']]). Do not add explanations or extra text."
 
@@ -52,10 +59,15 @@ async def check_ambiguity_async(lyrics, categories, category_words, api_key, ses
         print(f"Error processing lyrics: {lyrics[:50]}... Error: {e}")
         return category_words
 
+"""
+    Process a batch of lyrics asynchronously using the Grok-3 API.
+    Args:
+        batch (list): List of dictionaries containing song data (lyrics, categories, category_words).
+        api_key (str): API key for Grok-3 API authentication.
+    Returns:
+        list: List of filtered category words for each song in the batch.
+    """
 async def process_batch(batch, api_key):
-    """
-    Process a batch of lyrics asynchronously with a delay between requests.
-    """
     async with aiohttp.ClientSession() as session:
         tasks = []
         for row in batch:
@@ -66,11 +78,15 @@ async def process_batch(batch, api_key):
         results = await asyncio.gather(*tasks)
         return results
 
+
+"""
+    Count the number of processed rows in the output CSV file (excluding the header).
+    Args:
+        output_file (str): Path to the output CSV file.
+    Returns:
+        int: Number of processed rows.
+    """
 def get_processed_count(output_file):
-    """
-    Count the number of data rows in the output CSV (excluding header).
-    Returns the number of processed rows.
-    """
     processed_count = 0
     if os.path.exists(output_file):
         with open(output_file, 'r', encoding='utf-8') as f:
@@ -81,18 +97,20 @@ def get_processed_count(output_file):
                     processed_count += 1
     return processed_count
 
+
+"""
+    Process song data to check word ambiguity using the Grok-3 API and save results to a CSV.
+    Args:
+        sentences_tags (list): List of dictionaries containing song data.
+        api_key (str): API key for Grok-3 API authentication.
+        sample_size (int, optional): Number of rows to process. If None, process all unprocessed rows.
+    Output:
+        Writes results to a CSV file with original song data plus filtered category words.
+    """
 def process_ambiguity(sentences_tags, api_key, sample_size=None):
-    """
-    Process a list of dictionaries containing song data to check ambiguity using Grok-3 API.
-    Outputs each song with all original columns plus the filtered category words in a new 'Filtered Words' column.
-    Processes data in batches of 10 asynchronously and writes results to a CSV file after each batch.
-    If sample_size is provided, only process the first `sample_size` unprocessed rows.
-    Adds a newline (\n) to the end of cleaned_lyrics for readability in the output CSV.
-    Resumes processing from the last row written to the output CSV.
-    """
     batch_size = 10
     loop = asyncio.get_event_loop()
-    output_file = '../data/ambiguity_results1.csv'
+    output_file = '../../data/ambiguity_results1.csv'
 
     # Get number of processed rows
     processed_count = get_processed_count(output_file)
@@ -139,11 +157,14 @@ def process_ambiguity(sentences_tags, api_key, sample_size=None):
                 if filtered_words != row['category_words']:  # Log only if words were filtered
                     print(f"{row['cleaned_lyrics']} : Category: {row['categories']}, Original Words: {row['category_words']}, Filtered Words: {filtered_words}")
 
+"""
+    Read song data from a CSV file and parse it into a list of dictionaries.
+    Args:
+        file_path (str): Path to the input CSV file.
+    Returns:
+        list: List of dictionaries with song data (Song, Artist, Genre, categories, category_words, cleaned_lyrics).
+    """
 def extract_sentences_and_tags(file_path):
-    """
-    Read song data from a CSV file and extract all columns.
-    Returns a list of dictionaries with all columns: Song, Artist, Genre, categories, category_words, cleaned_lyrics.
-    """
     results = []
     with open(file_path, 'r', encoding='utf-8') as file:
         reader = csv.DictReader(file)
@@ -168,6 +189,6 @@ if __name__ == '__main__':
     if not api_key:
         raise ValueError("GROK3_API_KEY not found in .env file")
     
-    file_path = "../data/songs_for_api_tran4.csv"
+    file_path = "../../data/songs_for_api_tran4.csv"
     sentences_tags = extract_sentences_and_tags(file_path)
     process_ambiguity(sentences_tags, api_key)
