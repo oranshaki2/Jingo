@@ -188,3 +188,4 @@ cython_debug/
 /models
 /data
 /config
+/server/node_modules
