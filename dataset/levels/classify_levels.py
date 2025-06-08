@@ -192,6 +192,6 @@ if __name__ == '__main__':
     api_key = os.getenv('GROK3_API_KEY')
     if not api_key:
         raise ValueError("GROK3_API_KEY not found in .env file")
-    input_file = '../data/filtered_songs_three1.csv'  # Input CSV file path
-    output_file = '../data/song_lyrics_with_levels.csv'  # Output CSV file path
+    input_file = '../../data/filtered_songs_three1.csv'  # Input CSV file path
+    output_file = '../../data/song_lyrics_with_levels.csv'  # Output CSV file path
     process_category_words(input_file, output_file, api_key)
