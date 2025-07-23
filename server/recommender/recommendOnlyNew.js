@@ -38,16 +38,19 @@ function loadSongsFromCSV(filePath) {
 /**
  * Extracts and returns a list of words from the song that the user has not yet learned.
  * Filters out already known words based on the user's history.
+ * If the song's level matches the user's level, it includes those words.
  */
-
-function filterWordsByHistory(categoryWords, userHistory) {
+function filterWordsByHistory(categoryWords, userHistory, userLevel) {
   const newWords = [];
 
   for (const wordList of categoryWords) {
-    
-    const words = wordList.slice(0, -1); 
-    const unseenWords = words.filter(word => !userHistory.includes(word));
-    newWords.push(...unseenWords);
+    const level = wordList[wordList.length - 1];
+
+    if (level == userLevel) {
+      const words = wordList.slice(0, -1);
+      const unseenWords = words.filter(word => !userHistory.includes(word));
+      newWords.push(...unseenWords);
+    }
   }
 
   return [...new Set(newWords)];
@@ -69,7 +72,7 @@ async function recommendOnlyNewWords(csvPath, user, selectedCategory) {
       if (!song.categories.includes(selectedCategory)) continue;
       if (song.genre.toLowerCase() !== genre.toLowerCase()) continue;
 
-      const newWords = filterWordsByHistory(song.categoryWords, user.history);
+      const newWords = filterWordsByHistory(song.categoryWords, user.history, user.level);
 
       if (newWords.length > 1) {
         recommendations.push({

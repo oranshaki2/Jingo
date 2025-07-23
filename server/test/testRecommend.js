@@ -4,11 +4,12 @@ const { recommendOnlyNewWords } = require('../recommender/recommendOnlyNew');
 const user = {
   history: ['love', 'hate', 'baby', 'boots','ticket'], 
   genre: ['Pop' , 'Rock'],
+  level: 2,
 };
-category =  'Transport';
+category =  'Emotions'; // Example category, can be 'Emotions', 'Travel', etc.
 
-const csvPath = path.join(__dirname, '../../data/merged_song_with_level.csv') 
-// const csvPath = path.join(__dirname, '../../data/song.csv'); 
+// const csvPath = path.join(__dirname, '../../data/merged_song_with_level.csv') 
+const csvPath = path.join(__dirname, '../../data/song.csv'); 
 
 recommendOnlyNewWords(csvPath, user, category)
   .then((genreResults) => {
