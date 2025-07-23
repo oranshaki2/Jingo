@@ -187,5 +187,5 @@ cython_debug/
 /data/filtered_songs.csv
 /models
 /data
-/config
+/server/config/.env.local
 /server/node_modules

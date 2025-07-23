@@ -19,14 +19,14 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 router.post('/', upload.single('picture'), userController.createUser);
-router.get('/:username', userController.checkUsernameAvailability);
-// router.route('/')
-//     .post(userController.createUser);
 
 router.route('/:id')
     .get(userController.getUserById)
-    //.patch(userController.updateUser)
-    //.delete(userController.deleteUser);
+
+router.patch('/:id/favorites', userController.updateUserFavorites);
+router.patch('/:id/level', userController.updateUserLevel);
+router.patch('/:id/genres', userController.updateUserGenres);
+router.patch('/:id/history', userController.updateHistoryAndMistakes);
 
 // Export the router to use it in the app
 module.exports = router;
