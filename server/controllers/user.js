@@ -56,7 +56,54 @@ const getUserById = async (req, res) => {
     }
 }
 
+const updateUserFavorites = async (req, res) => {
+  try {
+    const user = await userService.getUserById(req.params.id);
+    await userService.updateUserFavorites(user, req.body); // req.body = { title, artist }
+    res.status(200).json({ message: 'Favorites updated successfully' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to update favorites' });
+  }
+};
+
+const updateUserLevel = async (req, res) => {
+  try {
+    const user = await userService.getUserById(req.params.id);
+    const { level } = req.body;
+    await userService.updateUserLevel(user, level);
+    res.status(200).json({ message: 'Level updated successfully' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to update level' });
+  }
+};
+
+const updateUserGenres = async (req, res) => {
+  try {
+    const user = await userService.getUserById(req.params.id);
+    const { genres } = req.body;
+    await userService.updateUserGenres(user, genres);
+    res.status(200).json({ message: 'Genres updated successfully' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to update genres' });
+  }
+};
+
+const updateHistoryAndMistakes = async (req, res) => {
+  try {
+    const user = await userService.getUserById(req.params.id);
+    const { correctWords, mistakenWords } = req.body;
+    await userService.updateHistoryAndMistakes(user, correctWords, mistakenWords);
+    res.status(200).json({ message: 'History updated successfully' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to update word history' });
+  }
+};
+
 module.exports = {
     createUser,
     getUserById,
+    updateUserFavorites,
+    updateUserLevel,
+    updateUserGenres,
+    updateHistoryAndMistakes
 };

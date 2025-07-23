@@ -1,0 +1,18 @@
+### Create a new user
+### I changed localhost to be web-server because of the Dockerfile
+POST http://web-server:3000/api/token
+Content-Type: application/json
+
+{
+  "username": "jane_doe",
+  "password": "securePassword123"
+}
+
+### Check of wrong username and password
+POST http://localhost:3000/api/tokens
+Content-Type: application/json
+
+{
+    "username": "jane_doa",
+  "password": "securePassword124"
+}

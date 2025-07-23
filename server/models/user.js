@@ -17,30 +17,42 @@ const userSchema = new mongoose.Schema({
     type: [String],
     default: [],
     required: true,
-  }, 
+  },
   difficultyLevel: {
     type: Number,
     required: true,
   },
-  wordHistory: [
-    {
-      words: [String],
-      default: [],
-    }
-  ],
-  mistakes: [
-    {
-      words: [String],
-      default: [],
-    }
-  ],
-  favorites: [
-    {
-      title: String,
-      artist: String,
-      default: [],
-    }
-  ],
+
+  wordHistory: {
+    type: [
+      {
+        words: [String],
+        _id: false
+      }
+    ],
+    default: []
+  },
+
+  mistakes: {
+    type: [
+      {
+        words: [String],
+        _id: false
+      }
+    ],
+    default: []
+  },
+
+  favorites: {
+    type: [
+      {
+        title: String,
+        artist: String,
+        _id: false
+      }
+    ],
+    default: []
+  }
 });
 
 module.exports = mongoose.model("User", userSchema);
