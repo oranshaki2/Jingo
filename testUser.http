@@ -1,0 +1,82 @@
+### Create a new user
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "username": "jane_doe",
+  "password": "securePassword123"
+}
+
+### Create a new user
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "username": "jane_doa",
+  "password": "securePassword124",
+  "difficultyLevel": 1,
+  "genres": ["rock", "pop"]
+}
+
+### Create a new user
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "username": "jane_doh",
+  "password": "securePassword222"
+}
+
+### Create a new user
+POST http://localhost:3000/api/users
+Content-Type: application/json
+
+{
+  "username": "jane_don",
+  "password": "securePassword246",
+  "difficultyLevel": 2,
+  "genres": ["pop"]
+}
+
+### Get user details by ID
+GET http://localhost:3000/api/users/677eb0296b8d36d5eacf6b53
+
+### 1. הוספת שיר לרשימת מועדפים
+PATCH http://localhost:3000/api/users/6880f447647cf2a21f291ee4/favorites
+Content-Type: application/json
+
+{
+  "title": "Shap You",
+  "artist": "Ed Sheeran"
+}
+
+###
+
+### 2. שינוי רמת קושי
+PATCH http://localhost:3000/api/users/6880f447647cf2a21f291ee4/level
+Content-Type: application/json
+
+{
+  "level": 1
+}
+
+###
+
+### 3. עדכון ז'אנרים
+PATCH http://localhost:3000/api/users/6880f447647cf2a21f291ee4/genres
+Content-Type: application/json
+
+{
+  "genres": ["jazz", "electronic"]
+}
+
+###
+
+### 4. עדכון רשימת מילים נכונות וטעויות
+PATCH http://localhost:3000/api/users/6880f447647cf2a21f291ee4/history
+Content-Type: application/json
+
+{
+  "correctWords": ["dog", "cat", "sky"],
+  "mistakenWords": ["apple", "cat"]
+}
