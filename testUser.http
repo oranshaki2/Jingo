@@ -14,7 +14,7 @@ Content-Type: application/json
 {
   "username": "jane_doa",
   "password": "securePassword124",
-  "difficultyLevel": 1,
+  "level": 1,
   "genres": ["rock", "pop"]
 }
 

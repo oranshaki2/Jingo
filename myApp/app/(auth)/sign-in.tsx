@@ -1,22 +1,83 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Pressable, StyleSheet } from "react-native";
+import { View, Text, TextInput, Pressable, StyleSheet, ActivityIndicator, Alert } from "react-native";
 import { router } from "expo-router";
+import * as SecureStore from "expo-secure-store";
 
 const COLORS = {
-  primary: "#4EC4C4",       // טורקיז־כחלחל
-  secondary: "#1A3D5A",     // כחול נייבי כהה
-  bgLight: "#F5F7F9",       // אפור־לבן רך
-  textDark: "#333333",      // אפור כהה
-  accent: "#A8E6CF",        // ירקרק ליים רך
+  primary: "#4EC4C4",       
+  secondary: "#1A3D5A",   
+  bgLight: "#F5F7F9",      
+  textDark: "#333333",     
+  accent: "#A8E6CF",        
 };
+
+const BASE_URL = "http://localhost:3000";
 
 export default function SignIn() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
-  const onSubmit = () => {
-    // כאן אפשר לבצע ולידציה/קריאה ל-API. כרגע ניווט בלבד:
-    router.replace("/(tabs)/home");
+  const onSubmit = async () => {
+    if (!username.trim() || !password) {
+      Alert.alert("שגיאה", "יש למלא את כל השדות.");
+      return;
+    }
+
+    setSubmitting(true);
+
+    // Timeout if server doesn't respond in 10 seconds
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10_000);
+
+    try {
+      const res = await fetch(`${BASE_URL}/api/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        signal: controller.signal,
+        body: JSON.stringify({ username: username.trim(), password }),
+      });
+
+      if (!res.ok) {
+        // Try to get error message from server response
+        let msg = "שם משתמש או סיסמה שגויים";
+        try {
+          const data = await res.json();
+          if (data?.message) msg = data.message;
+        } catch (_) {
+          // ignore JSON parse errors
+        }
+        throw new Error(msg);
+      }
+
+      const data = await res.json();
+      // Store token securely
+      const token: string | undefined = data?.token;
+      const user = data?.user;
+
+      if (!token) throw new Error("Token not found in server response");
+
+      await SecureStore.setItemAsync("auth_token", token);
+      // Save user ID for convenience
+      if (user?.id) await SecureStore.setItemAsync("user_id", String(user.id));
+
+      // Save username for convenience
+      if (user?.username) await SecureStore.setItemAsync("username", user.username);
+
+      // Navigate to home screen
+      Alert.alert("הצלחה", "ההתחברות בוצעה בהצלחה!");
+      router.replace("/(tabs)/home");
+      
+    } catch (err: any) {
+      if (err?.name === "AbortError") {
+        Alert.alert("תקלה", "בזמן ניסיון ההתחברות עבר זמן ההמתנה. נסו שוב.");
+      } else {
+        Alert.alert("שגיאה", err?.message || "נכשל בהתחברות. נסו שוב.");
+      }
+    } finally {
+      clearTimeout(timeout);
+      setSubmitting(false);
+    }
   };
 
   return (

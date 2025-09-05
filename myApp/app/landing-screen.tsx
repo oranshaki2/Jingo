@@ -3,11 +3,11 @@ import { View, Text, Image, Pressable, StyleSheet, SafeAreaView } from "react-na
 import { router } from "expo-router";
 
 const COLORS = {
-  primary: "#4EC4C4",       // טורקיז־כחלחל
-  secondary: "#1A3D5A",     // כחול נייבי כהה
-  bgLight: "#F5F7F9",       // אפור־לבן רך
-  textDark: "#333333",      // אפור כהה
-  accent: "#A8E6CF",        // ירקרק ליים רך
+  primary: "#4EC4C4",      
+  secondary: "#1A3D5A",    
+  bgLight: "#F5F7F9",     
+  textDark: "#333333",     
+  accent: "#A8E6CF",       
 };
 
 export default function Landing() {

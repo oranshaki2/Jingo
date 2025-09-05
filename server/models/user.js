@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema({
     default: [],
     required: true,
   },
-  difficultyLevel: {
+  level: {
     type: Number,
     required: true,
   },
