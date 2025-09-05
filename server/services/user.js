@@ -1,13 +1,13 @@
 const User = require('../models/user');
 
 // Create a new user
-const createUser = async ({ username, password, picture, genres, difficultyLevel }) => {
+const createUser = async ({ username, password, picture, genres, level }) => {
     const user = new User({
         username,
         password,
         picture,
         genres,
-        difficultyLevel,
+        level,
         wordHistory: [],
         mistakes: [],
         favorites: [],
@@ -53,7 +53,7 @@ const updateUserLevel = async (user, level) => {
         throw new Error('User not found');
     }
 
-    user.difficultyLevel = level;
+    user.level = level;
     await user.save();
 };
 

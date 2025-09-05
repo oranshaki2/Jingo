@@ -14,7 +14,7 @@ const createUser = async (req, res) => {
     // Parse JSON only if it's a string
     const userData = typeof req.body.user === "string" ? JSON.parse(req.body.user) : req.body;
 
-    const { username, password, genres, difficultyLevel } = userData;
+    const { username, password, genres, level } = userData;
 
     // הגדרת תמונה
     const picture = req.file ? req.file.path : 'default.jpg';
@@ -30,7 +30,7 @@ const createUser = async (req, res) => {
       password,
       picture,
       genres,
-      difficultyLevel,
+      level,
       wordHistory: [],
       mistakes: [],
       favorites: [],
