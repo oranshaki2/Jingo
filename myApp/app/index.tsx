@@ -1,19 +1,20 @@
 // app/index.tsx
-// import { Redirect } from 'expo-router';
-
-// export default function Index() {
-//   return <Redirect href="/sign-up" />;
-// }
 import { useEffect } from "react";
 import { View, ActivityIndicator } from "react-native";
 import { router } from "expo-router";
 
 export default function Index() {
   useEffect(() => {
-    // TODO: replace with real auth check
+    // TODO: החליפי כאן בלוגיקה אמיתית (בדיקת טוקן / קריאת API)
     const isSignedIn = false;
-    if (isSignedIn) router.replace("/(tabs)/home");
-    else router.replace("/(auth)/sign-in");
+
+    if (isSignedIn) {
+      // משתמש מחובר → מעבירים ישר לדף הבית
+      router.replace("/(tabs)/home");
+    } else {
+      // משתמש לא מחובר → נוחת קודם בלנדים
+      router.replace("/landing-screen");
+    }
   }, []);
 
   return (
