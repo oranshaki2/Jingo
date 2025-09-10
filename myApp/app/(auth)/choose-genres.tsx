@@ -2,6 +2,9 @@
 import React, { useMemo, useState } from "react";
 import { View, Text, Pressable, Image, StyleSheet, Alert, FlatList } from "react-native";
 import { Stack, useLocalSearchParams, router } from "expo-router";
+import { loadSignupData, clearSignupData } from "../../utils/storage";
+
+
 
 const COLORS = {
   primary: "#4EC4C4",       // טורקיז־כחלחל
@@ -32,12 +35,10 @@ const GENRES: GenreItem[] = [
 ];
 
 export default function ChooseGenres() {
-  // אם שלחת רמת קושי מהמסך הקודם:
-  const { level } = useLocalSearchParams<{ level?: string }>();
   const [selected, setSelected] = useState<Set<GenreKey>>(new Set());
 
   const dataInPairs = useMemo(() => {
-    // נציג 2 פריטים בשורה
+    // arrange genres in pairs for two-column layout
     const pairs: (GenreItem | null)[][] = [];
     for (let i = 0; i < GENRES.length; i += 2) {
       pairs.push([GENRES[i], GENRES[i + 1] ?? null]);
@@ -54,31 +55,53 @@ export default function ChooseGenres() {
     });
   };
 
+
   const onFinish = async () => {
-    if (selected.size === 0) {
-      Alert.alert("בחירת ז'אנרים", "אנא בחרו לפחות ז'אנר אחד כדי להמשיך.");
+  if (selected.size === 0) {
+    Alert.alert("בחירת ז'אנרים", "אנא בחרו לפחות ז'אנר אחד כדי להמשיך.");
+    return;
+  }
+ 
+  try {
+    
+    // get saved signup data
+    const username = await loadSignupData<string>("username");
+    const password = await loadSignupData<string>("password");
+    const level = await loadSignupData<number>("level"); // 1| 2 | 3
+    const picture = await loadSignupData<string | null>("picture"); 
+    const genres = Array.from(selected);
+
+    if (!username || !password || !level) {
+      Alert.alert("שגיאה", "פרטי ההרשמה חסרים. התחילו מחדש.");
       return;
     }
+    //debug to delete later
+    console.log("Submitting signup data:", { username, password, level, genres, picture });
 
-    try {
-      // ✉️ דוגמת POST — התאימי ל־API שלך:
-      // const res = await fetch("https://your.api/signup", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify({
-      //     // הוסיפי כאן גם פרטי משתמש מהמסכים הקודמים (username/password/imageUri) אם את מעבירה אותם ב־params/Store
-      //     level: level ?? null,
-      //     genres: Array.from(selected),
-      //   }),
-      // });
-      // if (!res.ok) throw new Error("Signup failed");
+    const API_URL = process.env.EXPO_PUBLIC_API_URL!;
+    const res = await fetch(`${API_URL}/users`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username,
+        password,
+        picture,
+        level,
+        genres,
+      }),
+    });
 
-      // בהצלחה → בית
-      router.replace("/(tabs)/home");
-    } catch (e) {
-      Alert.alert("שגיאה", "נכשל בשמירת ההעדפות. נסו שוב.");
-    }
-  };
+    if (!res.ok) throw new Error("הרשמה נכשלה");
+
+    await clearSignupData(); 
+
+    router.replace("/(tabs)/home");
+  
+  } catch (e) {
+    Alert.alert("שגיאה", "אירעה שגיאה בהרשמה. נסו שוב.");
+    console.error(e);
+  }
+};
 
   return (
     <>

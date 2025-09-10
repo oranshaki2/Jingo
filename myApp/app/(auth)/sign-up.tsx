@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Text, TextInput, Pressable, Image, Alert, StyleSheet, I18nManager } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
+import { saveSignupData } from "../../utils/storage";
 
 const COLORS = {
   primary: "#4EC4C4",       // טורקיז־כחלחל
@@ -15,13 +16,9 @@ export default function SignUp() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
-  const [imageUri, setImageUri] = useState<string | null>(null);
+  const [picture, setPicture] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  // וודא RTL
-  if (!I18nManager.isRTL) {
-    // לא משנה layout מידי, אבל נשמור על textAlign="right" בשדות
-  }
 
   const pickFromGallery = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -36,7 +33,7 @@ export default function SignUp() {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
     });
     if (!result.canceled) {
-      setImageUri(result.assets[0].uri);
+      setPicture(result.assets[0].uri);
     }
   };
 
@@ -52,7 +49,7 @@ export default function SignUp() {
       quality: 0.8,
     });
     if (!result.canceled) {
-      setImageUri(result.assets[0].uri);
+      setPicture(result.assets[0].uri);
     }
   };
 
@@ -72,6 +69,9 @@ export default function SignUp() {
 
     try {
       setSubmitting(true);
+      await saveSignupData("username", username.trim());
+      await saveSignupData("password", password);
+      await saveSignupData("picture", picture ?? null);
       // במקום מעבר לבית: מעבר לעמוד בחירת הרמה
       router.push("/(auth)/sign-up-difficulty");
     } catch (e) {
@@ -126,10 +126,10 @@ export default function SignUp() {
 
       <View style={[styles.field, { marginTop: 8 }]}>
         <Text style={styles.label}>תמונת פרופיל (לא חובה)</Text>
-        {imageUri ? (
+        {picture ? (
           <View style={styles.imageRow}>
-            <Image source={{ uri: imageUri }} style={styles.avatar} />
-            <Pressable onPress={() => setImageUri(null)} style={styles.clearThumb}>
+            <Image source={{ uri: picture }} style={styles.avatar} />
+            <Pressable onPress={() => setPicture(null)} style={styles.clearThumb}>
               <Text style={styles.clearThumbText}>הסר תמונה</Text>
             </Pressable>
           </View>

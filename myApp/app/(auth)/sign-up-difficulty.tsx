@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { View, Text, Pressable, StyleSheet, Alert } from "react-native";
 import { Stack, router } from "expo-router";
+import { saveSignupData } from "../../utils/storage";
 
 const COLORS = {
   primary: "#4EC4C4",       // טורקיז־כחלחל
@@ -11,17 +12,17 @@ const COLORS = {
   accent: "#A8E6CF",        // ירקרק ליים רך
 };
 
-type Difficulty = "easy" | "medium" | "hard";
+type Difficulty = 1 | 2 | 3;;
 
 export default function SignUpDifficulty() {
   const [level, setLevel] = useState<Difficulty | null>(null);
 
-  const goNext = () => {
+  const goNext = async () => {
     if (!level) {
       Alert.alert("בחרו רמה", "אנא בחרו אחת מהאפשרויות כדי להמשיך.");
       return;
     }
-
+    await saveSignupData("level", level);
     router.push({
       pathname: "/(auth)/choose-genres",
       params: { level },
@@ -45,22 +46,22 @@ export default function SignUpDifficulty() {
             emoji="🟢"
             title="קל"
             subtitle="מתאים למתחילים"
-            selected={level === "easy"}
-            onPress={() => setLevel("easy")}
+            selected={level === 1}
+            onPress={() => setLevel(1)}
           />
           <OptionCard
             emoji="🟡"
             title="בינוני"
             subtitle="עם קצת ניסיון"
-            selected={level === "medium"}
-            onPress={() => setLevel("medium")}
+            selected={level === 2}
+            onPress={() => setLevel(2)}
           />
           <OptionCard
             emoji="🔴"
             title="קשה"
             subtitle="לרמה מתקדמת"
-            selected={level === "hard"}
-            onPress={() => setLevel("hard")}
+            selected={level === 3}
+            onPress={() => setLevel(3)}
           />
         </View>
 
