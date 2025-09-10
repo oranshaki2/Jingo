@@ -6,16 +6,26 @@ const checkIfUserRegistered = async (req, res) => {
 
     try {
         const user = await tokenService.getUserByUserNameAndPassword(username, password);
+        if (!user) return res.status(401).json({ errors: ['Invalid username or password'] });
 
         if (user) {
              const token = jwt.sign(
-                { username: user.username, picture: user.picture }, // Payload
+                {sub: String(user._id || user.id), username: user.username, picture: user.picture }, // Payload
                 process.env.JWT_SECRET, // Secret key from your .env
                 { expiresIn: '1h' } // Token expiration
             );
-
-            // Send the token to the client
-            return res.status(200).json({ token });
+            const userPublic = {
+            id: String(user._id || user.id),
+            username: user.username,
+            level: user.level,
+            genres: user.genres,
+            picture: user.picture,
+            wordHistory: user.wordHistory,
+            mistakes: user.mistakes,
+            favorites: user.favorites
+        };
+            // Send the token and user information to the client
+            return res.status(200).json({ token, user: userPublic });
         } else {
             return res.status(401).json({ errors: ['Invalid username or password'] });
         }

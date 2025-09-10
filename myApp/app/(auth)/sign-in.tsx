@@ -11,7 +11,8 @@ const COLORS = {
   accent: "#A8E6CF",        
 };
 
-const BASE_URL = "http://localhost:3000";
+
+const API_URL = process.env.EXPO_PUBLIC_API_URL!;
 
 export default function SignIn() {
   const [username, setUsername] = useState("");
@@ -31,7 +32,7 @@ export default function SignIn() {
     const timeout = setTimeout(() => controller.abort(), 10_000);
 
     try {
-      const res = await fetch(`${BASE_URL}/api/auth/login`, {
+      const res = await fetch(`${API_URL}/tokens`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         signal: controller.signal,
