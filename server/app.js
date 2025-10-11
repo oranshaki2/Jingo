@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const recommendationsRouter = require('./routes/recommendations');
 const mongoose = require('mongoose');
 const fs = require('fs');
 const path = require('path');
@@ -11,8 +12,12 @@ require('dotenv').config({ path: './config/.env.local' });
 
 // Create a new Express application
 const app = express();
+
 // Middleware for CORS
 app.use(cors());
+
+// Middleware to parse JSON bodies
+app.use(express.json({ limit: '2mb' }));
 
 // Increase payload size limit
 app.use(bodyParser.json({ limit: '50mb' }));
@@ -43,6 +48,8 @@ app.use(express.json());
 // Set up routes
 app.use('/api/tokens', tokens);
 app.use('/api/users', users);
+app.use('/api/recommendations', recommendationsRouter);
+
 
 // Start the server
 const PORT = process.env.PORT || 3000;

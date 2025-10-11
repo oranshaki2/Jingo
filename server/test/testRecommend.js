@@ -1,5 +1,5 @@
 const path = require('path');
-const { recommendOnlyNewWords } = require('../recommender/recommendOnlyNew');
+const { recommendOnlyNewWords } = require('../services/recommendOnlyNew');
 
 const user = {
   history: ['love', 'hate', 'baby', 'boots','ticket'], 

@@ -61,7 +61,7 @@ function filterWordsByHistory(categoryWords, userHistory, userLevel) {
  * Only includes songs from a selected category that contain new vocabulary
  * not previously encountered by the user.
  */
-async function recommendOnlyNewWords(csvPath, user, selectedCategory) {
+async function recommendOnlyNewWords(csvPath ='../../data/someSongs.csv', user, selectedCategory) {
   const allSongs = await loadSongsFromCSV(csvPath);
   const genreRecommendations = {};
 
@@ -80,6 +80,7 @@ async function recommendOnlyNewWords(csvPath, user, selectedCategory) {
           artist: song.artist,
           genre: song.genre,
           newWords,
+          // picture: song.picture,
         });
       }
 
