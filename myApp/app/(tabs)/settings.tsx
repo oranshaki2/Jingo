@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    flexDirection: "row-reverse", // גלגל שיניים בצד ימין
+    flexDirection: "row-reverse", 
     alignItems: "center",
     justifyContent: "space-between",
     marginBottom: 24,
@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: COLORS.secondary,
     fontWeight: "bold",
-    textAlign: "center", // אם יש צורך
+    textAlign: "center", 
   },
   infoBox: {
     backgroundColor: "white",
@@ -129,22 +129,22 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 2,
-    alignItems: "flex-end", // מיישר את התוכן כולו לימין
+    alignItems: "flex-end", 
   },
   label: {
     color: COLORS.secondary,
     fontWeight: "bold",
     marginTop: 12,
     fontSize: 16,
-    textAlign: "right", // טקסט מיושר לימין
-    alignSelf: "stretch", // לוודא שהטקסט תופס את כל השורה
+    textAlign: "right", 
+    alignSelf: "stretch", 
   },
   value: {
     color: COLORS.textDark,
     fontSize: 16,
     marginTop: 4,
-    textAlign: "right", // טקסט מיושר לימין
-    alignSelf: "stretch", // חשוב להצמדה לימין
+    textAlign: "right", 
+    alignSelf: "stretch", 
   },
   center: {
     flex: 1,
