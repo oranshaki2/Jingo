@@ -5,11 +5,11 @@ import { router } from "expo-router";
 import { saveSignupData } from "../../utils/storage";
 
 const COLORS = {
-  primary: "#4EC4C4",       // טורקיז־כחלחל
-  secondary: "#1A3D5A",     // כחול נייבי כהה
-  bgLight: "#F5F7F9",       // אפור־לבן רך
-  textDark: "#333333",      // אפור כהה
-  accent: "#A8E6CF",        // ירקרק ליים רך
+  primary: "#4EC4C4",      
+  secondary: "#1A3D5A",    
+  bgLight: "#F5F7F9",      
+  textDark: "#333333",     
+  accent: "#A8E6CF",      
 };
 
 export default function SignUp() {
@@ -62,6 +62,10 @@ export default function SignUp() {
       Alert.alert("שגיאה", "יש להזין סיסמה.");
       return;
     }
+    if (password.length < 8) {
+      Alert.alert("שגיאה", "הסיסמה חייבת להכיל לפחות 8 תווים.");
+      return;
+    }
     if (password !== confirm) {
       Alert.alert("שגיאה", "הסיסמאות אינן תואמות.");
       return;
@@ -102,7 +106,7 @@ export default function SignUp() {
         <Text style={styles.label}>סיסמה</Text>
         <TextInput
           style={styles.input}
-          placeholder="הקלד/י סיסמה"
+          placeholder="הקלד/י סיסמה (לפחות 8 תווים)"
           placeholderTextColor="#7A7A7A"
           value={password}
           onChangeText={setPassword}
