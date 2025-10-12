@@ -95,7 +95,7 @@ export default function ChooseGenres() {
 
     await clearSignupData(); 
 
-    router.replace("/(tabs)/home");
+    router.replace("/(auth)/sign-in");
   
   } catch (e) {
     Alert.alert("שגיאה", "אירעה שגיאה בהרשמה. נסו שוב.");
