@@ -1,6 +1,7 @@
 // app/(tabs)/home.tsx
 import React from "react";
-import { View, Text, Image, Pressable, StyleSheet, FlatList, SafeAreaView } from "react-native";
+import { View, Text, Image, Pressable, StyleSheet, FlatList } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack, router } from "expo-router";
 
 const COLORS = {
@@ -12,20 +13,20 @@ const COLORS = {
 };
 
 type CatKey =
-  | "animals" | "transport" | "sports" | "emotions"
-  | "family" | "body" | "food" | "clothing";
+  | "Animals" | "Transport" | "Sports" | "Emotions"
+  | "Family" | "Body" | "Food" | "Clothing";
 
 type Category = { key: CatKey; label: string; src: any };
 
 const CATEGORIES: Category[] = [
-  { key: "animals",   label: "חיות",      src: require("../../assets/categories/animals.jpg") },
-  { key: "transport", label: "תחבורה",    src: require("../../assets/categories/transport.jpg") },
-  { key: "sports",    label: "ספורט",     src: require("../../assets/categories/sports.jpg") },
-  { key: "emotions",  label: "רגשות",     src: require("../../assets/categories/emotions.jpg") },
-  { key: "family",    label: "משפחה",     src: require("../../assets/categories/family.jpg") },
-  { key: "body",      label: "איברי גוף", src: require("../../assets/categories/body.jpg") },
-  { key: "food",      label: "אוכל",      src: require("../../assets/categories/food.jpg") },
-  { key: "clothing",  label: "הלבשה",     src: require("../../assets/categories/clothing.jpg") },
+  { key: "Animals",   label: "חיות",      src: require("../../assets/categories/animals.jpg") },
+  { key: "Transport", label: "תחבורה",    src: require("../../assets/categories/transport.jpg") },
+  { key: "Sports",    label: "ספורט",     src: require("../../assets/categories/sports.jpg") },
+  { key: "Emotions",  label: "רגשות",     src: require("../../assets/categories/emotions.jpg") },
+  { key: "Family",    label: "משפחה",     src: require("../../assets/categories/family.jpg") },
+  { key: "Body",      label: "איברי גוף", src: require("../../assets/categories/body.jpg") },
+  { key: "Food",      label: "אוכל",      src: require("../../assets/categories/food.jpg") },
+  { key: "Clothing",  label: "הלבשה",     src: require("../../assets/categories/clothing.jpg") },
 ];
 
 export default function Home() {

@@ -80,3 +80,16 @@ Content-Type: application/json
   "correctWords": ["dog", "cat", "sky"],
   "mistakenWords": ["apple", "cat"]
 }
+
+### Get user details by ID
+POST http://localhost:3000/api/recommendations/only-new
+Content-Type: application/json
+
+{
+  "user": {
+    "wordHistory": [],
+    "genre": ["rock", "pop"],
+    "level": 1
+  },
+  "category": "Clothing"
+}

@@ -3,6 +3,30 @@ const path = require('path');
 const csv = require('csv-parser');
 
 /**
+ * Constructs a public URL for accessing assets based on environment configuration.
+ * Uses PUBLIC_BASE_URL from environment variables or defaults to localhost.
+ */
+function publicAssetUrl(relativePath) {
+  const base = process.env.PUBLIC_BASE_URL || 'http://localhost:3000';
+  const rel = String(relativePath || '').replace(/^\/+/, '');
+  const url = `${base.replace(/\/+$/, '')}/assets/${rel}`; // מסיר / בסוף base
+  return url;
+}
+
+/** Extracts the relative path of an asset from a full local file path.
+ * If the path does not contain "assets/", it returns just the filename.
+ */
+
+function extractAssetsRelative(localPath) {
+  if (!localPath) return null;
+  const norm = String(localPath).replace(/\\/g, '/'); 
+  const marker = '/assets/';
+  const i = norm.toLowerCase().lastIndexOf(marker);
+  // If we didn't find "assets/", fallback to just the filename
+  return i !== -1 ? norm.slice(i + marker.length) : path.basename(norm);
+}
+
+/**
  * Loads songs from a CSV file and parses relevant fields.
  * Parses the song title, artist, genre, categories, and categoryWords.
  * Handles malformed rows gracefully by skipping them.
@@ -18,12 +42,19 @@ function loadSongsFromCSV(filePath) {
           const categories = JSON.parse(row.categories.replace(/'/g, '"'));
           const categoryWords = JSON.parse(row.category_words.replace(/'/g, '"'));
 
+          
+          // Handle picture field if present
+          const rawPicture = row.picture || row.Picture || null;
+          const relFromAssets = rawPicture ? extractAssetsRelative(rawPicture) : null;
+          const pictureUrl = relFromAssets ? publicAssetUrl(relFromAssets) : null;
+
           const song = {
             title: row.Song,
             artist: row.Artist,
             genre: row.Genre,
             categories,
             categoryWords,
+            picture: pictureUrl,
           };
 
           songs.push(song);
@@ -72,7 +103,7 @@ async function recommendOnlyNewWords(csvPath ='../../data/someSongs.csv', user, 
       if (!song.categories.includes(selectedCategory)) continue;
       if (song.genre.toLowerCase() !== genre.toLowerCase()) continue;
 
-      const newWords = filterWordsByHistory(song.categoryWords, user.history, user.level);
+      const newWords = filterWordsByHistory(song.categoryWords, user.wordHistory, user.level);
 
       if (newWords.length > 1) {
         recommendations.push({
@@ -80,7 +111,7 @@ async function recommendOnlyNewWords(csvPath ='../../data/someSongs.csv', user, 
           artist: song.artist,
           genre: song.genre,
           newWords,
-          // picture: song.picture,
+          picture: song.picture,
         });
       }
 
