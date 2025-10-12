@@ -5,6 +5,8 @@ import {
   Text,
   ActivityIndicator,
   SectionList,
+  FlatList,
+  ScrollView,
   Image,
   StyleSheet,
   RefreshControl,
@@ -86,7 +88,7 @@ export default function CategoryScreen() {
   async (user: UserPublic) => {
     const body = {
       user: {
-        history: user.wordHistory,
+        wordHistory: user.wordHistory,
         genre: user.genres,
         level: user.level,
       },
@@ -211,51 +213,43 @@ export default function CategoryScreen() {
     );
   }
 
-  return (
+   return (
     <View style={styles.container}>
       <Text style={styles.header}>קטגוריה: {category}</Text>
 
-      <SectionList
-        sections={sections}
-        keyExtractor={(item) => `${item.genre}-${item.title}-${item.artist}`}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-        renderSectionHeader={({ section: { title } }) => (
-          <Text style={styles.sectionTitle}>{title}</Text>
-        )}
-        renderItem={({ item }) => (
-          <View style={styles.card}>
-            {item.picture ? (
-              <Image source={{ uri: item.picture }} style={styles.cover} />
-            ) : (
-              <View style={[styles.cover, styles.coverPlaceholder]}>
-                <Text style={styles.coverPhText}>♪</Text>
-              </View>
-            )}
-            <View style={styles.cardBody}>
-              <Text style={styles.songTitle}>{item.title}</Text>
-              <Text style={styles.songArtist}>{item.artist}</Text>
-              <View style={styles.tagsWrap}>
-                {item.newWords.slice(0, 8).map((w) => (
-                  <View style={styles.tag} key={w}>
-                    <Text style={styles.tagText}>{w}</Text>
-                  </View>
-                ))}
-                {item.newWords.length > 8 ? (
-                  <View style={[styles.tag, styles.moreTag]}>
-                    <Text style={styles.moreTagText}>
-                      +{item.newWords.length - 8}
-                    </Text>
-                  </View>
-                ) : null}
-              </View>
-            </View>
+      <ScrollView contentContainerStyle={{ paddingBottom: 24 }}>
+        {sections.map((sec) => (
+          <View key={sec.title} style={{ marginBottom: 18 }}>
+            <Text style={styles.sectionTitle}>{sec.title}</Text>
+
+            <FlatList
+              horizontal
+              data={sec.data}
+              keyExtractor={(item) => `${item.genre}-${item.title}-${item.artist}`}
+              showsHorizontalScrollIndicator={false}
+              ItemSeparatorComponent={() => <View style={{ width: 12 }} />}
+              contentContainerStyle={{ paddingHorizontal: 4 }}
+              renderItem={({ item }) => (
+                <View style={styles.vcard}>
+                  {item.picture ? (
+                    <Image source={{ uri: item.picture }} style={styles.vcover} />
+                  ) : (
+                    <View style={[styles.vcover, styles.coverPlaceholder]}>
+                      <Text style={styles.coverPhText}>♪</Text>
+                    </View>
+                  )}
+                  <Text numberOfLines={1} style={styles.songTitleCenter}>
+                    {item.title}
+                  </Text>
+                  <Text numberOfLines={1} style={styles.songArtistCenter}>
+                    {item.artist}
+                  </Text>
+                </View>
+              )}
+            />
           </View>
-        )}
-        ItemSeparatorComponent={() => <View style={styles.sep} />}
-        contentContainerStyle={{ paddingBottom: 24 }}
-      />
+        ))}
+      </ScrollView>
     </View>
   );
 }
@@ -263,19 +257,29 @@ export default function CategoryScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, paddingHorizontal: 16, paddingTop: 8, backgroundColor: "#FFF" },
   header: { fontSize: 20, fontWeight: "700", marginBottom: 8, color: COLORS.secondary, textAlign: "right" },
-  sectionTitle: { fontSize: 18, fontWeight: "700", marginTop: 12, marginBottom: 6, color: "#333", textAlign: "right" },
-  card: { flexDirection: "row", backgroundColor: "#F7FAFB", borderRadius: 16, overflow: "hidden" },
-  cover: { width: 72, height: 72, borderTopLeftRadius: 16, borderBottomLeftRadius: 16 },
-  coverPlaceholder: { alignItems: "center", justifyContent: "center", backgroundColor: "#E9F4F4" },
+  sectionTitle: { fontSize: 18, fontWeight: "700", marginTop: 4, marginBottom: 8, color: "#333", textAlign: "right" },
+
+  // כרטיס אנכי לקרוסלה
+  vcard: {
+    width: 140,
+    backgroundColor: "#F7FAFB",
+    borderRadius: 16,
+    padding: 10,
+    alignItems: "center",
+  },
+  vcover: {
+    width: 120,
+    height: 120,
+    borderRadius: 12,
+    marginBottom: 8,
+    backgroundColor: "#E9F4F4",
+  },
+  coverPlaceholder: { alignItems: "center", justifyContent: "center" },
   coverPhText: { fontSize: 28, fontWeight: "700", color: COLORS.primary },
-  cardBody: { flex: 1, padding: 10, alignItems: "flex-end" },
-  songTitle: { fontSize: 16, fontWeight: "700", color: COLORS.secondary },
-  songArtist: { fontSize: 14, color: "#555", marginTop: 2 },
-  tagsWrap: { flexDirection: "row-reverse", flexWrap: "wrap", gap: 6, marginTop: 8 },
-  tag: { borderRadius: 999, paddingHorizontal: 10, paddingVertical: 4, backgroundColor: "#DFF3F3" },
-  tagText: { fontSize: 12, fontWeight: "600", color: "#215E5E" },
-  moreTag: { backgroundColor: COLORS.secondary },
-  moreTagText: { color: "#FFF", fontSize: 12, fontWeight: "700" },
+
+  songTitleCenter: { fontSize: 14, fontWeight: "700", color: COLORS.secondary, textAlign: "center" },
+  songArtistCenter: { fontSize: 12, color: "#555", marginTop: 2, textAlign: "center" },
+
   sep: { height: 10 },
   center: { flex: 1, alignItems: "center", justifyContent: "center", padding: 16, backgroundColor: COLORS.bgLight },
   title: { fontSize: 18, fontWeight: "700", color: COLORS.secondary, marginBottom: 6, textAlign: "center" },

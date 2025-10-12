@@ -13,9 +13,9 @@ async function postOnlyNew(req, res) {
     console.log("[POST /only-new] Incoming body:", JSON.stringify(req.body, null, 2));
     console.log("[POST /only-new] CSV_PATH:", CSV_PATH);
 
-    if (!user || !Array.isArray(user.history) || !Array.isArray(user.genre) || typeof user.level !== 'number') {
+    if (!user || !Array.isArray(user.wordHistory) || !Array.isArray(user.genre) || typeof user.level !== 'number') {
       console.log("[POST /only-new] ❌ Invalid user payload");
-      return res.status(400).json({ error: 'Invalid "user" payload. Expect { history: string[], genre: string[], level: number }' });
+      return res.status(400).json({ error: 'Invalid "user" payload. Expect { wordHistory: string[], genre: string[], level: number }' });
     }
     if (!category || typeof category !== 'string') {
       console.log("[POST /only-new] ❌ Missing/invalid category");
@@ -23,7 +23,7 @@ async function postOnlyNew(req, res) {
     }
 
     console.log("[POST /only-new] Using:",
-      { category, level: user.level, genres: user.genre, historyLen: user.history.length });
+      { category, level: user.level, genres: user.genre, historyLen: user.wordHistory.length });
 
     const t0 = Date.now();
     const result = await recommendOnlyNewWords(CSV_PATH, user, category);
