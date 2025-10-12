@@ -66,7 +66,8 @@ export default function Settings() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <View style={{ width: 28 }} /> {/* עמודת ריק לשם סימטריה */}
+        <View style={{ width: 28 }} /> 
+        {/* עמודת ריק לשם סימטריה */}
         <Text style={styles.title}>הגדרות</Text>
         <Image
           source={require("../../assets/icons/settings-gear.png")}
