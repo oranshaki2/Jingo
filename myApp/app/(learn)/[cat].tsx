@@ -25,6 +25,17 @@ const COLORS = {
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL!;
 
+const categoryHebrewMap: Record<string, string> = {
+  "Animals": "בעלי חיים",
+  "Transport": "תחבורה",
+  "Sports": "ספורט",
+  "Emotions": "רגשות",
+  "Family": "משפחה",
+  "Body Parts": "איברי גוף",
+  "Food": "מזון",
+  "Clothing": "בגדים",
+};
+
 type UserPublic = {
   id: string;
   username: string;
@@ -49,6 +60,7 @@ type Section = { title: string; data: SongItem[] };
 export default function CategoryScreen() {
   const { cat } = useLocalSearchParams<{ cat: string }>();
   const category = useMemo(() => String(cat ?? "").trim(), [cat]);
+  const categoryHebrew = categoryHebrewMap[category] || category;
 
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -184,7 +196,7 @@ export default function CategoryScreen() {
     return (
       <View style={styles.center}>
         <ActivityIndicator size="large" color={COLORS.primary} />
-        <Text style={styles.subtitle}>טוען שירים לקטגוריה: {category}</Text>
+        <Text style={styles.subtitle}>טוען שירים לקטגוריה: {categoryHebrew}</Text>
       </View>
     );
   }
@@ -215,7 +227,7 @@ export default function CategoryScreen() {
 
    return (
     <View style={styles.container}>
-      <Text style={styles.header}>קטגוריה: {category}</Text>
+      <Text style={styles.header}>קטגוריה: {categoryHebrew}</Text>
 
       <ScrollView contentContainerStyle={{ paddingBottom: 24 }}>
         {sections.map((sec) => (
