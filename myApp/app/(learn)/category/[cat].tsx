@@ -14,6 +14,7 @@ import { useLocalSearchParams, router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { saveLyrics, saveNewWords } from "../questions/shared/storage";
+import { artistImages } from "@/assets/artistsMap";
 
 const COLORS = {
   primary: "#4EC4C4",
@@ -246,6 +247,17 @@ export default function CategoryScreen() {
     []
   );
 
+  const getImageSource = (picture?: string | null) => {
+    if (!picture) return null;
+    // if it's a full URL, use it directly
+    if (/^https?:\/\//.test(picture)) return { uri: picture };
+    // otherwise, look up in the imported artistImages map
+    console.log("Looking up image for picture key:", picture);
+    console.log("Available artist images:", Object.keys(artistImages));
+    console.log("Found image source:", artistImages[picture]);
+    return artistImages[picture] ?? null;
+  };
+
   /** 4) UI */
   if (loading) {
     return (
@@ -311,13 +323,16 @@ export default function CategoryScreen() {
                       style={({ pressed }) => [{ opacity: pressed ? 0.85 : 1 }]}
                     >
                       <View style={styles.vcard}>
-                        {item.picture ? (
-                          <Image source={{ uri: item.picture }} style={styles.vcover} />
-                        ) : (
-                          <View style={[styles.vcover, styles.coverPlaceholder]}>
-                            <Text style={styles.coverPhText}>♪</Text>
-                          </View>
-                        )}
+                        {(() => {
+                          const src = getImageSource(item.picture);
+                          return src ? (
+                            <Image source={src} style={styles.vcover} />
+                          ) : (
+                            <View style={[styles.vcover, styles.coverPlaceholder]}>
+                              <Text style={styles.coverPhText}>♪</Text>
+                            </View>
+                          );
+                        })()}
                         <Text numberOfLines={1} style={styles.songTitleCenter}>
                           {item.title}
                         </Text>
