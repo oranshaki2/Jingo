@@ -13,17 +13,20 @@ function publicAssetUrl(relativePath) {
   return url;
 }
 
-/** Extracts the relative path of an asset from a full local file path.
- * If the path does not contain "assets/", it returns just the filename.
- */
-
-function extractAssetsRelative(localPath) {
-  if (!localPath) return null;
-  const norm = String(localPath).replace(/\\/g, '/'); 
-  const marker = '/assets/';
-  const i = norm.toLowerCase().lastIndexOf(marker);
-  // If we didn't find "assets/", fallback to just the filename
-  return i !== -1 ? norm.slice(i + marker.length) : path.basename(norm);
+// Helper: normalize CSV value into a key (snake_case like "taylor_swift")
+function normalizePictureKey(s) {
+  if (!s) return null;
+  // basename
+  const base = String(s).trim().replace(/^.*[\\/]/, "");
+  // strip ext
+  const noExt = base.replace(/\.(png|jpe?g|webp)$/i, "");
+  // snake
+  const key = noExt
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[^\w]+/g, "_")
+    .replace(/^_+|_+$/g, "");
+  return key || null;
 }
 
 /**
@@ -44,9 +47,19 @@ function loadSongsFromCSV(filePath) {
 
           
           // Handle picture field if present
-          const rawPicture = row.picture || row.Picture || null;
-          const relFromAssets = rawPicture ? extractAssetsRelative(rawPicture) : null;
-          const pictureUrl = relFromAssets ? publicAssetUrl(relFromAssets) : null;
+          // prefer "picture" key or fall back to legacy column names
+          const rawPicture = (row.picture || row.Picture || "").trim();
+
+          let picture = null;
+          if (rawPicture) {
+            if (/^https?:\/\//i.test(rawPicture)) {
+              // remote image URL — let the app load via { uri }
+              picture = rawPicture;
+            } else {
+              // key (new behavior) or local path — normalize to key for RN require-map
+              picture = normalizePictureKey(rawPicture);
+            }
+          }
 
           const song = {
             title: row.Song || row['\uFEFFSong'],
@@ -54,7 +67,7 @@ function loadSongsFromCSV(filePath) {
             genre: row.Genre,
             categories,
             categoryWords,
-            picture: pictureUrl,
+            picture,
             lyrics: row.lyrics || '',
             lyricsHebrew: row.lyricsHebrew || '',
           };

@@ -1,0 +1,53 @@
+#!/bin/bash
+
+# Function to clean up background processes when the script exits or is interrupted
+cleanup() {
+  echo ""
+  echo "🧹 Cleaning up..."
+  # Kill all child processes started by this script
+  pkill -P $$
+  echo "✅ All background processes stopped."
+  exit 0
+}
+
+# Run the cleanup function when Ctrl+C (SIGINT) is pressed
+trap cleanup SIGINT
+
+# Ensure required tools exist
+command -v jq >/dev/null 2>&1 || { echo "❌ 'jq' is required (sudo apt install jq)"; exit 1; }
+command -v curl >/dev/null 2>&1 || { echo "❌ 'curl' is required (sudo apt install curl)"; exit 1; }
+
+# Navigate to the server directory
+cd server || { echo "❌ Couldn't find 'server' directory"; exit 1; }
+
+# Start the API server with nodemon in the background
+echo "🚀 Starting API server (nodemon)..."
+nodemon app.js &
+DEV_PID=$!
+
+# Go back to the project root
+cd ..
+
+# Start ngrok to expose the local API to the internet
+echo "🌍 Starting ngrok tunnel for port 3000..."
+ngrok http 3000 > /tmp/ngrok.log &
+sleep 3  # Give ngrok a few seconds to initialize
+
+# Extract the public URL created by ngrok and update the .env.local file
+URL=$(curl -s http://127.0.0.1:4040/api/tunnels | jq -r '.tunnels[0].public_url')
+if [ -z "$URL" ] || [ "$URL" = "null" ]; then
+  echo "❌ Could not retrieve ngrok URL. Is ngrok running and authtoken configured?"
+  cleanup
+fi
+
+echo "EXPO_PUBLIC_API_URL=${URL}/api" > .env.local
+echo "🌐 API URL set to: ${URL}/api"
+
+# Start Expo in tunnel mode (foreground so you can see logs/QR)
+echo "📦 Starting Expo (tunnel mode)..."
+# Move into the myApp directory
+cd myApp || { echo "❌ Couldn't find 'myApp' directory"; cleanup; }
+npx expo start --tunnel -c
+
+# If Expo exits normally, clean up background processes before leaving
+cleanup

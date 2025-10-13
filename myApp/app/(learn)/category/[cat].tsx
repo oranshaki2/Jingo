@@ -4,18 +4,17 @@ import {
   View,
   Text,
   ActivityIndicator,
-  SectionList,
   FlatList,
   ScrollView,
   Image,
   StyleSheet,
-  RefreshControl,
   Pressable,
 } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { saveLyrics, saveNewWords } from "../questions/shared/storage";
+import { artistImages } from "@/assets/artistsMap";
 
 const COLORS = {
   primary: "#4EC4C4",
@@ -38,7 +37,6 @@ const categoryHebrewMap: Record<string, string> = {
   Clothing: "בגדים",
 };
 
-// ✅ מיפוי הז'אנרים לא labels בעברית
 const genreLabels: Record<string, string> = {
   rock: "רוק",
   pop: "פופ",
@@ -64,14 +62,13 @@ type UserPublic = {
   favorites?: any[];
 };
 
-// ⬇️ עדכון קטן: מוסיפים lyrics כאופציונלי אם את מקבלת אותו מהשרת
 type SongItem = {
-  id?: string | number; // אם יש מזהה יציב מהשרת – מעולה!
+  id?: string | number; 
   title: string;
   artist: string;
-  genre: string; // key באנגלית (rock/pop/...)
+  genre: string; 
   newWords: string[];
-  lyrics?: string; // אופציונלי – אם מגיע כבר כאן
+  lyrics?: string; 
   picture?: string | null;
 };
 
@@ -153,7 +150,7 @@ export default function CategoryScreen() {
       // Extract sections
       const genres = Object.keys(parsed || {});
       const nextSections: Section[] = genres.map((g) => ({
-        title: g, // נשמר באנגלית; נתרגם בזמן הצגה
+        title: g, // store the genre key (rock/pop/...) for later
         data: parsed?.[g] || [],
       }));
 
@@ -206,7 +203,7 @@ export default function CategoryScreen() {
     load();
   }, [load]);
 
-  // ⬇️ עוזר לבנות מזהה יציב אם אין item.id מהשרת
+  // helper to create stable slugs for songs without IDs
   const slugify = (s: string) =>
     String(s)
       .toLowerCase()
@@ -215,21 +212,19 @@ export default function CategoryScreen() {
       .replace(/[^a-z0-9\-]/g, "")
       .slice(0, 64);
 
-  // ⬇️ האנדלר: שמירה ל-AsyncStorage → ניווט ל-/songs/[song] עם songId בלבד
+  // save newWords + lyrics, then navigate to /songs/[song]
   const handleOpenSong = useCallback(
     async (item: SongItem, genreLabel: string) => {
       const songId = item.id ? String(item.id) : slugify(`${item.title}-${item.artist}`);
 
       try {
-        // שומרות newWords (וכשיש lyrics — גם אותם)
         if (item.newWords?.length) {
           await saveNewWords(songId, item.newWords);
         }
         if (item.lyrics) {
           await saveLyrics(songId, item.lyrics);
         }
-
-        // אופציונלי: לשמור מטא־דאטה לשימוש מהיר במסכי השיר
+        // Cache basic song data for display in /songs/[song]
         await AsyncStorage.setItem(
           `@songMeta/${songId}`,
           JSON.stringify({
@@ -243,15 +238,25 @@ export default function CategoryScreen() {
         console.warn("[song/open] failed to cache song data:", e);
       }
 
-      // מנווטים עם הפרמטר הדינמי שתואם לשם התיקייה [song]
       router.push({ pathname: "/songs/[song]", 
-        params: { song: songId,             // ← ה-ID הדינמי
-        title: item.title,        // ← קטן וקל: fallback לתצוגה
-        artist: item.artist,      // ← קטן וקל: fallback לתצוגה
+        params: { song: songId,            
+        title: item.title,       
+        artist: item.artist,      
         picture: item.picture ?? "" } });
         },
     []
   );
+
+  const getImageSource = (picture?: string | null) => {
+    if (!picture) return null;
+    // if it's a full URL, use it directly
+    if (/^https?:\/\//.test(picture)) return { uri: picture };
+    // otherwise, look up in the imported artistImages map
+    console.log("Looking up image for picture key:", picture);
+    console.log("Available artist images:", Object.keys(artistImages));
+    console.log("Found image source:", artistImages[picture]);
+    return artistImages[picture] ?? null;
+  };
 
   /** 4) UI */
   if (loading) {
@@ -293,14 +298,11 @@ export default function CategoryScreen() {
 
       <ScrollView contentContainerStyle={{ paddingBottom: 24 }}>
         {sections.map((sec) => {
-          // ✅ כותרת הסקשן בעברית
           const sectionTitleHebrew = genreLabels[sec.title] || sec.title;
 
           return (
             <View key={sec.title} style={{ marginBottom: 18 }}>
               <Text style={styles.sectionTitle}>{sectionTitleHebrew}</Text>
-
-              {/* ✅ ה-FlatList שלך עם תרגום הז'אנר לכל פריט */}
               <FlatList
                 horizontal
                 data={sec.data}
@@ -317,17 +319,20 @@ export default function CategoryScreen() {
 
                   return (
                     <Pressable
-                      onPress={() => handleOpenSong(item, genreLabel)} // ⬅️ השתמשנו בהנדלר החדש
+                      onPress={() => handleOpenSong(item, genreLabel)} 
                       style={({ pressed }) => [{ opacity: pressed ? 0.85 : 1 }]}
                     >
                       <View style={styles.vcard}>
-                        {item.picture ? (
-                          <Image source={{ uri: item.picture }} style={styles.vcover} />
-                        ) : (
-                          <View style={[styles.vcover, styles.coverPlaceholder]}>
-                            <Text style={styles.coverPhText}>♪</Text>
-                          </View>
-                        )}
+                        {(() => {
+                          const src = getImageSource(item.picture);
+                          return src ? (
+                            <Image source={src} style={styles.vcover} />
+                          ) : (
+                            <View style={[styles.vcover, styles.coverPlaceholder]}>
+                              <Text style={styles.coverPhText}>♪</Text>
+                            </View>
+                          );
+                        })()}
                         <Text numberOfLines={1} style={styles.songTitleCenter}>
                           {item.title}
                         </Text>
@@ -347,7 +352,6 @@ export default function CategoryScreen() {
   );
 }
 
-// אם יש לך טיפוס CatKey צר, עדכני את המפה כך:
 const styles = StyleSheet.create({
   container: { flex: 1, paddingHorizontal: 16, paddingTop: 8, backgroundColor: "#FFF" },
   header: { fontSize: 20, fontWeight: "700", marginBottom: 8, color: COLORS.secondary, textAlign: "right" },
@@ -373,7 +377,6 @@ const styles = StyleSheet.create({
 
   songTitleCenter: { fontSize: 14, fontWeight: "700", color: COLORS.secondary, textAlign: "center" },
   songArtistCenter: { fontSize: 12, color: "#555", marginTop: 2, textAlign: "center" },
-  // ✅ סגנון לז'אנר
   songGenreCenter: { fontSize: 11, color: "#777", marginTop: 2, textAlign: "center" },
 
   sep: { height: 10 },
