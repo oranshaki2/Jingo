@@ -1,0 +1,262 @@
+// app/songs/[song].tsx
+import React, { useEffect, useMemo, useState } from "react";
+import { View, Text, Image, StyleSheet, ScrollView, Pressable } from "react-native";
+import { Stack, useLocalSearchParams, router } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+const COLORS = {
+  primary: "#4EC4C4",
+  secondary: "#1A3D5A",
+  bgLight: "#F5F7F9",
+  textDark: "#333333",
+  chipOn: "#CDEEDC",
+  chipOff: "#E9E6E6",
+  placeholderBg: "#DDF4F4",
+};
+
+type Params = {
+  song?: string;        // כאן זה ה-ID, לא שם השיר
+};
+
+type SongMeta = {
+  title: string;
+  artist: string;
+  genre?: string;
+  picture?: string | null;
+};
+
+export default function SongScreen() {
+  const params = useLocalSearchParams<Params>();
+  const songId = String(params.song ?? "").trim();
+
+  const [level, setLevel] = useState<number | null>(null);
+  const [meta, setMeta] = useState<SongMeta | null>(null);
+  const [newWords, setNewWords] = useState<string[]>([]);
+  const [lyrics, setLyrics] = useState<string>("");
+
+  // ----- טוענים נתונים מה-AsyncStorage -----
+  useEffect(() => {
+    let mounted = true;
+
+    async function loadAll() {
+      try {
+        // רמה מה-cache אם אין פרמטר
+        const lvl = await AsyncStorage.getItem("user_level");
+        if (mounted) setLevel(lvl ? Number(lvl) : null);
+
+        // Meta
+        const metaRaw = await AsyncStorage.getItem(`@songMeta/${songId}`);
+        const metaParsed = metaRaw ? (JSON.parse(metaRaw) as SongMeta) : null;
+        if (mounted) setMeta(metaParsed);
+
+        // newWords
+        const wordsRaw = await AsyncStorage.getItem(`@newWords/${songId}`);
+        const wordsParsed = wordsRaw ? (JSON.parse(wordsRaw) as string[]) : [];
+        if (mounted) setNewWords(Array.isArray(wordsParsed) ? wordsParsed : []);
+
+        // lyrics (אופציונלי — אם תרצה להשתמש כאן)
+        const lyr = (await AsyncStorage.getItem(`@lyrics/${songId}`)) || "";
+        if (mounted) setLyrics(lyr || "");
+      } catch (e) {
+        console.warn("[song] failed to load storage:", e);
+        if (mounted) {
+          setMeta(null);
+          setNewWords([]);
+          setLyrics("");
+        }
+      }
+    }
+
+    if (songId) loadAll();
+    return () => {
+      mounted = false;
+    };
+  }, [songId]);
+
+  // ----- תמונה: ניקוי URI + fallback -----
+  const rawUri = (meta?.picture ?? "").trim();
+  const safeUri = rawUri && rawUri !== "null" && rawUri !== "undefined" ? rawUri : "";
+  const [showImage, setShowImage] = useState<boolean>(!!safeUri);
+  useEffect(() => setShowImage(!!safeUri), [safeUri]);
+
+  // נטען רמה לתצוגה
+  const levelLabel = useMemo(() => {
+    if (level === 1) return "קל";
+    if (level === 2) return "בינוני";
+    if (level === 3) return "קשה";
+    return "קל";
+  }, [level]);
+  const isActive = (key: "קל" | "בינוני" | "קשה") => levelLabel === key;
+
+  // התחלת תרגול — לנווט רק עם songId
+  const onStart = () => {
+    router.push({
+      pathname: "/questions/[words]",
+      params: { words: songId },
+    });
+  };
+
+  return (
+    <View style={styles.wrap}>
+      <Stack.Screen options={{ title: meta?.title ?? "Song" }} />
+
+      {/* רמות – ממורכז */}
+      <View style={styles.levelRow}>
+        {["קשה", "בינוני", "קל"].map((lbl) => (
+          <View
+            key={lbl}
+            style={[
+              styles.chip,
+              { backgroundColor: isActive(lbl as any) ? COLORS.chipOn : COLORS.chipOff },
+            ]}
+          >
+            <Text style={[styles.chipText, { color: isActive(lbl as any) ? "#2D6A4F" : "#444" }]}>
+              {lbl}
+            </Text>
+          </View>
+        ))}
+      </View>
+
+      <ScrollView contentContainerStyle={styles.content}>
+        {/* כרטיס אמן */}
+        <View style={styles.card}>
+          <Text style={styles.cardLabel}>אמן</Text>
+          <Text style={styles.cardValue}>{meta?.artist || "—"}</Text>
+        </View>
+
+        {/* כרטיס שם שיר */}
+        <View style={styles.card}>
+          <Text style={styles.cardLabel}>שם השיר</Text>
+          <Text style={styles.cardValue}>{meta?.title || "—"}</Text>
+        </View>
+
+        {/* כרטיס מילים ללמידה */}
+        <View style={styles.card}>
+          <Text style={styles.cardLabel}>מילים שנלמד</Text>
+          <Text style={styles.cardValue}>
+            {newWords.length ? newWords.join(", ") : "—"}
+          </Text>
+        </View>
+
+        {/* תמונה/placeholder – ממורכז + fallback */}
+        <View style={styles.coverWrap}>
+          {showImage ? (
+            <Image
+              source={{ uri: safeUri }}
+              style={styles.cover}
+              resizeMode="cover"
+              onError={() => setShowImage(false)}
+            />
+          ) : (
+            <View style={[styles.cover, styles.coverPlaceholder]}>
+              <View style={styles.noteBadge}>
+                <Text style={styles.noteText}>♪</Text>
+              </View>
+              <Text style={styles.placeholderText}>No Cover</Text>
+            </View>
+          )}
+        </View>
+
+        {/* כפתור התחל – ממורכז */}
+        <Pressable style={styles.startBtn} onPress={onStart} disabled={!songId}>
+          <Text style={styles.startText}>התחל</Text>
+        </Pressable>
+      </ScrollView>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  wrap: { flex: 1, backgroundColor: "#FFF" },
+
+  levelRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 8,
+    paddingHorizontal: 16,
+    paddingTop: 12,
+  },
+  chip: {
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 20,
+  },
+  chipText: { fontWeight: "700", textAlign: "center" },
+
+  content: {
+    padding: 16,
+    paddingBottom: 32,
+    alignItems: "center",
+  },
+
+  card: {
+    width: "92%",
+    backgroundColor: "#FFF",
+    borderRadius: 14,
+    padding: 14,
+    marginBottom: 12,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: "#E5E7EB",
+    shadowColor: "#000",
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
+    alignItems: "center",
+  },
+  cardLabel: {
+    color: "#7A7A7A",
+    marginBottom: 6,
+    fontSize: 13,
+    textAlign: "center",
+  },
+  cardValue: {
+    color: COLORS.textDark,
+    fontSize: 20,
+    fontWeight: "800",
+    textAlign: "center",
+  },
+
+  coverWrap: { alignItems: "center", marginTop: 8 },
+
+  cover: {
+    width: 250,
+    height: 250,
+    borderRadius: 16,
+    overflow: "hidden",
+    backgroundColor: "#E9F4F4",
+    borderWidth: 2,
+    borderColor: "#9FD9D9",
+  },
+
+  coverPlaceholder: {
+    backgroundColor: COLORS.placeholderBg,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  noteBadge: {
+    width: 72,
+    height: 72,
+    borderRadius: 999,
+    backgroundColor: "#FFFFFF",
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: "#D1D5DB",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 10,
+    elevation: 1,
+  },
+  noteText: { fontSize: 34, color: COLORS.primary, fontWeight: "800" },
+  placeholderText: { color: "#9AA1A9", fontWeight: "600" },
+
+  startBtn: {
+    marginTop: 18,
+    backgroundColor: COLORS.primary,
+    paddingHorizontal: 32,
+    paddingVertical: 12,
+    borderRadius: 16,
+    alignSelf: "center",
+  },
+  startText: { color: "#003B3B", fontWeight: "900", fontSize: 16, textAlign: "center" },
+});

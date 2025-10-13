@@ -49,12 +49,14 @@ function loadSongsFromCSV(filePath) {
           const pictureUrl = relFromAssets ? publicAssetUrl(relFromAssets) : null;
 
           const song = {
-            title: row.Song,
+            title: row.Song || row['\uFEFFSong'],
             artist: row.Artist,
             genre: row.Genre,
             categories,
             categoryWords,
             picture: pictureUrl,
+            lyrics: row.lyrics || '',
+            lyricsHebrew: row.lyricsHebrew || '',
           };
 
           songs.push(song);
@@ -112,6 +114,8 @@ async function recommendOnlyNewWords(csvPath ='../../data/someSongs.csv', user, 
           genre: song.genre,
           newWords,
           picture: song.picture,
+          lyrics: song.lyrics,
+          lyricsHebrew: song.lyricsHebrew,
         });
       }
 

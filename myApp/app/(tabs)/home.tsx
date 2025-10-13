@@ -64,7 +64,7 @@ export default function Home() {
             <Pressable
               onPress={() =>
                 router.push({
-                  pathname: "/(learn)/[cat]",
+                  pathname: "/(learn)/category/[cat]",
                   params: { cat: item.key }, // <--- ניווט דינמי בטוח טיפוסית
                 })
               }
