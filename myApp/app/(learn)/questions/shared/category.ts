@@ -1,5 +1,4 @@
-# Define categories and associated words
-categories = {
+export const CATEGORIES: Record<string, string[]> = {
     "Animals": [
         "animal", "animals", "alligator", "alligators", "alpaca", "alpacas", "anaconda", "anacondas", "ant", "ants", "antelope", "antelopes", "armadillo", "armadillos", "baboon", "baboons", "bat", "bats", "bear", "bears",
         "beast", "bee", "bees", "beetle", "beetles", "buffalo", "buffalos", "butterfly", "butterflies", "camel", "camels",
@@ -225,9 +224,7 @@ categories = {
 
 }
 
-# Define multi-word keywords to preserve as single tokens
-multi_word_keywords = [
-    # Family Members category
+export const multi_word_keywords = [
     "blood relative", "biological parent", 
     "biological child", "chosen family", "family friend", "household member", 
     "family unit", "family bond", "family support", "family gathering", 
@@ -241,12 +238,12 @@ multi_word_keywords = [
     "middle name", "surrogate mother", "adoptive parent", "joint custody", "shared custody",
     "family dinner", "family outing", "family photo", "family values", "family structure",
 
-    # other categories
+
     "ice cream", "sweet potato", "whipped cream", "tank top", "tank tops", "in love with", "fall in love", "fell in love", "falling in love",
     "belly button", "vocal cords", "broken hearted", "broken heart", 
     "sea lion", "sea lions", "sea urchin", "sea urchins", "self conscious", "tired of",
 
-    # Transport category
+  
     "container ship", "container ships", "cargo ship", "cargo ships",
     "freight train", "freight trains", "bullet train", "bullet trains",
     "electric car", "electric cars", "hybrid car", "hybrid cars",
@@ -255,7 +252,6 @@ multi_word_keywords = [
     "boarding pass", "boarding passes", "traffic light", "traffic lights",
     "stop sign", "stop signs",
 
-    # Sports category
     "ping pong", "table tennis", "martial arts", "martial art", "ice skating", "ice hockey"
 ]
 
