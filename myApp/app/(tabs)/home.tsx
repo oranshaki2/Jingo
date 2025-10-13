@@ -14,7 +14,7 @@ const COLORS = {
 
 type CatKey =
   | "Animals" | "Transport" | "Sports" | "Emotions"
-  | "Family" | "Body" | "Food" | "Clothing";
+  | "Family" | "Body Parts" | "Food" | "Clothing";
 
 type Category = { key: CatKey; label: string; src: any };
 
@@ -24,7 +24,7 @@ const CATEGORIES: Category[] = [
   { key: "Sports",    label: "ספורט",     src: require("../../assets/categories/sports.jpg") },
   { key: "Emotions",  label: "רגשות",     src: require("../../assets/categories/emotions.jpg") },
   { key: "Family",    label: "משפחה",     src: require("../../assets/categories/family.jpg") },
-  { key: "Body",      label: "איברי גוף", src: require("../../assets/categories/body.jpg") },
+  { key: "Body Parts",      label: "איברי גוף", src: require("../../assets/categories/body.jpg") },
   { key: "Food",      label: "אוכל",      src: require("../../assets/categories/food.jpg") },
   { key: "Clothing",  label: "הלבשה",     src: require("../../assets/categories/clothing.jpg") },
 ];
@@ -64,7 +64,7 @@ export default function Home() {
             <Pressable
               onPress={() =>
                 router.push({
-                  pathname: "/(learn)/category/[cat]",
+                  pathname: "/(learn)/[cat]",
                   params: { cat: item.key }, // <--- ניווט דינמי בטוח טיפוסית
                 })
               }
