@@ -103,11 +103,51 @@ function filterWordsByHistory(categoryWords, userHistory, userLevel) {
 }
 
 /**
+ * Returns the word-list (single array) that matches the requested category.
+ * It uses the index of the category inside song.categories to pick the
+ * parallel array from song.categoryWords.
+ */
+function pickWordsForCategory(song, selectedCategory) {
+  if (!song || !Array.isArray(song.categories) || !Array.isArray(song.categoryWords)) return null;
+
+  const wanted = String(selectedCategory || '').trim().toLowerCase();
+  const idx = song.categories.findIndex(
+    (c) => String(c || '').trim().toLowerCase() === wanted
+  );
+
+  if (idx === -1) return null;
+  const list = song.categoryWords[idx];
+  return Array.isArray(list) ? list : null;
+}
+
+/**
+ * Filters a *single* category word-list by user history and level.
+ * The list format is: ["word1", "word2", ..., levelNumber]
+ * We return only unseen words when the level matches exactly.
+ */
+function filterWordsByHistory(singleCategoryWordList, userHistory, userLevel) {
+  if (!Array.isArray(singleCategoryWordList) || singleCategoryWordList.length === 0) return [];
+
+  const maybeLevel = singleCategoryWordList[singleCategoryWordList.length - 1];
+  const level = Number(maybeLevel);
+
+  // If the level is not a number or doesn't match the user's level -> no words
+  if (!Number.isFinite(level) || level !== Number(userLevel)) return [];
+
+  // All items except the last are the words
+  const words = singleCategoryWordList.slice(0, -1).map((w) => String(w));
+  const history = Array.isArray(userHistory) ? userHistory.map((w) => String(w)) : [];
+
+  const unseen = words.filter((w) => !history.includes(w));
+  return [...new Set(unseen)]; // ensure uniqueness
+}
+
+/**
  * Recommends up to 20 songs per genre for the user.
  * Only includes songs from a selected category that contain new vocabulary
  * not previously encountered by the user.
  */
-async function recommendOnlyNewWords(csvPath ='../../data/someSongs.csv', user, selectedCategory) {
+async function recommendOnlyNewWords(csvPath, user, selectedCategory) {
   const allSongs = await loadSongsFromCSV(csvPath);
   const genreRecommendations = {};
 
@@ -115,12 +155,23 @@ async function recommendOnlyNewWords(csvPath ='../../data/someSongs.csv', user, 
     const recommendations = [];
 
     for (const song of allSongs) {
-      if (!song.categories.includes(selectedCategory)) continue;
-      if (song.genre.toLowerCase() !== genre.toLowerCase()) continue;
+      // 1) Genre must match
+      if (String(song.genre || '').toLowerCase() !== String(genre || '').toLowerCase()) continue;
 
-      const newWords = filterWordsByHistory(song.categoryWords, user.wordHistory, user.level);
+      // 2) Song must contain the selected category
+      if (!Array.isArray(song.categories)) continue;
+      const hasCategory = song.categories.some(
+        (c) => String(c || '').trim().toLowerCase() === String(selectedCategory || '').trim().toLowerCase()
+      );
+      if (!hasCategory) continue;
 
-      if (newWords.length > 1) {
+      // 3) Pick ONLY the word-list for that category, then filter by history & level
+      const listForCategory = pickWordsForCategory(song, selectedCategory);
+      if (!listForCategory) continue;
+
+      const newWords = filterWordsByHistory(listForCategory, user.wordHistory, user.level);
+
+      if (newWords.length > 0) {
         recommendations.push({
           title: song.title,
           artist: song.artist,
@@ -140,6 +191,5 @@ async function recommendOnlyNewWords(csvPath ='../../data/someSongs.csv', user, 
 
   return genreRecommendations;
 }
-
 
 module.exports = { recommendOnlyNewWords };

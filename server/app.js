@@ -8,7 +8,8 @@ const path = require("path");
 const tokens = require("./routes/token");
 const users = require("./routes/user");
 
-require("dotenv").config({ path: "./config/.env.local" });
+//load env vars from .env.local (if exists) and .env
+require('dotenv').config({ path: path.resolve(__dirname, './config/.env.local'), quiet: true });
 
 // Create a new Express application
 const app = express();
