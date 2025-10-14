@@ -95,6 +95,8 @@ export default function ChooseGenres() {
 
     await clearSignupData(); 
 
+    // Show success alert and navigate to sign-in
+    Alert.alert("ההרשמה בוצעה בהצלחה!", "התחברו כדי להמשיך.");
     router.replace("/(auth)/sign-in");
   
   } catch (e) {
