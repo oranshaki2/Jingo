@@ -20,10 +20,9 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      {/* <Slot /> */}
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="(auth)/sign-up" />
+      <Stack initialRouteName="landing-screen/index">
+        {/* Root screens (optional to define options) */}
+        <Stack.Screen name="landing-screen/index" options={{ headerShown: false }} />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
