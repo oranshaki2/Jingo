@@ -73,24 +73,27 @@ const updateHistoryAndMistakes = async (user, correctWords, mistakenWords) => {
     throw new Error("User not found");
   }
 
-  // קבל את הרשימות הנוכחיות
+  // get existing words from history and mistakes
   let existingCorrect = new Set(user.wordHistory.flatMap(entry => entry.words));
   let existingMistakes = new Set(user.mistakes.flatMap(entry => entry.words));
 
-  // הסר מילים שהתבלבלו ביניהן
+  // remove words that were confused with each other
   mistakenWords.forEach(word => existingCorrect.delete(word));
   correctWords.forEach(word => existingMistakes.delete(word));
 
-  // הוסף את המילים החדשות לרשימות הקיימות
+  // add new words to existing lists
   correctWords.forEach(word => existingCorrect.add(word));
   mistakenWords.forEach(word => existingMistakes.add(word));
 
-  // עדכן את המשתמש עם רשימות חדשות בפורמט של [{ words: [...] }]
+  // update user with new lists in the format of [{ words: [...] }]
   user.wordHistory = [{ words: Array.from(existingCorrect) }];
   user.mistakes = [{ words: Array.from(existingMistakes) }];
 
   await user.save();
 };
+
+
+
 
 
 module.exports = {
@@ -101,5 +104,5 @@ module.exports = {
     updateUserFavorites,
     updateUserLevel,
     updateUserGenres,
-    updateHistoryAndMistakes,
+    updateHistoryAndMistakes
 };
