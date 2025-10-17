@@ -189,3 +189,4 @@ cython_debug/
 /data
 /server/config/.env.local
 /server/node_modules
+/.env.local
