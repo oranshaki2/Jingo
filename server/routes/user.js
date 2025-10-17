@@ -22,6 +22,7 @@ router.post('/', upload.single('picture'), userController.createUser);
 
 router.route('/:id')
     .get(userController.getUserById)
+router.get('/by-username/:username', userController.checkUsernameAvailability);
 
 router.patch('/:id/favorites', userController.updateUserFavorites);
 router.patch('/:id/level', userController.updateUserLevel);

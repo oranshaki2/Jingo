@@ -93,3 +93,9 @@ Content-Type: application/json
   },
   "category": "Clothing"
 }
+
+### Get user details by username
+GET http://localhost:3000/api/users/by-username/t
+
+### Get user details by ID
+GET http://localhost:3000/api/users/68c16feefbb27f647438d21d

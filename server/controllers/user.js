@@ -99,11 +99,28 @@ const updateHistoryAndMistakes = async (req, res) => {
   }
 };
 
+const checkUsernameAvailability = async (req, res) => {
+    try {
+    const { username } = req.params;
+    // Use the service function to get user by username
+    const user = await userService.getUserByUsername(username);
+
+    if (!user) {
+      return res.status(404).json({ exists: false });
+    }
+    return res.status(200).json({ exists: true, username });
+  } catch (err) {
+    console.error('checkUsernameAvailability error:', err);
+    return res.status(500).json({ error: 'server_error' });
+  }
+};
+
 module.exports = {
     createUser,
     getUserById,
     updateUserFavorites,
     updateUserLevel,
     updateUserGenres,
-    updateHistoryAndMistakes
+    updateHistoryAndMistakes,
+    checkUsernameAvailability
 };

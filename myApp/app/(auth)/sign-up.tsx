@@ -12,6 +12,9 @@ const COLORS = {
   accent: "#A8E6CF",      
 };
 
+const API_URL = process.env.EXPO_PUBLIC_API_URL!;
+
+
 export default function SignUp() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -19,7 +22,29 @@ export default function SignUp() {
   const [picture, setPicture] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
+  // check username availability
+  const isUsernameTaken = async (name: string): Promise<boolean> => {
+    try {
+      const res = await fetch(`${API_URL}/users/by-username/${encodeURIComponent(name.trim())}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
 
+      if (res.status === 404) {
+        // 404 Not Found 
+        return false;
+      }
+      // 200 OK - username taken
+      if (res.ok) return true;
+
+      // Server/intermediate error - treat as failed check
+      Alert.alert("שגיאה", "לא ניתן לבדוק זמינות שם משתמש כרגע. נסו שוב בעוד רגע.");
+      return true; // Block registration until clarified
+    } catch {
+      Alert.alert("שגיאה", "בעיה בחיבור לשרת. נסו שוב מאוחר יותר.");
+      return true; // Block registration until clarified
+    }
+  };
   const pickFromGallery = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
@@ -70,13 +95,18 @@ export default function SignUp() {
       Alert.alert("שגיאה", "הסיסמאות אינן תואמות.");
       return;
     }
+    const taken = await isUsernameTaken(username);
+    if (taken) {
+      Alert.alert("שגיאה", "השם משתמש תפוס. בחר/י שם משתמש אחר.");
+      return;
+    }
 
     try {
       setSubmitting(true);
       await saveSignupData("username", username.trim());
       await saveSignupData("password", password);
       await saveSignupData("picture", picture ?? null);
-      // במקום מעבר לבית: מעבר לעמוד בחירת הרמה
+      // move to next sign-up step
       router.push("/(auth)/sign-up-difficulty");
     } catch (e) {
       Alert.alert("שגיאה", "אירעה תקלה בהרשמה. נסו שוב.");
