@@ -21,8 +21,8 @@ command -v curl >/dev/null 2>&1 || { echo "❌ 'curl' is required (sudo apt inst
 cd server || { echo "❌ Couldn't find 'server' directory"; exit 1; }
 
 # Start the API server with nodemon in the background
-echo "🚀 Starting API server (nodemon)..."
-nodemon app.js &
+echo "🚀 Starting API server..."
+node app.js &
 DEV_PID=$!
 
 # Go back to the project root
