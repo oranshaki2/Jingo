@@ -70,6 +70,7 @@ function loadSongsFromCSV(filePath) {
             picture,
             lyrics: row.lyrics || '',
             lyricsHebrew: row.lyricsHebrew || '',
+            link: row.link || '',
           };
 
           songs.push(song);
@@ -180,6 +181,7 @@ async function recommendOnlyNewWords(csvPath, user, selectedCategory) {
           picture: song.picture,
           lyrics: song.lyrics,
           lyricsHebrew: song.lyricsHebrew,
+          link: song.link,
         });
       }
 
