@@ -1,19 +1,12 @@
+// app/(auth)/sign-up.tsx
 import React, { useState } from "react";
-import { View, Text, TextInput, Pressable, Image, Alert, StyleSheet, I18nManager } from "react-native";
+import { View, Text, TextInput, Pressable, Image, Alert } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import { router } from "expo-router";
-import { saveSignupData } from "../../utils/storage";
-
-const COLORS = {
-  primary: "#4EC4C4",      
-  secondary: "#1A3D5A",    
-  bgLight: "#F5F7F9",      
-  textDark: "#333333",     
-  accent: "#A8E6CF",      
-};
+import { router, Href } from "expo-router";
+import { saveSignupData } from "../../../utils/storage";
+import styles, { COLORS } from "./_styles";
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL!;
-
 
 export default function SignUp() {
   const [username, setUsername] = useState("");
@@ -25,26 +18,22 @@ export default function SignUp() {
   // check username availability
   const isUsernameTaken = async (name: string): Promise<boolean> => {
     try {
-      const res = await fetch(`${API_URL}/users/by-username/${encodeURIComponent(name.trim())}`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-      });
+      const res = await fetch(
+        `${API_URL}/users/by-username/${encodeURIComponent(name.trim())}`,
+        { method: "GET", headers: { "Content-Type": "application/json" } }
+      );
 
-      if (res.status === 404) {
-        // 404 Not Found 
-        return false;
-      }
-      // 200 OK - username taken
-      if (res.ok) return true;
+      if (res.status === 404) return false; 
+      if (res.ok) return true;              
 
-      // Server/intermediate error - treat as failed check
       Alert.alert("שגיאה", "לא ניתן לבדוק זמינות שם משתמש כרגע. נסו שוב בעוד רגע.");
-      return true; // Block registration until clarified
+      return true; 
     } catch {
       Alert.alert("שגיאה", "בעיה בחיבור לשרת. נסו שוב מאוחר יותר.");
-      return true; // Block registration until clarified
+      return true;
     }
   };
+
   const pickFromGallery = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
@@ -57,9 +46,7 @@ export default function SignUp() {
       quality: 0.8,
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
     });
-    if (!result.canceled) {
-      setPicture(result.assets[0].uri);
-    }
+    if (!result.canceled) setPicture(result.assets[0].uri);
   };
 
   const takePhoto = async () => {
@@ -73,9 +60,7 @@ export default function SignUp() {
       aspect: [1, 1],
       quality: 0.8,
     });
-    if (!result.canceled) {
-      setPicture(result.assets[0].uri);
-    }
+    if (!result.canceled) setPicture(result.assets[0].uri);
   };
 
   const onSubmit = async () => {
@@ -95,6 +80,7 @@ export default function SignUp() {
       Alert.alert("שגיאה", "הסיסמאות אינן תואמות.");
       return;
     }
+
     const taken = await isUsernameTaken(username);
     if (taken) {
       Alert.alert("שגיאה", "השם משתמש תפוס. בחר/י שם משתמש אחר.");
@@ -106,9 +92,8 @@ export default function SignUp() {
       await saveSignupData("username", username.trim());
       await saveSignupData("password", password);
       await saveSignupData("picture", picture ?? null);
-      // move to next sign-up step
-      router.push("/(auth)/sign-up-difficulty");
-    } catch (e) {
+      router.push("/(auth)/sign-up-difficulty" as Href);
+    } catch {
       Alert.alert("שגיאה", "אירעה תקלה בהרשמה. נסו שוב.");
     } finally {
       setSubmitting(false);
@@ -190,11 +175,13 @@ export default function SignUp() {
         accessibilityRole="button"
         accessibilityLabel="המשך"
       >
-        <Text style={styles.primaryButtonText}>{submitting ? "נרשם/ת..." : "המשך"}</Text>
+        <Text style={styles.primaryButtonText}>
+          {submitting ? "נרשם/ת..." : "המשך"}
+        </Text>
       </Pressable>
 
       <Pressable
-        onPress={() => router.replace("/(auth)/sign-in")}
+        onPress={() => router.replace("/(auth)/sign-in" as Href)}
         style={styles.linkWrapper}
         accessibilityRole="link"
         accessibilityLabel="מעבר לעמוד התחברות"
@@ -206,114 +193,3 @@ export default function SignUp() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    padding: 24,
-    flex: 1,
-    backgroundColor: COLORS.bgLight,
-    justifyContent: "center",
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: "700",
-    color: COLORS.secondary,
-    marginBottom: 24,
-    textAlign: "right",
-  },
-  field: {
-    marginBottom: 14,
-  },
-  label: {
-    fontSize: 14,
-    color: COLORS.secondary,
-    marginBottom: 6,
-    textAlign: "right",
-  },
-  input: {
-    backgroundColor: "#FFFFFF",
-    borderWidth: 1,
-    borderColor: COLORS.secondary,
-    borderRadius: 10,
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-    color: COLORS.textDark,
-  },
-  primaryButton: {
-    backgroundColor: COLORS.primary,
-    paddingVertical: 14,
-    borderRadius: 12,
-    alignItems: "center",
-    marginTop: 12,
-  },
-  primaryButtonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "700",
-  },
-  imageButtonsRow: {
-    flexDirection: "row",
-    gap: 10,
-  },
-  secondaryButton: {
-    backgroundColor: COLORS.accent,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    borderRadius: 10,
-  },
-  secondaryButtonText: {
-    color: COLORS.secondary,
-    fontWeight: "600",
-    fontSize: 14,
-  },
-  secondaryButtonOutline: {
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: COLORS.secondary,
-  },
-  secondaryButtonOutlineText: {
-    color: COLORS.secondary,
-    fontWeight: "600",
-    fontSize: 14,
-  },
-  imageRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-  avatar: {
-    width: 72,
-    height: 72,
-    borderRadius: 999,
-    borderWidth: 2,
-    borderColor: COLORS.primary,
-    backgroundColor: "#FFF",
-  },
-  clearThumb: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 10,
-    backgroundColor: "#ffffff",
-    borderWidth: 1,
-    borderColor: COLORS.secondary,
-  },
-  clearThumbText: {
-    color: COLORS.secondary,
-    fontWeight: "600",
-  },
-  linkWrapper: {
-    marginTop: 14,
-    alignItems: "center",
-  },
-  linkText: {
-    color: COLORS.textDark,
-    fontSize: 14,
-  },
-  linkEmph: {
-    color: COLORS.accent,
-    textDecorationLine: "underline",
-    fontWeight: "600",
-  },
-});

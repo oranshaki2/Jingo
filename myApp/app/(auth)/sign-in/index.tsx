@@ -1,15 +1,9 @@
+// app/(auth)/sign-in/index.tsx
 import React, { useState } from "react";
-import { View, Text, TextInput, Pressable, StyleSheet, ActivityIndicator, Alert } from "react-native";
-import { router } from "expo-router";
+import { View, Text, TextInput, Pressable, Alert, ActivityIndicator } from "react-native";
+import { router ,Href} from "expo-router";
 import * as SecureStore from "expo-secure-store";
-
-const COLORS = {
-  primary: "#4EC4C4",       
-  secondary: "#1A3D5A",   
-  bgLight: "#F5F7F9",      
-  textDark: "#333333",     
-  accent: "#A8E6CF",        
-};
+import styles, { COLORS } from "./_styles";
 
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL!;
@@ -24,12 +18,9 @@ export default function SignIn() {
       Alert.alert("שגיאה", "יש למלא את כל השדות.");
       return;
     }
-
-    setSubmitting(true);
-
-    // Timeout if server doesn't respond in 10 seconds
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 10_000);
+
 
     try {
       const res = await fetch(`${API_URL}/tokens`, {
@@ -39,7 +30,8 @@ export default function SignIn() {
         body: JSON.stringify({ username: username.trim(), password }),
       });
 
-      if (!res.ok) {
+
+       if (!res.ok) {
         // Try to get error message from server response
         let msg = "שם משתמש או סיסמה שגויים";
         try {
@@ -93,6 +85,7 @@ export default function SignIn() {
           placeholderTextColor="#7A7A7A"
           value={username}
           onChangeText={setUsername}
+          autoCapitalize="none"
           textAlign="right"
         />
       </View>
@@ -103,94 +96,37 @@ export default function SignIn() {
           style={styles.input}
           placeholder="הקלד/י סיסמה"
           placeholderTextColor="#7A7A7A"
+          secureTextEntry
           value={password}
           onChangeText={setPassword}
-          secureTextEntry
           textAlign="right"
         />
       </View>
 
       <Pressable
         onPress={onSubmit}
+        disabled={submitting}
         style={({ pressed }) => [
           styles.primaryButton,
           pressed && { opacity: 0.9 },
+          submitting && { opacity: 0.6 },
         ]}
-        accessibilityRole="button"
-        accessibilityLabel="התחבר"
       >
-        <Text style={styles.primaryButtonText}>התחבר</Text>
+        {submitting ? (
+          <ActivityIndicator color="#fff" />
+        ) : (
+          <Text style={styles.primaryButtonText}>התחבר/י</Text>
+        )}
       </Pressable>
 
       <Pressable
-        onPress={() => router.push("/(auth)/sign-up")}
+        onPress={() => router.push("/(auth)/sign-up" as Href)}
         style={styles.linkWrapper}
-        accessibilityRole="link"
-        accessibilityLabel="מעבר לעמוד הרשמה"
       >
         <Text style={styles.linkText}>
-          לא רשומים עדיין? <Text style={styles.linkEmph}>לחצו כאן להרשמה</Text>
+          אין לך חשבון? <Text style={styles.linkEmph}>הרשם/י עכשיו</Text>
         </Text>
       </Pressable>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    padding: 24,
-    flex: 1,
-    backgroundColor: COLORS.bgLight,
-    justifyContent: "center",
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: "700",
-    color: COLORS.secondary,
-    marginBottom: 24,
-    textAlign: "right",
-  },
-  field: {
-    marginBottom: 14,
-  },
-  label: {
-    fontSize: 14,
-    color: COLORS.secondary,
-    marginBottom: 6,
-    textAlign: "right",
-  },
-  input: {
-    backgroundColor: "#FFFFFF",
-    borderWidth: 1,
-    borderColor: COLORS.secondary,
-    borderRadius: 10,
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-    color: COLORS.textDark,
-  },
-  primaryButton: {
-    backgroundColor: COLORS.primary,
-    paddingVertical: 14,
-    borderRadius: 12,
-    alignItems: "center",
-    marginTop: 10,
-  },
-  primaryButtonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "700",
-  },
-  linkWrapper: {
-    marginTop: 14,
-    alignItems: "center",
-  },
-  linkText: {
-    color: COLORS.textDark,
-    fontSize: 14,
-  },
-  linkEmph: {
-    color: COLORS.accent,
-    textDecorationLine: "underline",
-    fontWeight: "600",
-  },
-});
