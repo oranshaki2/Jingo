@@ -102,9 +102,9 @@ npx localtunnel --port 3000 --print-requests >"$LT_LOG" 2>&1 &
 LT_PID=$!
 echo "➡️ LocalTunnel PID: $LT_PID"
 
-# Wait up to ~30s for a URL to appear
+# Wait up to ~120s for a URL to appear
 LT_URL=""
-for i in {1..30}; do
+for i in {1..120}; do
   if grep -Eo 'https://[a-z0-9.-]+\.loca\.lt' "$LT_LOG" >/dev/null 2>&1; then
     LT_URL=$(grep -Eo 'https://[a-z0-9.-]+\.loca\.lt' "$LT_LOG" | head -n1)
     break
@@ -131,4 +131,4 @@ cat "$ENV_FILE"
 # --- Step 4: Start the Expo app (tunnel mode) ---
 echo "🎵 Starting Expo app with tunnel..."
 cd "$APP_DIR"
-npx expo start -c --tunnel
+npx expo start --tunnel

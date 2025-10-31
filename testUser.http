@@ -42,12 +42,21 @@ Content-Type: application/json
 GET http://localhost:3000/api/users/677eb0296b8d36d5eacf6b53
 
 ### 1. הוספת שיר לרשימת מועדפים
-PATCH http://localhost:3000/api/users/6880f447647cf2a21f291ee4/favorites
+PATCH http://localhost:3000/api/users/68f22ba7187347a8f2bdd95f/favorites
 Content-Type: application/json
 
 {
   "title": "Shap You",
   "artist": "Ed Sheeran"
+}
+
+### 1. הוספת שיר לרשימת מועדפים
+PATCH http://localhost:3000/api/users/68f22ba7187347a8f2bdd95f/favorites
+Content-Type: application/json
+
+{
+  "title": "you belong to me",
+  "artist": "taylor swift"
 }
 
 ###
@@ -63,7 +72,7 @@ Content-Type: application/json
 ###
 
 ### 3. עדכון ז'אנרים
-PATCH http://localhost:3000/api/users/6880f447647cf2a21f291ee4/genres
+PATCH http://localhost:3000/api/users/68f24401e72000776cf47a74/genres
 Content-Type: application/json
 
 {
@@ -81,13 +90,23 @@ Content-Type: application/json
   "mistakenWords": ["apple", "cat"]
 }
 
+
+### Get user details by username
+PATCH http://localhost:3000/api/users/68f22ba7187347a8f2bdd95f/history
+Content-Type: application/json
+
+{
+  "correctWords": ["heels","skirts","sneakers"],
+  "mistakenWords": ["jeans"]
+}
+
 ### Get user details by ID
 POST http://localhost:3000/api/recommendations/only-new
 Content-Type: application/json
 
 {
   "user": {
-    "wordHistory": [],
+    "wordHistory": ["jeans", "heels", "skirts", "sneakers"],
     "genre": ["rock", "pop"],
     "level": 1
   },
@@ -95,7 +114,7 @@ Content-Type: application/json
 }
 
 ### Get user details by username
-GET http://localhost:3000/api/users/by-username/t
+GET http://localhost:3000/api/users/by-username/
 
 ### Get user details by ID
-GET http://localhost:3000/api/users/68c16feefbb27f647438d21d
+GET http://localhost:3000/api/users/68f22ba7187347a8f2bdd95f

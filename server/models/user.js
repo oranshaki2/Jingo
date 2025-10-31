@@ -24,22 +24,12 @@ const userSchema = new mongoose.Schema({
   },
 
   wordHistory: {
-    type: [
-      {
-        words: [String],
-        _id: false
-      }
-    ],
+    type: [String],
     default: []
   },
 
   mistakes: {
-    type: [
-      {
-        words: [String],
-        _id: false
-      }
-    ],
+    type: [String],
     default: []
   },
 
