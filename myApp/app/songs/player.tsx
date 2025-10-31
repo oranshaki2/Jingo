@@ -12,6 +12,8 @@ import {
 } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { Audio, AVPlaybackStatusSuccess } from "expo-av";
+import { audioMap } from "@/assets/audioMap";
+
 
 /**
  * ===== How this page works =====
@@ -35,13 +37,6 @@ type LyricsPayload = {
   lines: LyricLine[];
 };
 
-/** ===== Config (edit to match your project) =====
- * Put your MP3 under myApp/assets/audios/ (already true in your project).
- * IMPORTANT: In React Native you must import bundled assets with `require`.
- * The filename below must match exactly, including spaces and parentheses.
- */
-const LOCAL_AUDIO = require("../../assets/audios/Taylor Swift - You Belong With Me (Lyrics) - Watermelon Music.mp3");
-
 /**
  * Gemini config: put your key in .env and expose it to the app:
  *   .env.local:
@@ -57,6 +52,16 @@ export default function SongPlayerScreen() {
   const params = useLocalSearchParams<{ title?: string; artist?: string }>();
   const title = params.title || "You Belong With Me";
   const artist = params.artist || "Taylor Swift";
+
+  // Normalize title for file naming (lowercase, no extra spaces)
+const normalizedTitle = title.trim().toLowerCase();
+
+const LOCAL_AUDIO =
+  audioMap[normalizedTitle] ?? audioMap["you belong with me"];
+
+if (!audioMap[normalizedTitle]) {
+  console.warn(`Audio not found for "${normalizedTitle}", using fallback.`);
+}
 
   const [sound, setSound] = useState<Audio.Sound | null>(null);
   const [isLoadingAudio, setIsLoadingAudio] = useState(true);
