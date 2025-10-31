@@ -33,14 +33,25 @@ echo "🌍 Starting ngrok tunnel for port 3000..."
 ngrok http 3000 > /tmp/ngrok.log &
 sleep 3  # Give ngrok a few seconds to initialize
 
-# Extract the public URL created by ngrok and update the .env.local file
+# Extract the public URL created by ngrok and update the .env.local files
 URL=$(curl -s http://127.0.0.1:4040/api/tunnels | jq -r '.tunnels[0].public_url')
 if [ -z "$URL" ] || [ "$URL" = "null" ]; then
   echo "❌ Could not retrieve ngrok URL. Is ngrok running and authtoken configured?"
   cleanup
 fi
 
+# Update root .env.local with just the API URL
 echo "EXPO_PUBLIC_API_URL=${URL}/api" > .env.local
+
+# Preserve Gemini API key from myApp/.env.local if it exists
+GEMINI_KEY=$(grep EXPO_PUBLIC_GEMINI_API_KEY myApp/.env.local 2>/dev/null || echo "")
+
+# Update myApp/.env.local with API URL and preserve Gemini key
+echo "EXPO_PUBLIC_API_URL=${URL}/api" > myApp/.env.local
+if [ ! -z "$GEMINI_KEY" ]; then
+  echo "$GEMINI_KEY" >> myApp/.env.local
+fi
+
 echo "🌐 API URL set to: ${URL}/api"
 
 # Start Expo in tunnel mode (foreground so you can see logs/QR)
