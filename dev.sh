@@ -58,7 +58,7 @@ echo "🌐 API URL set to: ${URL}/api"
 echo "📦 Starting Expo (tunnel mode)..."
 # Move into the myApp directory
 cd myApp || { echo "❌ Couldn't find 'myApp' directory"; cleanup; }
-npx expo start --tunnel -c
+npx expo start --tunnel
 
 # If Expo exits normally, clean up background processes before leaving
 cleanup
