@@ -21,8 +21,6 @@ export default function Settings() {
       try {
         const userId = await SecureStore.getItemAsync("user_id");
         const token = await SecureStore.getItemAsync("auth_token");
-        console.log("USER ID:", userId);
-        console.log("TOKEN:", token);
 
         if (!userId || !token) {
           Alert.alert("שגיאה", "לא נמצאו פרטי משתמש.");

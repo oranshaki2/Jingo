@@ -124,12 +124,12 @@ export default function CategoryScreen() {
         },
         category,
       };
-
       const res = await fetch(`${API_URL}/recommendations/only-new`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
+      
 
       // Read raw text to print in case of invalid JSON
       const raw = await res.text();
@@ -137,7 +137,6 @@ export default function CategoryScreen() {
       if (!res.ok) {
         throw new Error(`נכשל לטעון המלצות (${res.status}): ${raw}`);
       }
-
       // safe JSON parsing
       let parsed: Record<string, SongItem[]> | null = null;
       try {
@@ -252,9 +251,6 @@ export default function CategoryScreen() {
     // if it's a full URL, use it directly
     if (/^https?:\/\//.test(picture)) return { uri: picture };
     // otherwise, look up in the imported artistImages map
-    console.log("Looking up image for picture key:", picture);
-    console.log("Available artist images:", Object.keys(artistImages));
-    console.log("Found image source:", artistImages[picture]);
     return artistImages[picture] ?? null;
   };
 

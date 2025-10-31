@@ -172,7 +172,7 @@ async function recommendOnlyNewWords(csvPath, user, selectedCategory) {
 
       const newWords = filterWordsByHistory(listForCategory, user.wordHistory, user.level);
 
-      if (newWords.length > 0) {
+      if (newWords.length > 1) {
         recommendations.push({
           title: song.title,
           artist: song.artist,

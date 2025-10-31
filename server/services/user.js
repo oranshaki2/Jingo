@@ -85,9 +85,9 @@ const updateHistoryAndMistakes = async (user, correctWords, mistakenWords) => {
   correctWords.forEach(word => existingCorrect.add(word));
   mistakenWords.forEach(word => existingMistakes.add(word));
 
-  // update user with new lists in the format of [{ words: [...] }]
-  user.wordHistory = [{ words: Array.from(existingCorrect) }];
-  user.mistakes = [{ words: Array.from(existingMistakes) }];
+  // update user with new lists
+  user.wordHistory = Array.from(existingCorrect);
+  user.mistakes = Array.from(existingMistakes);
 
   await user.save();
 };
