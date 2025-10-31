@@ -91,8 +91,8 @@ export default function SongScreen() {
   // התחלת תרגול — לנווט רק עם songId
   const onStart = () => {
     router.push({
-      pathname: "/questions/[words]",
-      params: { words: songId },
+      pathname: "/songs/player",
+      params: { title: meta?.title ?? "Unknown", artist: meta?.artist ?? "Unknown" },
     });
   };
 

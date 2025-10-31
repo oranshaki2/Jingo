@@ -1,25 +1,42 @@
 // app/index.tsx
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { View, ActivityIndicator } from "react-native";
 import { router } from "expo-router";
+import * as SecureStore from 'expo-secure-store';
 
 export default function Index() {
-  useEffect(() => {
-    // TODO: החליפי כאן בלוגיקה אמיתית (בדיקת טוקן / קריאת API)
-    const isSignedIn = false;
+  const [isLoading, setIsLoading] = useState(true);
 
-    if (isSignedIn) {
-      // משתמש מחובר → מעבירים ישר לדף הבית
-      router.replace("/(tabs)/home");
-    } else {
-      // משתמש לא מחובר → נוחת קודם בלנדים
-      router.replace("/landing-screen");
-    }
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const token = await SecureStore.getItemAsync("auth_token");
+
+        if (token) {
+          router.replace("/(tabs)/home");
+        } else {
+          router.replace("/landing-screen");
+        }
+      } catch (error) {
+        console.error("Auth check failed:", error);
+        router.replace("/landing-screen");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkAuth();
   }, []);
 
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <ActivityIndicator />
+      {isLoading ? (
+        <ActivityIndicator />
+      ) : (
+        <View>
+          {/* Render content after auth check */}
+        </View>
+      )}
     </View>
   );
 }
