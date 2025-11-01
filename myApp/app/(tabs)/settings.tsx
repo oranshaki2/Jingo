@@ -1,6 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, ActivityIndicator, Alert, Image } from "react-native";
+import { Image } from "expo-image";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  Alert,
+  ScrollView,
+} from "react-native";
 import * as SecureStore from "expo-secure-store";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Stack } from "expo-router";
 
 const COLORS = {
   primary: "#4EC4C4",
@@ -10,10 +20,28 @@ const COLORS = {
   accent: "#A8E6CF",
 };
 
+const genreLabels: Record<string, string> = {
+  rock: "רוק",
+  pop: "פופ",
+  rnb: "רית'ם אנד בלוז",
+  hiphop: "היפ-הופ",
+  metal: "מטאל",
+  jazz: "ג'אז",
+  folk: "פולק",
+  electronic: "אלקטרוני",
+  country: "קאנטרי",
+  indie: "אינדי",
+  kids: "ילדים",
+};
+
 const API_URL = process.env.EXPO_PUBLIC_API_URL!;
 
 export default function Settings() {
-  const [userData, setUserData] = useState<null | { username: string; level: number; genres: string[] }>(null);
+  const [userData, setUserData] = useState<null | {
+    username: string;
+    level: number;
+    genres: string[];
+  }>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -47,104 +75,141 @@ export default function Settings() {
 
   if (loading) {
     return (
-      <View style={styles.center}>
+      <SafeAreaView style={styles.center}>
         <ActivityIndicator size="large" color={COLORS.primary} />
-      </View>
+      </SafeAreaView>
     );
   }
 
   if (!userData) {
     return (
-      <View style={styles.center}>
+      <SafeAreaView style={styles.center}>
         <Text style={{ color: COLORS.textDark }}>לא נמצאו נתונים</Text>
-      </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <View style={{ width: 28 }} /> 
-        {/* עמודת ריק לשם סימטריה */}
-        <Text style={styles.title}>הגדרות</Text>
-        <Image
-          source={require("../../assets/icons/settings-gear.png")}
-          style={styles.icon}
-        />
-      </View>
+    <SafeAreaView style={styles.wrap}>
+      <Stack.Screen options={{ headerShown: false }} />
 
+      <ScrollView contentContainerStyle={styles.container}>
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.title}>הגדרות</Text>
+          <View style={styles.titleUnderline} />
+          <Image
+            source={require("../../assets/gif/head-moves.gif")}
+            style={{ width: 100, height: 100 }}
+          />
+        </View>
 
-      <View style={styles.infoBox}>
-        <Text style={styles.label}>שם משתמש:</Text>
-        <Text style={styles.value}>{userData.username}</Text>
+        {/* Info Card */}
+        <View style={styles.card}>
+          <Text style={styles.label}>שם משתמש:</Text>
+          <Text style={styles.value}>{userData.username}</Text>
 
-        <Text style={styles.label}>רמת קושי:</Text>
-        <Text style={styles.value}>
-          {userData.level === 1
-            ? "קל"
-            : userData.level === 2
-            ? "בינוני"
-            : userData.level === 3
-            ? "קשה"
-            : userData.level}
-        </Text>
+          <View style={styles.divider} />
 
-        <Text style={styles.label}>ז'אנרים מועדפים:</Text>
-        <Text style={styles.value}>{userData.genres.join(", ")}</Text>
-      </View>
-    </View>
+          <Text style={styles.label}>רמת קושי:</Text>
+          <Text style={styles.value}>
+            {userData.level === 1
+              ? "קל"
+              : userData.level === 2
+              ? "בינוני"
+              : userData.level === 3
+              ? "קשה"
+              : userData.level}
+          </Text>
+
+          <View style={styles.divider} />
+
+          <Text style={styles.label}>ז'אנרים מועדפים:</Text>
+          <Text style={styles.value}>
+            {userData.genres && userData.genres.length > 0
+              ? userData.genres
+                  .map((genre) => genreLabels[genre.toLowerCase()] || genre)
+                  .join(", ")
+              : "לא נבחרו ז'אנרים"}
+          </Text>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  wrap: {
+    flex: 1,
+    backgroundColor: COLORS.bgLight,
+  },
   container: {
     padding: 24,
-    backgroundColor: COLORS.bgLight,
-    flex: 1,
+    paddingBottom: 40,
   },
+
+  // Header
   header: {
-    flexDirection: "row-reverse", 
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "center",
     marginBottom: 24,
   },
+  title: {
+    fontSize: 26,
+    fontWeight: "800",
+    color: COLORS.secondary,
+    textAlign: "center",
+  },
+  titleUnderline: {
+    width: 60,
+    height: 4,
+    backgroundColor: COLORS.primary,
+    borderRadius: 2,
+    marginTop: 6,
+    marginBottom: 10,
+  },
   icon: {
-    width: 28,
-    height: 28,
-    marginLeft: 12,
+    width: 36,
+    height: 36,
+    marginTop: 8,
     tintColor: COLORS.secondary,
   },
-  title: {
-    fontSize: 24,
-    color: COLORS.secondary,
-    fontWeight: "bold",
-    textAlign: "center", 
-  },
-  infoBox: {
-    backgroundColor: "white",
-    borderRadius: 12,
+
+  // Card
+  card: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
     padding: 20,
     shadowColor: "#000",
     shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-    alignItems: "flex-end", 
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 4,
+    borderWidth: 1,
+    borderColor: "#E6EEF0",
+    alignItems: "flex-end",
   },
+
   label: {
+    fontSize: 17,
+    fontWeight: "700",
     color: COLORS.secondary,
-    fontWeight: "bold",
+    textAlign: "right",
     marginTop: 12,
-    fontSize: 16,
-    textAlign: "right", 
-    alignSelf: "stretch", 
   },
   value: {
-    color: COLORS.textDark,
     fontSize: 16,
+    color: COLORS.textDark,
+    textAlign: "right",
     marginTop: 4,
-    textAlign: "right", 
-    alignSelf: "stretch", 
   },
+  divider: {
+    height: 1,
+    backgroundColor: "#EAEAEA",
+    alignSelf: "stretch",
+    marginVertical: 12,
+  },
+
   center: {
     flex: 1,
     justifyContent: "center",
@@ -152,4 +217,3 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.bgLight,
   },
 });
-

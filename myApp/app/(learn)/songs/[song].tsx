@@ -3,6 +3,13 @@ import React, { useEffect, useMemo, useState } from "react";
 import { View, Text, Image, StyleSheet, ScrollView, Pressable } from "react-native";
 import { Stack, useLocalSearchParams, router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { artistImages } from "@/assets/artistsMap"; 
+
+const getImageSource = (picture?: string | null) => {
+  if (!picture) return null;
+  if (/^https?:\/\//.test(picture)) return { uri: picture };
+  return artistImages[picture] ?? null;
+};
 
 const COLORS = {
   primary: "#4EC4C4",
@@ -15,7 +22,7 @@ const COLORS = {
 };
 
 type Params = {
-  song?: string;        // כאן זה ה-ID, לא שם השיר
+  song?: string;        
 };
 
 type SongMeta = {
@@ -34,7 +41,7 @@ export default function SongScreen() {
   const [newWords, setNewWords] = useState<string[]>([]);
   const [lyrics, setLyrics] = useState<string>("");
 
-  // ----- טוענים נתונים מה-AsyncStorage -----
+  // ----- Load Data from AsyncStorage -----
   useEffect(() => {
     let mounted = true;
 
@@ -73,13 +80,12 @@ export default function SongScreen() {
     };
   }, [songId]);
 
-  // ----- תמונה: ניקוי URI + fallback -----
-  const rawUri = (meta?.picture ?? "").trim();
-  const safeUri = rawUri && rawUri !== "null" && rawUri !== "undefined" ? rawUri : "";
-  const [showImage, setShowImage] = useState<boolean>(!!safeUri);
-  useEffect(() => setShowImage(!!safeUri), [safeUri]);
+  // ----- Image Handling -----
+  const imageSource = getImageSource(meta?.picture);
+  const [showImage, setShowImage] = useState<boolean>(!!imageSource);
+  useEffect(() => setShowImage(!!imageSource), [imageSource]);
 
-  // נטען רמה לתצוגה
+  // Load Level for Display
   const levelLabel = useMemo(() => {
     if (level === 1) return "קל";
     if (level === 2) return "בינוני";
@@ -88,7 +94,7 @@ export default function SongScreen() {
   }, [level]);
   const isActive = (key: "קל" | "בינוני" | "קשה") => levelLabel === key;
 
-  // התחלת תרגול — לנווט רק עם songId
+  // ----- Start Button Handler -----
   const onStart = () => {
     router.push({
       pathname: "/songs/player",
@@ -118,19 +124,19 @@ export default function SongScreen() {
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
-        {/* כרטיס אמן */}
+        {/* Card: Artist */}
         <View style={styles.card}>
           <Text style={styles.cardLabel}>אמן</Text>
           <Text style={styles.cardValue}>{meta?.artist || "—"}</Text>
         </View>
 
-        {/* כרטיס שם שיר */}
+        {/* Card: Title */}
         <View style={styles.card}>
           <Text style={styles.cardLabel}>שם השיר</Text>
           <Text style={styles.cardValue}>{meta?.title || "—"}</Text>
         </View>
 
-        {/* כרטיס מילים ללמידה */}
+        {/* Card: New Words */}
         <View style={styles.card}>
           <Text style={styles.cardLabel}>מילים שנלמד</Text>
           <Text style={styles.cardValue}>
@@ -138,11 +144,11 @@ export default function SongScreen() {
           </Text>
         </View>
 
-        {/* תמונה/placeholder – ממורכז + fallback */}
-        <View style={styles.coverWrap}>
-          {showImage ? (
+        {/* Cover Image */}
+         <View style={styles.coverWrap}>
+          {imageSource ? (
             <Image
-              source={{ uri: safeUri }}
+              source={imageSource}
               style={styles.cover}
               resizeMode="cover"
               onError={() => setShowImage(false)}

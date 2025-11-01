@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
+import { Image } from "expo-image";
 import {
   View,
   Text,
@@ -136,6 +137,11 @@ export default function Profile() {
       <Stack.Screen options={{ headerShown: false }} />
       <View style={styles.header}>
         <Text style={styles.title}>פרופיל</Text>
+        <View style={styles.titleUnderline} />
+        <Image
+          source={require("../../assets/gif/Happy Bird.gif")}
+          style={{ width: 100, height: 100 }}
+        />
       </View>
 
       <ScrollView contentContainerStyle={styles.container}>
@@ -366,6 +372,14 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     color: COLORS.secondary,
     textAlign: "center",
+  },
+  titleUnderline: {
+    width: 60,
+    height: 4,
+    backgroundColor: COLORS.primary,
+    borderRadius: 2,
+    marginTop: 6,
+    marginBottom: 10,
   },
 
   container: {
