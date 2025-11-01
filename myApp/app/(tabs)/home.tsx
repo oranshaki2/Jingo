@@ -1,17 +1,18 @@
 // app/(tabs)/home.tsx
 import React, { useState } from "react";
-import { View, Image, Pressable, StyleSheet, FlatList, Modal, TouchableOpacity } from "react-native";
+import { View, Text, Image, Pressable, StyleSheet, FlatList, Modal, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { useRouter } from "expo-router";
-import { LogOut } from "lucide-react-native";
+import { LogOut } from "lucide-react-native"; // ← אייקון יציאה
 
 const COLORS = {
   primary: "#4EC4C4",
   secondary: "#1A3D5A",
-  secondaryLight: "#82CFCF", // צבע בעת לחיצה
   bgLight: "#F5F7F9",
+  textDark: "#333333",
+  accent: "#A8E6CF",
 };
 
 type CatKey =
@@ -47,7 +48,7 @@ export default function Home() {
       <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.bgLight }}>
         {/* פס עליון */}
         <View style={styles.topBar}>
-          {/* כפתור התנתקות בצד שמאל עם אפקט לחיצה */}
+          {/* כפתור התנתקות בצד שמאל */}
           <Pressable
             onPress={async () => {
               try {
@@ -57,13 +58,11 @@ export default function Home() {
                 console.error("Sign-out error:", error);
               }
             }}
-            style={({ pressed }) => [styles.logoutBtn, pressed && { opacity: 0.7 }]}
+            style={styles.logoutBtn}
             accessibilityRole="button"
             accessibilityLabel="התנתקות מהמערכת"
           >
-            {({ pressed }) => (
-              <LogOut size={26} color={pressed ? COLORS.secondaryLight : COLORS.secondary} />
-            )}
+            <LogOut size={26} color={COLORS.secondary} />
           </Pressable>
 
           {/* תמונת פרופיל בצד ימין */}
@@ -104,7 +103,7 @@ export default function Home() {
                   padding: 8,
                 }}
               >
-                <Image source={require("../../assets/images/close-icon.png")} style={{ width: 16, height: 16 }} />
+                <Text style={{ fontSize: 16, fontWeight: "bold" }}>✕</Text>
               </TouchableOpacity>
 
               <Image
@@ -117,6 +116,9 @@ export default function Home() {
         </View>
 
         {/* כותרת */}
+        <Text style={styles.heading}>מאיזו קטגוריה נלמד עכשיו?</Text>
+
+        {/* רשת קטגוריות */}
         <FlatList
           data={CATEGORIES}
           keyExtractor={(item) => item.key}
@@ -138,6 +140,7 @@ export default function Home() {
               <View style={styles.thumbWrap}>
                 <Image source={item.src} style={styles.thumb} resizeMode="cover" />
               </View>
+              <Text style={styles.cardLabel}>{item.label}</Text>
             </Pressable>
           )}
           showsVerticalScrollIndicator={false}
@@ -153,7 +156,7 @@ const styles = StyleSheet.create({
     paddingTop: 8,
     paddingBottom: 4,
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "space-between", // תמונה מימין, כפתור משמאל
     alignItems: "center",
     backgroundColor: COLORS.bgLight,
   },
@@ -167,6 +170,14 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: COLORS.primary,
     backgroundColor: "#FFF",
+  },
+  heading: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: COLORS.secondary,
+    textAlign: "right",
+    paddingHorizontal: 16,
+    marginBottom: 10,
   },
   card: {
     flex: 1,
@@ -189,5 +200,11 @@ const styles = StyleSheet.create({
   thumb: {
     width: "100%",
     height: "100%",
+  },
+  cardLabel: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: COLORS.secondary,
+    textAlign: "center",
   },
 });
