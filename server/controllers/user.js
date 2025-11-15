@@ -1,3 +1,4 @@
+// server/controllers/user.js
 const userService = require('../services/user');
 const mongoose = require('mongoose');
 const fs = require('fs');
@@ -16,15 +17,15 @@ const createUser = async (req, res) => {
 
     const { username, password, genres, level } = userData;
 
-    // הגדרת תמונה
+    // Handle profile picture upload
     const picture = req.file ? req.file.path : 'default.jpg';
 
-    // בדיקת סיסמה תקינה
+    // Validate required fields
     if (!password || password.length < 8) {
       return res.status(400).json({ errors: ['Password must be at least 8 characters long.'] });
     }
 
-    // יצירת משתמש חדש עם ברירת מחדל לשדות שלא סופקו
+    // Create the user
     const user = await userService.createUser({
       username,
       password,
@@ -58,10 +59,17 @@ const getUserById = async (req, res) => {
 
 const updateUserFavorites = async (req, res) => {
   try {
-    const user = await userService.getUserById(req.params.id);
-    await userService.updateUserFavorites(user, req.body); // req.body = { title, artist }
+    const { id } = req.params; 
+    const { songId } = req.body; 
+
+    if (!songId) {
+      return res.status(400).json({ error: 'songId is required' });
+    }
+
+    await userService.updateUserFavorites(id, songId);
     res.status(200).json({ message: 'Favorites updated successfully' });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: 'Failed to update favorites' });
   }
 };

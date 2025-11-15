@@ -8,6 +8,7 @@ router.route('/')
 
 router.route('/:id')
     .get(songController.getSongById); // Get a specific song by ID.
+router.get('/:id/favorite-suggestions', songController.getFavoriteSuggestions); // Get favorite suggestions for a song.
 
 // Export the router to use it in the app.
 module.exports = router;

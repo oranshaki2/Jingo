@@ -1,3 +1,4 @@
+// server/models/user.js
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
@@ -34,13 +35,7 @@ const userSchema = new mongoose.Schema({
   },
 
   favorites: {
-    type: [
-      {
-        title: String,
-        artist: String,
-        _id: false
-      }
-    ],
+    type: [String], 
     default: []
   }
 });

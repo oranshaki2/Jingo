@@ -1,8 +1,6 @@
-// Import Express for routing
+// server/routes/user.js
 const express = require('express'); 
-// Create a new router instance
 const router = express.Router(); 
-// Import the user controller
 const multer = require('multer');
 const userController = require('../controllers/user');
 

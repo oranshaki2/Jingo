@@ -12,7 +12,7 @@ POST http://localhost:3000/api/users
 Content-Type: application/json
 
 {
-  "username": "jane_doa",
+  "username": "oran",
   "password": "securePassword124",
   "level": 1,
   "genres": ["rock", "pop"]
@@ -51,12 +51,11 @@ Content-Type: application/json
 }
 
 ### 1. הוספת שיר לרשימת מועדפים
-PATCH http://localhost:3000/api/users/68f22ba7187347a8f2bdd95f/favorites
+PATCH http://localhost:3000/api/users/6918a78ef2223bf071c42c49/favorites
 Content-Type: application/json
 
 {
-  "title": "you belong to me",
-  "artist": "taylor swift"
+  "songId": "69189429a3b605871525da35"
 }
 
 ###
@@ -117,4 +116,5 @@ Content-Type: application/json
 GET http://localhost:3000/api/users/by-username/
 
 ### Get user details by ID
-GET http://localhost:3000/api/users/68f22ba7187347a8f2bdd95f
+GET http://localhost:3000/api/users/68c17208dcc6dad7b61920e0
+

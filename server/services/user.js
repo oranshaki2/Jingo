@@ -1,3 +1,4 @@
+// server/services/user.js
 const User = require('../models/user');
 
 // Create a new user
@@ -32,19 +33,25 @@ const getAllUsers = async () => {
 };
 
 // Update user's favorite songs- If the song already exists, delete it, otherwise add it
-const updateUserFavorites = async (user, song) => {
-    if (!user) {
-        throw new Error('User not found');
-    }
+const updateUserFavorites = async (userId, songId) => {
+const user = await User.findById(userId);
+  if (!user) {
+    throw new Error('User not found');
+  }
 
-    const favoriteIndex = user.favorites.findIndex(fav => fav.title === song.title && fav.artist === song.artist);
-    if (favoriteIndex > -1) {
-        user.favorites.splice(favoriteIndex, 1);
-    } else {
-        user.favorites.push(song);
-    }
+  const songIdStr = songId.toString(); 
+  const index = user.favorites.indexOf(songIdStr);
 
-    await user.save();
+  if (index === -1) {
+    //not exist – add
+    user.favorites.push(songIdStr);
+  } else {
+    // exist – remove
+    user.favorites.splice(index, 1);
+  }
+
+  await user.save();
+  return user;
 };
 
 // Update user's level
