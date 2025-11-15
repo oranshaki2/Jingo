@@ -11,7 +11,6 @@ type GenreKey =
 
 type GenreItem = { key: GenreKey; label: string; src: any };
 
-// שימי לב: מעומק התיקייה החדש צריך נתיב ../ נוסף ל-assets
 const GENRES: GenreItem[] = [
   { key: "rock",        label: "רוק",              src: require("../../../assets/genres/rock.jpg") },
   { key: "pop",         label: "פופ",              src: require("../../../assets/genres/pop.jpg") },
