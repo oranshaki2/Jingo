@@ -106,7 +106,41 @@ export default function Profile() {
 
         const rawFavs = Array.isArray(data.favorites) ? data.favorites : [];
 
-        setFavorites(rawFavs);
+        // favorites in the backend are saved as song ObjectId strings.
+        // Resolve them to { title, artist } by fetching each song.
+        const resolvedFavs = await Promise.all(
+          rawFavs.map(async (fav: any) => {
+            if (!fav) return null;
+            // if already an object with title -> use it
+            if (typeof fav === "object" && (fav.title || fav.name)) {
+              return {
+                title: fav.title ?? fav.name ?? "",
+                artist: fav.artist ?? fav.performer ?? "",
+              };
+            }
+            // otherwise assume it's an id (string/number)
+            const id = String(fav);
+            try {
+              const songRes = await fetch(`${API_URL}/songs/${id}`, {
+                headers: { Authorization: `Bearer ${token}` },
+              });
+              if (!songRes.ok) {
+                console.warn("Failed to fetch favorite song", id, songRes.status);
+                return null;
+              }
+              const song = await songRes.json();
+              return {
+                title: song.title ?? song.name ?? `#${id.slice(0, 6)}`,
+                artist: song.artist ?? song.performer ?? "",
+              };
+            } catch (err) {
+              console.warn("Error fetching favorite song", id, err);
+              return null;
+            }
+          })
+        );
+        if (mounted)
+          setFavorites(resolvedFavs.filter(Boolean) as { title: string; artist: string }[]);
       } catch (e: any) {
         console.warn("Profile fetch error:", e);
         setErr(e?.message ?? "אירעה שגיאה בטעינת פרופיל");
