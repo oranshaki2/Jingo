@@ -1,0 +1,15 @@
+### Create a new song
+POST http://localhost:3000/api/songs
+Content-Type: application/json
+
+{
+    "name": "you belong with me",
+    "artist": "taylor swift",
+    "genre": "Pop",
+    "categories": ["Clothing", "Sports"],
+    "category_words": [
+        ["jeans", "heels", "skirts", "sneakers", "1"],
+        ["bleachers", "cheer", "captain", "2"]
+    ],
+    "picture": "../myApp/assets/artists/taylor_swift.jpg"
+}
