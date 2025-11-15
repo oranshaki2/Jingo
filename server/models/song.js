@@ -37,10 +37,6 @@ const song = new Schema({
     lyrics : { // Lyrics of the song
         type: String,
         default: ''
-    },
-    lyricsHebrew : { // Lyrics of the song in Hebrew
-        type: String,
-        default: ''
     }
 }, {versionKey: false}); // Disable the version key from the schema.
 

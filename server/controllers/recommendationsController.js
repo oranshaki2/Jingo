@@ -25,10 +25,10 @@ function resolveCsvPath() {
 */
 async function postOnlyNew(req, res) {
   try {
-    const csvPath = resolveCsvPath();
-    if (!fs.existsSync(csvPath)) {
-      return res.status(500).json({ error: `CSV file not found at: ${csvPath}` });
-    }
+    // const csvPath = resolveCsvPath();
+    // if (!fs.existsSync(csvPath)) {
+    //   return res.status(500).json({ error: `CSV file not found at: ${csvPath}` });
+    // }
 
     const { user, category } = req.body || {};
     if (
@@ -45,7 +45,7 @@ async function postOnlyNew(req, res) {
       return res.status(400).json({ error: 'Missing/invalid "category" (string)' });
     }
     // All good, proceed to recommendations
-    const result = await recommendOnlyNewWords(csvPath, user, category);
+    const result = await recommendOnlyNewWords(user, category);
 
     return res.status(200).json(result);
   } catch (err) {
