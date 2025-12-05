@@ -48,8 +48,8 @@ const GEMINI_MODEL = "gemini-2.5-pro";
 export default function SongPlayerScreen() {
   // useLocalSearchParams has a generic constraint 'Route' — cast the result instead of passing a generic.
   const params = useLocalSearchParams() as Partial<{ title: string; artist: string; lyrics: string}>;
-  const title = params?.title || "You Belong With Me";
-  const artist = params?.artist || "Taylor Swift";
+  const title = params?.title || "Unknown Song";
+  const artist = params?.artist || "Unknown Artist";
   const initialLyrics = params?.lyrics ?? "";
 
   // Normalize title for file naming (lowercase, no extra spaces)
@@ -151,6 +151,11 @@ if (!audioMap[normalizedTitle]) {
 
   /** ===== Fetch lyrics from Gemini ===== */
   useEffect(() => {
+    // Skip if lyrics are already loaded from params
+    if (lyrics && lyrics.length > 0) {
+      setIsLoadingLyrics(false);
+      return;
+    }
 
   let cancelled = false;
 
@@ -205,7 +210,7 @@ if (!audioMap[normalizedTitle]) {
   return () => {
     cancelled = true;
   };
-}, [title, artist]);
+}, [title, artist, lyrics]);
 
   /** ===== Playback status listener ===== */
   const onPlaybackStatusUpdate = useCallback(
