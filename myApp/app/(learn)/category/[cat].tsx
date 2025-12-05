@@ -221,16 +221,18 @@ export default function CategoryScreen() {
           await saveNewWords(songId, item.newWords);
         }
         if (item.lyrics) {
-          await saveLyrics(songId, item.lyrics);
+          await saveLyrics(songId, typeof item.lyrics === 'string' ? item.lyrics : JSON.stringify(item.lyrics));
         }
         // Cache basic song data for display in /songs/[song]
         await AsyncStorage.setItem(
           `@songMeta/${songId}`,
           JSON.stringify({
+            id: songId,
             title: item.title,
             artist: item.artist,
             genre: genreLabel,
             picture: item.picture ?? "",
+            lyrics: item.lyrics || null,
           })
         );
       } catch (e) {
@@ -241,7 +243,9 @@ export default function CategoryScreen() {
         params: { song: songId,            
         title: item.title,       
         artist: item.artist,      
-        picture: item.picture ?? "" } });
+        picture: item.picture ?? "",
+        lyrics: item.lyrics || null,
+      } });
         },
     []
   );

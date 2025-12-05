@@ -98,7 +98,11 @@ export default function SongScreen() {
   const onStart = () => {
     router.push({
       pathname: "/songs/player",
-      params: { title: meta?.title ?? "Unknown", artist: meta?.artist ?? "Unknown" },
+      params: { 
+        title: meta?.title ?? "Unknown", 
+        artist: meta?.artist ?? "Unknown", 
+        lyrics: lyrics || null,
+      },
     });
   };
 

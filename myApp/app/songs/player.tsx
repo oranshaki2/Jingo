@@ -32,8 +32,6 @@ import { audioMap } from "@/assets/audioMap";
 /** ===== Types ===== */
 type LyricLine = { english: string; hebrew: string };
 type LyricsPayload = {
-  song: string;
-  artist: string;
   lines: LyricLine[];
 };
 
@@ -48,10 +46,11 @@ const GEMINI_MODEL = "gemini-2.5-pro";
 
 /** ===== Page Component ===== */
 export default function SongPlayerScreen() {
-  // You can pass title/artist via route params, or hardcode defaults.
-  const params = useLocalSearchParams<{ title?: string; artist?: string }>();
-  const title = params.title || "You Belong With Me";
-  const artist = params.artist || "Taylor Swift";
+  // useLocalSearchParams has a generic constraint 'Route' — cast the result instead of passing a generic.
+  const params = useLocalSearchParams() as Partial<{ title: string; artist: string; lyrics: string}>;
+  const title = params?.title || "You Belong With Me";
+  const artist = params?.artist || "Taylor Swift";
+  const initialLyrics = params?.lyrics ?? "";
 
   // Normalize title for file naming (lowercase, no extra spaces)
 const normalizedTitle = title.trim().toLowerCase();
@@ -69,8 +68,16 @@ if (!audioMap[normalizedTitle]) {
   const [durationMs, setDurationMs] = useState<number | null>(null);
   const [positionMs, setPositionMs] = useState(0);
 
-  const [lyrics, setLyrics] = useState<LyricLine[] | null>(null);
-  const [isLoadingLyrics, setIsLoadingLyrics] = useState(true);
+  const [lyrics, setLyrics] = useState<LyricLine[] | null>(() => {
+    if (!initialLyrics) return null;
+    try {
+      return JSON.parse(initialLyrics);
+    } catch (e) {
+      console.warn("Failed to parse initialLyrics:", e);
+      return null;
+    }
+  });
+  const [isLoadingLyrics, setIsLoadingLyrics] = useState(!initialLyrics);
   const [error, setError] = useState<string | null>(null);
 
   const listRef = useRef<FlatList<LyricLine>>(null);
@@ -140,80 +147,65 @@ if (!audioMap[normalizedTitle]) {
         sound.unloadAsync().catch(() => {});
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   /** ===== Fetch lyrics from Gemini ===== */
   useEffect(() => {
-    let cancelled = false;
 
-    (async () => {
-      try {
-        if (!GEMINI_API_KEY) {
-          throw new Error(
-            "Missing EXPO_PUBLIC_GEMINI_API_KEY. Add it to your .env.local and restart Expo."
-          );
-        }
+  let cancelled = false;
 
-        setIsLoadingLyrics(true);
-        setError(null);
-
-        const prompt = buildGeminiPrompt(title, artist);
-        const res = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              contents: [
-                {
-                  role: "user",
-                  parts: [{ text: prompt }],
-                },
-              ],
-              // Safety option: request JSON-only by nudging the model with system style
-              // (API doesn't have a hard JSON mode like some providers; we still validate)
-              generationConfig: { temperature: 0.2 },
-            }),
-          }
-        );
-
-        if (!res.ok) {
-          const txt = await res.text();
-          throw new Error(`Gemini HTTP ${res.status}: ${txt}`);
-        }
-
-        const data = (await res.json()) as any;
-
-        // Extract text result (Gemini returns text in candidates[0].content.parts[].text)
-        const raw =
-          data?.candidates?.[0]?.content?.parts?.[0]?.text ??
-          data?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data ??
-          "";
-
-        // We asked for strict JSON. Still, we defensively parse in case of stray chars.
-        const jsonText = extractFirstJsonObject(raw);
-        const parsed = JSON.parse(jsonText) as LyricsPayload;
-
-        if (parsed?.lines && Array.isArray(parsed.lines) && parsed.lines.length) {
-          if (!cancelled) setLyrics(parsed.lines);
-        } else {
-          throw new Error(`No lines returned. Raw: ${raw?.slice(0, 200)}...`);
-        }
-      } catch (e: any) {
-        setError(
-          `Lyrics fetch failed: ${String(e?.message || e)}.\n` +
-            `Tip: ensure your API key is valid and the model name is correct.`
-        );
-      } finally {
-        if (!cancelled) setIsLoadingLyrics(false);
+  (async () => {
+    try {
+      if (!GEMINI_API_KEY) {
+        throw new Error("Missing Gemini API key.");
       }
-    })();
 
-    return () => {
-      cancelled = true;
-    };
-  }, [title, artist]);
+      setIsLoadingLyrics(true);
+      setError(null);
+
+      const prompt = buildGeminiPrompt(title, artist);
+
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ role: "user", parts: [{ text: prompt }] }],
+            generationConfig: { temperature: 0.2 },
+          }),
+        }
+      );
+
+      if (!res.ok) {
+        const txt = await res.text();
+        throw new Error(`Gemini HTTP ${res.status}: ${txt}`);
+      }
+
+      const data = await res.json();
+      const raw =
+        data?.candidates?.[0]?.content?.parts?.[0]?.text ??
+        data?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data ??
+        "";
+
+      const jsonText = extractFirstJsonObject(raw);
+      const parsed = JSON.parse(jsonText) as LyricsPayload;
+
+      if (!cancelled && Array.isArray(parsed.lines)) {
+        setLyrics(parsed.lines);
+      }
+
+    } catch (e: any) {
+      setError(`Lyrics fetch failed: ${String(e?.message || e)}`);
+    } finally {
+      if (!cancelled) setIsLoadingLyrics(false);
+    }
+  })();
+
+  return () => {
+    cancelled = true;
+  };
+}, [title, artist]);
 
   /** ===== Playback status listener ===== */
   const onPlaybackStatusUpdate = useCallback(
@@ -388,8 +380,6 @@ function buildGeminiPrompt(title: string, artist: string) {
     `Artist: ${artist}\n` +
     `Output example:\n` +
     `{\n` +
-    `  "song": "You Belong With Me",\n` +
-    `  "artist": "Taylor Swift",\n` +
     `  "lines": [\n` +
     `    { "english": "You're on the phone with your girlfriend, she's upset", "hebrew": "אתה מדבר בטלפון עם החברה שלך, והיא נסערת" }\n` +
     `  ]}\n`
