@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema; 
 
+const lyricSchema = new mongoose.Schema({
+  english: String,
+  hebrew: String
+}, { _id: false });
 
 const song = new Schema({
     name: { // Name of the song
@@ -34,10 +38,11 @@ const song = new Schema({
         type: String,
         default: ''
     },
-    lyrics : { // Lyrics of the song
-        type: String,
-        default: ''
+    lyrics: {
+    type: [lyricSchema],
+    default: []
     }
+
 }, {versionKey: false}); // Disable the version key from the schema.
 
 // Export the Mongoose model for categories to use it elsewhere in the application.
