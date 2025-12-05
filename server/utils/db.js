@@ -17,7 +17,7 @@ function resolveCsvPath() {
     return abs;
   }
   // Fallback to the repo default (resolve relative to the server working dir)
-  return path.resolve(process.cwd());
+  return path.resolve(process.cwd(), '../data/some_songs.csv');
 }
 
 /**
@@ -43,33 +43,36 @@ const parseSongsFromCsv = () => {
     return new Promise((resolve, reject) => {
         const songsToInsert = [];
         
-        const csvFilePath = resolveCsvPath();
+        const csvFilePath = path.resolve(process.cwd(), '../data/some_songs.csv');
         if (!fs.existsSync(csvFilePath)) {
             return reject(new Error(`CSV file not found at: ${csvFilePath}`));
         }
 
         fs.createReadStream(csvFilePath)
-            .pipe(csv({
-                // Column settings according to your CSV
-                headers: ['Song', 'Artist', 'Genre', 'categories', 'category_words', 'picture', 'audioURL', 'lyrics', 'lyricsHebrew'],
-                skipLines: 1 // Skip the header row
-            }))
+            .pipe(csv())
             .on('data', (row) => {
                 try {
+                    // The row object will have keys: Song, Artist, Genre, categories, category_words, picture, audioURL, lyrics
+                    
                     // Convert array strings to JavaScript arrays
                     const categoriesArray = JSON.parse(row.categories.replace(/'/g, '"'));
                     const categoryWordsArray = JSON.parse(row.category_words.replace(/'/g, '"'));
                     
+                    // Parse lyrics only if it exists and is not empty
+                    let lyricsArray = [];
+                    if (row.lyrics && row.lyrics.trim()) {
+                        lyricsArray = JSON.parse(row.lyrics);
+                    }
+                    
                     songsToInsert.push({
-                        name: row.Song,
-                        artist: row.Artist,
-                        genre: row.Genre,
+                        name: row.Song.trim(),
+                        artist: row.Artist.trim(),
+                        genre: row.Genre.trim(),
                         categories: categoriesArray,
                         category_words: categoryWordsArray,
-                        picture: row.picture,
-                        audioURL: row.audioURL,
-                        lyrics: row.lyrics,
-                        lyricsHebrew: row.lyticsHebrew
+                        picture: row.picture ? row.picture.trim() : '',
+                        audioURL: row.audioURL ? row.audioURL.trim() : '',
+                        lyrics: lyricsArray,
                     });
                 } catch (e) {
                     console.error(`Error parsing data for song: ${row.Song}. Skipping. Error: ${e.message}`);
