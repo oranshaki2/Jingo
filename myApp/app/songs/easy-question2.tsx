@@ -12,6 +12,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 
 /** ===== Types ===== */
 type QuestionData = {
+  sentence: string;
   options: string[];
   correctAnswerIndex: number;
 };
@@ -19,10 +20,10 @@ type QuestionData = {
 const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
 const GEMINI_MODEL = "gemini-2.5-pro";
 
-export default function Question1Screen() {
+export default function Question2Screen() {
   const router = useRouter();
-  const params = useLocalSearchParams() as Partial<{ words: string; category: string; level: string }>;
-
+  const params = useLocalSearchParams() as Partial<{ remainingWords: string; category: string; level: string }>;
+  
   const [words, setWords] = useState<string[]>([]);
   const [currentWord, setCurrentWord] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -32,27 +33,28 @@ export default function Question1Screen() {
   const [isChecked, setIsChecked] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  /** ===== Parse words ===== */
   useEffect(() => {
     try {
-      if (params.words) {
-        const parsedWords = JSON.parse(params.words);
+      if (params.remainingWords) {
+        const parsedWords = JSON.parse(params.remainingWords);
         if (Array.isArray(parsedWords) && parsedWords.length > 0) {
           setWords(parsedWords);
+          // Select a random word as the current word
           const randomIndex = Math.floor(Math.random() * parsedWords.length);
           setCurrentWord(parsedWords[randomIndex]);
         } else {
-          Alert.alert("שגיאה", "לא נטענו מילים ללמוד");
+          Alert.alert("Error", "No words received or words list is empty.");
         }
       }
     } catch (e) {
-      Alert.alert("שגיאה", "טעינת המילים נכשלה");
+      console.error("Failed to parse remaining words:", e);
+      Alert.alert("Error", "Failed to parse remaining words.");
     } finally {
       setIsLoading(false);
     }
-  }, [params.words]);
+  }, [params.remainingWords]);
 
-  /** ===== Fetch options from Gemini ===== */
+  /** ===== Fetch question from Gemini ===== */
   useEffect(() => {
     if (!currentWord) return;
 
@@ -86,8 +88,7 @@ export default function Question1Screen() {
         }
 
         const data = await res.json();
-        const raw =
-          data?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+        const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
 
         const jsonText = extractFirstJsonObject(raw);
         const parsed = JSON.parse(jsonText) as QuestionData;
@@ -118,20 +119,21 @@ export default function Question1Screen() {
   const handleContinue = () => {
     if (!currentWord) return;
 
-    const remainingWords = words.filter((w) => w !== currentWord);
-    const levelNum = params.level ? Number(params.level) : 0;
-    const nextPath = (levelNum === 1 ? "/songs/easy-question2" : "/songs/question2") as any;
+    // Create remaining words array (original list minus the selected word)
+    const remainingWords = words.filter((word) => word !== currentWord);
 
     if (remainingWords.length > 0) {
+      // Navigate to easy-question3 with remaining words
       router.push({
-        pathname: nextPath,
-        params: { 
+        pathname: "/songs/easy-question3" as any,
+        params: {
           remainingWords: JSON.stringify(remainingWords),
           category: params.category || "",
           level: params.level || "",
         },
       });
     } else {
+      // No remaining words, navigate to finish
       router.push("/songs/finish");
     }
   };
@@ -156,20 +158,18 @@ export default function Question1Screen() {
   return (
     <View style={styles.container}>
       <View style={styles.contentContainer}>
-        {/* ===== Word ===== */}
-        {currentWord && (
-          <View style={styles.wordBox}>
-            <Text style={styles.wordLabel}>המילה הנלמדת:</Text>
-            <Text style={styles.word}>{currentWord}</Text>
+
+        {/* ===== Question Title ===== */}
+        <View style={styles.questionBox}>
+          <Text style={styles.questionText}>השלימו את המשפט: אתם בעמוד הקל</Text>
+        </View>
+
+        {/* ===== Sentence with Blank ===== */}
+        {!isLoadingQuestion && questionData && (
+          <View style={styles.sentenceBox}>
+            <Text style={styles.sentenceText}>{questionData.sentence}</Text>
           </View>
         )}
-
-        {/* ===== Static Question ===== */}
-        <View style={styles.questionBox}>
-          <Text style={styles.questionText}>
-            בחרו את התרגום הנכון של המילה:
-          </Text>
-        </View>
 
         {/* ===== Options / Loader ===== */}
         <View style={styles.optionsContainer}>
@@ -238,10 +238,11 @@ export default function Question1Screen() {
 /** ===== Helpers ===== */
 function buildGeminiPrompt(word: string, category: string | undefined): string {
   return `
-Return ONLY valid JSON, with "options" and "correctAnswerIndex".
-Generate 4 Hebrew translations for the English word "${word}" which belongs to the category "${category}":
-- One correct translation
-- Three plausible but incorrect distractors
+Return ONLY valid JSON, with "sentence", "options" and "correctAnswerIndex".
+Generate a fill-the-blank exercise:
+- Create a sentence in Hebrew that uses the word "${word}" (from category "${category}")
+- Replace the word with a blank (shown as _______ in the sentence)
+- Provide 4 options: the correct word and 3 plausible but incorrect distractors
 `;
 }
 
@@ -256,21 +257,33 @@ function extractFirstJsonObject(s: string): string {
 
 const COLORS = {
   primary: "#4EC4C4",
+  secondary: "#1A3D5A",
   bg: "#F7FAFC",
   text: "#222",
   textDim: "#4a4a4a",
   border: "#e9ecef",
+  success: "#22c55e",
+  error: "#ef4444",
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.bg,
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 24,
     justifyContent: "space-between",
   },
   contentContainer: {
+    flex: 1,
+    justifyContent: "center",
     alignItems: "center",
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: "700",
+    color: COLORS.text,
+    marginBottom: 32,
   },
   wordBox: {
     backgroundColor: "white",
@@ -279,91 +292,133 @@ const styles = StyleSheet.create({
     borderColor: COLORS.primary,
     padding: 24,
     width: "100%",
-    marginBottom: 24,
+    marginBottom: 32,
     alignItems: "center",
   },
   wordLabel: {
     fontSize: 14,
+    fontWeight: "600",
     color: COLORS.textDim,
+    marginBottom: 8,
   },
   word: {
     fontSize: 32,
     fontWeight: "700",
     color: COLORS.primary,
   },
-  questionBox: {
-    backgroundColor: "#F0F8F8",
-    borderRadius: 12,
-    padding: 16,
-    width: "100%",
-    marginBottom: 24,
-  },
-  questionText: {
+  description: {
     fontSize: 16,
-    fontWeight: "600",
-    textAlign: "right",
-  },
-  optionsContainer: {
-    width: "100%",
-    gap: 12,
-  },
-  optionButton: {
-    backgroundColor: "white",
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: COLORS.border,
-    padding: 16,
-    alignItems: "center",
-  },
-  selectedOption: {
-    borderColor: COLORS.primary,
-    backgroundColor: "#E6FAF7",
-  },
-  correctOption: {
-    backgroundColor: "#D1FAE5",
-    borderColor: "#10B981",
-  },
-  wrongOption: {
-    backgroundColor: "#FEE2E2",
-    borderColor: "#EF4444",
-  },
-  optionText: {
-    fontSize: 16,
-  },
-  correctText: {
-    color: "#10B981",
-    fontWeight: "700",
-  },
-  wrongText: {
-    color: "#EF4444",
-    fontWeight: "700",
+    color: COLORS.textDim,
+    textAlign: "center",
+    lineHeight: 24,
   },
   buttonContainer: {
     gap: 12,
     marginBottom: Platform.OS === "ios" ? 32 : 24,
   },
-  checkButton: {
-    backgroundColor: COLORS.primary,
-    padding: 14,
-    borderRadius: 12,
-    alignItems: "center",
-  },
   continueButton: {
     backgroundColor: COLORS.primary,
-    padding: 14,
+    paddingVertical: 14,
     borderRadius: 12,
     alignItems: "center",
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
   },
   buttonText: {
     color: "white",
     fontWeight: "700",
+    fontSize: 16,
   },
   loadingText: {
     marginTop: 12,
     color: COLORS.textDim,
+    fontSize: 16,
   },
   errorText: {
-    color: "#b00020",
+    color: COLORS.error,
+    fontSize: 14,
+    marginTop: 12,
     textAlign: "center",
+  },
+  questionBox: {
+    marginBottom: 24,
+  },
+  questionText: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: COLORS.text,
+    marginBottom: 16,
+    textAlign: "center",
+  },
+  sentenceBox: {
+    backgroundColor: "white",
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: COLORS.primary,
+    padding: 16,
+    marginBottom: 24,
+    minHeight: 80,
+    justifyContent: "center",
+  },
+  sentenceText: {
+    fontSize: 18,
+    color: COLORS.text,
+    lineHeight: 28,
+    textAlign: "center",
+  },
+  optionsContainer: {
+    gap: 12,
+    marginBottom: 24,
+  },
+  optionButton: {
+    backgroundColor: "white",
+    borderWidth: 2,
+    borderColor: COLORS.primary,
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    minHeight: 50,
+    justifyContent: "center",
+  },
+  optionText: {
+    fontSize: 16,
+    color: COLORS.text,
+    textAlign: "center",
+    fontWeight: "500",
+  },
+  selectedOption: {
+    backgroundColor: COLORS.primary,
+    borderColor: COLORS.primary,
+  },
+  selectedText: {
+    color: "white",
+  },
+  correctOption: {
+    backgroundColor: COLORS.success,
+    borderColor: COLORS.success,
+  },
+  correctText: {
+    color: "white",
+  },
+  wrongOption: {
+    backgroundColor: COLORS.error,
+    borderColor: COLORS.error,
+  },
+  wrongText: {
+    color: "white",
+  },
+  checkButton: {
+    backgroundColor: COLORS.primary,
+    paddingVertical: 14,
+    borderRadius: 12,
+    alignItems: "center",
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
   },
 });

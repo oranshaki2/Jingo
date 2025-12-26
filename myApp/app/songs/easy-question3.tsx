@@ -7,52 +7,54 @@ import {
   ActivityIndicator,
   Alert,
   Platform,
+  TextInput,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 
 /** ===== Types ===== */
 type QuestionData = {
-  options: string[];
-  correctAnswerIndex: number;
+  sentence: string;
+  correctAnswer: string;
 };
 
 const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
 const GEMINI_MODEL = "gemini-2.5-pro";
 
-export default function Question1Screen() {
+export default function Question3Screen() {
   const router = useRouter();
-  const params = useLocalSearchParams() as Partial<{ words: string; category: string; level: string }>;
-
+  const params = useLocalSearchParams() as Partial<{ remainingWords: string; category: string; level: string }>;
+  
   const [words, setWords] = useState<string[]>([]);
   const [currentWord, setCurrentWord] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingQuestion, setIsLoadingQuestion] = useState(false);
   const [questionData, setQuestionData] = useState<QuestionData | null>(null);
-  const [selectedOption, setSelectedOption] = useState<number | null>(null);
+  const [userAnswer, setUserAnswer] = useState<string>("");
   const [isChecked, setIsChecked] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  /** ===== Parse words ===== */
   useEffect(() => {
     try {
-      if (params.words) {
-        const parsedWords = JSON.parse(params.words);
+      if (params.remainingWords) {
+        const parsedWords = JSON.parse(params.remainingWords);
         if (Array.isArray(parsedWords) && parsedWords.length > 0) {
           setWords(parsedWords);
+          // Select a random word as the current word
           const randomIndex = Math.floor(Math.random() * parsedWords.length);
           setCurrentWord(parsedWords[randomIndex]);
         } else {
-          Alert.alert("שגיאה", "לא נטענו מילים ללמוד");
+          Alert.alert("Error", "No words received or words list is empty.");
         }
       }
     } catch (e) {
-      Alert.alert("שגיאה", "טעינת המילים נכשלה");
+      console.error("Failed to parse remaining words:", e);
+      Alert.alert("Error", "Failed to parse remaining words.");
     } finally {
       setIsLoading(false);
     }
-  }, [params.words]);
+  }, [params.remainingWords]);
 
-  /** ===== Fetch options from Gemini ===== */
+  /** ===== Fetch question from Gemini ===== */
   useEffect(() => {
     if (!currentWord) return;
 
@@ -86,8 +88,7 @@ export default function Question1Screen() {
         }
 
         const data = await res.json();
-        const raw =
-          data?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+        const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
 
         const jsonText = extractFirstJsonObject(raw);
         const parsed = JSON.parse(jsonText) as QuestionData;
@@ -108,8 +109,8 @@ export default function Question1Screen() {
   }, [currentWord]);
 
   const handleCheck = () => {
-    if (selectedOption === null) {
-      Alert.alert("שגיאה", "לא נבחרה תשובה");
+    if (!userAnswer.trim()) {
+      Alert.alert("שגיאה", "אנא הקלידו תשובה");
       return;
     }
     setIsChecked(true);
@@ -118,20 +119,21 @@ export default function Question1Screen() {
   const handleContinue = () => {
     if (!currentWord) return;
 
-    const remainingWords = words.filter((w) => w !== currentWord);
-    const levelNum = params.level ? Number(params.level) : 0;
-    const nextPath = (levelNum === 1 ? "/songs/easy-question2" : "/songs/question2") as any;
+    // Create remaining words array (original list minus the selected word)
+    const remainingWords = words.filter((word) => word !== currentWord);
 
     if (remainingWords.length > 0) {
+      // Words remain, loop back to Question1 with remaining words
       router.push({
-        pathname: nextPath,
-        params: { 
-          remainingWords: JSON.stringify(remainingWords),
+        pathname: "/songs/question1",
+        params: {
+          words: JSON.stringify(remainingWords),
           category: params.category || "",
           level: params.level || "",
         },
       });
     } else {
+      // No remaining words, navigate to finish
       router.push("/songs/finish");
     }
   };
@@ -153,68 +155,54 @@ export default function Question1Screen() {
     );
   }
 
+  const isAnswerCorrect = userAnswer.trim().toLowerCase() === (questionData?.correctAnswer.toLowerCase() || "");
+
   return (
     <View style={styles.container}>
       <View style={styles.contentContainer}>
-        {/* ===== Word ===== */}
-        {currentWord && (
-          <View style={styles.wordBox}>
-            <Text style={styles.wordLabel}>המילה הנלמדת:</Text>
-            <Text style={styles.word}>{currentWord}</Text>
+
+        {/* ===== Question Title ===== */}
+        <View style={styles.questionBox}>
+          <Text style={styles.questionText}>מלאו את המילה החסרה: אתם בעמוד הקל</Text>
+        </View>
+
+        {/* ===== Sentence with Blank ===== */}
+        {!isLoadingQuestion && questionData && (
+          <View style={styles.sentenceBox}>
+            <Text style={styles.sentenceText}>{questionData.sentence}</Text>
           </View>
         )}
 
-        {/* ===== Static Question ===== */}
-        <View style={styles.questionBox}>
-          <Text style={styles.questionText}>
-            בחרו את התרגום הנכון של המילה:
+        {/* ===== Loader or Input ===== */}
+        {isLoadingQuestion ? (
+          <ActivityIndicator size="large" color={COLORS.primary} />
+        ) : (
+          <TextInput
+            style={[
+              styles.textInput,
+              isChecked && isAnswerCorrect && styles.correctInput,
+              isChecked && !isAnswerCorrect && styles.wrongInput,
+            ]}
+            placeholder="הקלידו את התשובה..."
+            placeholderTextColor={COLORS.textDim}
+            value={userAnswer}
+            onChangeText={setUserAnswer}
+            editable={!isChecked}
+          />
+        )}
+
+        {/* ===== Feedback Message ===== */}
+        {isChecked && (
+          <Text
+            style={[
+              styles.feedbackText,
+              isAnswerCorrect && styles.correctFeedback,
+              !isAnswerCorrect && styles.wrongFeedback,
+            ]}
+          >
+            {isAnswerCorrect ? "✓ תשובה נכונה!" : `✗ תשובה שגויה. התשובה הנכונה: ${questionData?.correctAnswer}`}
           </Text>
-        </View>
-
-        {/* ===== Options / Loader ===== */}
-        <View style={styles.optionsContainer}>
-          {isLoadingQuestion && (
-            <ActivityIndicator size="large" color={COLORS.primary} />
-          )}
-
-          {!isLoadingQuestion &&
-            questionData?.options.map((option, index) => {
-              let optionStyle: any = styles.optionButton;
-              let optionTextStyle: any = styles.optionText;
-
-              if (isChecked) {
-                if (
-                  index === selectedOption &&
-                  index === questionData.correctAnswerIndex
-                ) {
-                  optionStyle = [styles.optionButton, styles.correctOption];
-                  optionTextStyle = [styles.optionText, styles.correctText];
-                } else if (
-                  index === selectedOption &&
-                  index !== questionData.correctAnswerIndex
-                ) {
-                  optionStyle = [styles.optionButton, styles.wrongOption];
-                  optionTextStyle = [styles.optionText, styles.wrongText];
-                } else if (index === questionData.correctAnswerIndex) {
-                  optionStyle = [styles.optionButton, styles.correctOption];
-                  optionTextStyle = [styles.optionText, styles.correctText];
-                }
-              } else if (index === selectedOption) {
-                optionStyle = [styles.optionButton, styles.selectedOption];
-              }
-
-              return (
-                <Pressable
-                  key={index}
-                  style={optionStyle}
-                  onPress={() => !isChecked && setSelectedOption(index)}
-                  disabled={isChecked}
-                >
-                  <Text style={optionTextStyle}>{option}</Text>
-                </Pressable>
-              );
-            })}
-        </View>
+        )}
       </View>
 
       {/* ===== Buttons ===== */}
@@ -238,10 +226,11 @@ export default function Question1Screen() {
 /** ===== Helpers ===== */
 function buildGeminiPrompt(word: string, category: string | undefined): string {
   return `
-Return ONLY valid JSON, with "options" and "correctAnswerIndex".
-Generate 4 Hebrew translations for the English word "${word}" which belongs to the category "${category}":
-- One correct translation
-- Three plausible but incorrect distractors
+Return ONLY valid JSON, with "sentence" and "correctAnswer".
+Generate a fill-the-blank exercise:
+- Create a sentence in Hebrew that uses the word "${word}" (from category "${category}")
+- Replace the word with "___" in the sentence
+- Provide the correct word as the answer
 `;
 }
 
@@ -256,87 +245,87 @@ function extractFirstJsonObject(s: string): string {
 
 const COLORS = {
   primary: "#4EC4C4",
+  secondary: "#1A3D5A",
   bg: "#F7FAFC",
   text: "#222",
   textDim: "#4a4a4a",
   border: "#e9ecef",
+  success: "#22c55e",
+  error: "#ef4444",
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.bg,
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 24,
     justifyContent: "space-between",
   },
   contentContainer: {
+    flex: 1,
+    justifyContent: "center",
     alignItems: "center",
-  },
-  wordBox: {
-    backgroundColor: "white",
-    borderRadius: 16,
-    borderWidth: 2,
-    borderColor: COLORS.primary,
-    padding: 24,
-    width: "100%",
-    marginBottom: 24,
-    alignItems: "center",
-  },
-  wordLabel: {
-    fontSize: 14,
-    color: COLORS.textDim,
-  },
-  word: {
-    fontSize: 32,
-    fontWeight: "700",
-    color: COLORS.primary,
   },
   questionBox: {
-    backgroundColor: "#F0F8F8",
-    borderRadius: 12,
-    padding: 16,
-    width: "100%",
     marginBottom: 24,
   },
   questionText: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "600",
-    textAlign: "right",
+    color: COLORS.text,
+    marginBottom: 16,
+    textAlign: "center",
   },
-  optionsContainer: {
-    width: "100%",
-    gap: 12,
-  },
-  optionButton: {
+  sentenceBox: {
     backgroundColor: "white",
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: COLORS.border,
-    padding: 16,
-    alignItems: "center",
-  },
-  selectedOption: {
     borderColor: COLORS.primary,
-    backgroundColor: "#E6FAF7",
+    padding: 16,
+    marginBottom: 24,
+    minHeight: 80,
+    justifyContent: "center",
   },
-  correctOption: {
-    backgroundColor: "#D1FAE5",
-    borderColor: "#10B981",
+  sentenceText: {
+    fontSize: 18,
+    color: COLORS.text,
+    lineHeight: 28,
+    textAlign: "center",
   },
-  wrongOption: {
-    backgroundColor: "#FEE2E2",
-    borderColor: "#EF4444",
-  },
-  optionText: {
+  textInput: {
+    backgroundColor: "white",
+    borderWidth: 2,
+    borderColor: COLORS.primary,
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     fontSize: 16,
+    color: COLORS.text,
+    minHeight: 50,
+    width: "100%",
+    marginBottom: 24,
+    textAlign: "center",
   },
-  correctText: {
-    color: "#10B981",
-    fontWeight: "700",
+  correctInput: {
+    backgroundColor: COLORS.success,
+    borderColor: COLORS.success,
   },
-  wrongText: {
-    color: "#EF4444",
-    fontWeight: "700",
+  wrongInput: {
+    backgroundColor: COLORS.error,
+    borderColor: COLORS.error,
+  },
+  feedbackText: {
+    fontSize: 16,
+    fontWeight: "600",
+    marginBottom: 24,
+    textAlign: "center",
+  },
+  correctFeedback: {
+    color: COLORS.success,
+  },
+  wrongFeedback: {
+    color: COLORS.error,
   },
   buttonContainer: {
     gap: 12,
@@ -344,26 +333,40 @@ const styles = StyleSheet.create({
   },
   checkButton: {
     backgroundColor: COLORS.primary,
-    padding: 14,
+    paddingVertical: 14,
     borderRadius: 12,
     alignItems: "center",
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
   },
   continueButton: {
     backgroundColor: COLORS.primary,
-    padding: 14,
+    paddingVertical: 14,
     borderRadius: 12,
     alignItems: "center",
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
   },
   buttonText: {
     color: "white",
     fontWeight: "700",
+    fontSize: 16,
   },
   loadingText: {
     marginTop: 12,
     color: COLORS.textDim,
+    fontSize: 16,
   },
   errorText: {
-    color: "#b00020",
+    color: COLORS.error,
+    fontSize: 14,
+    marginTop: 12,
     textAlign: "center",
   },
 });
