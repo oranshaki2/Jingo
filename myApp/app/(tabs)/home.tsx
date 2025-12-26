@@ -85,7 +85,7 @@ export default function Home() {
 
   return (
     <>
-      <Stack.Screen options={{ headerShown: false }} />
+      <Stack.Screen options={{ headerBackVisible: false }} />
       <SafeAreaView
         edges={["left", "right"]}
         style={{ flex: 1, backgroundColor: COLORS.bgLight }}
