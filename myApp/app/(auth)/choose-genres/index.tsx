@@ -55,7 +55,6 @@ export default function ChooseGenres() {
       const username = await loadSignupData<string>("username");
       const password = await loadSignupData<string>("password");
       const level = await loadSignupData<number>("level");
-      const picture = await loadSignupData<string | null>("picture");
       const genres = Array.from(selected);
 
       if (!username || !password || !level) {
@@ -67,7 +66,7 @@ export default function ChooseGenres() {
       const res = await fetch(`${API_URL}/users`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password, picture, level, genres }),
+        body: JSON.stringify({ username, password, level, genres }),
       });
 
       if (!res.ok) throw new Error("הרשמה נכשלה");

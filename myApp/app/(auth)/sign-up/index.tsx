@@ -1,7 +1,6 @@
 // app/(auth)/sign-up.tsx
 import React, { useState } from "react";
-import { View, Text, TextInput, Pressable, Image, Alert } from "react-native";
-import * as ImagePicker from "expo-image-picker";
+import { View, Text, TextInput, Pressable, Alert } from "react-native";
 import { router, Href } from "expo-router";
 import { saveSignupData } from "../../../utils/storage";
 import styles, { COLORS } from "./_styles";
@@ -12,7 +11,6 @@ export default function SignUp() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
-  const [picture, setPicture] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   // check username availability
@@ -34,34 +32,9 @@ export default function SignUp() {
     }
   };
 
-  const pickFromGallery = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== "granted") {
-      Alert.alert("הרשאה נחוצה", "יש לאשר גישה לגלריה כדי להעלות תמונה.");
-      return;
-    }
-    const result = await ImagePicker.launchImageLibraryAsync({
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.8,
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-    });
-    if (!result.canceled) setPicture(result.assets[0].uri);
-  };
+  
 
-  const takePhoto = async () => {
-    const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    if (status !== "granted") {
-      Alert.alert("הרשאה נחוצה", "יש לאשר גישה למצלמה כדי לצלם תמונת פרופיל.");
-      return;
-    }
-    const result = await ImagePicker.launchCameraAsync({
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.8,
-    });
-    if (!result.canceled) setPicture(result.assets[0].uri);
-  };
+  
 
   const onSubmit = async () => {
     if (!username.trim()) {
@@ -91,7 +64,6 @@ export default function SignUp() {
       setSubmitting(true);
       await saveSignupData("username", username.trim());
       await saveSignupData("password", password);
-      await saveSignupData("picture", picture ?? null);
       router.push("/(auth)/sign-up-difficulty" as Href);
     } catch {
       Alert.alert("שגיאה", "אירעה תקלה בהרשמה. נסו שוב.");
@@ -143,26 +115,7 @@ export default function SignUp() {
         />
       </View>
 
-      <View style={[styles.field, { marginTop: 8 }]}>
-        <Text style={styles.label}>תמונת פרופיל (לא חובה)</Text>
-        {picture ? (
-          <View style={styles.imageRow}>
-            <Image source={{ uri: picture }} style={styles.avatar} />
-            <Pressable onPress={() => setPicture(null)} style={styles.clearThumb}>
-              <Text style={styles.clearThumbText}>הסר תמונה</Text>
-            </Pressable>
-          </View>
-        ) : (
-          <View style={styles.imageButtonsRow}>
-            <Pressable onPress={pickFromGallery} style={styles.secondaryButton}>
-              <Text style={styles.secondaryButtonText}>בחר/י מהגלריה</Text>
-            </Pressable>
-            <Pressable onPress={takePhoto} style={styles.secondaryButtonOutline}>
-              <Text style={styles.secondaryButtonOutlineText}>צלם/י מהמצלמה</Text>
-            </Pressable>
-          </View>
-        )}
-      </View>
+      {/* Profile picture upload removed */}
 
       <Pressable
         onPress={onSubmit}
