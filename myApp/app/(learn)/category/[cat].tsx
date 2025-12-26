@@ -84,6 +84,7 @@ export default function CategoryScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [sections, setSections] = useState<Section[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [userLevel, setUserLevel] = useState<number>(0);
 
   /** 1) Load user (like Settings): user_id + auth_token → GET /users/:id */
   const loadUser = useCallback(async (): Promise<UserPublic> => {
@@ -174,6 +175,7 @@ export default function CategoryScreen() {
     setLoading(true);
     try {
       const user = await loadUser();
+      setUserLevel(user.level);
       const s = await fetchRecommendations(user);
       setSections(s);
     } catch (e: any) {
@@ -188,6 +190,7 @@ export default function CategoryScreen() {
     setRefreshing(true);
     try {
       const user = await loadUser();
+      setUserLevel(user.level);
       const s = await fetchRecommendations(user);
       setSections(s);
     } catch (e: any) {
@@ -245,9 +248,10 @@ export default function CategoryScreen() {
         artist: item.artist,      
         picture: item.picture ?? "",
         lyrics: item.lyrics || null,
+        level: userLevel,
       } });
         },
-    []
+    [userLevel]
   );
 
   const getImageSource = (picture?: string | null) => {

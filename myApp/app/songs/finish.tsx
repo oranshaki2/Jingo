@@ -11,9 +11,9 @@ import { useRouter } from "expo-router";
 export default function FinishScreen() {
   const router = useRouter();
 
-  const handleBackToPlayer = () => {
-    // Navigate back to [cat] screen
-    router.back();
+  const handleBackToHome = () => {
+    // Navigate back to home screen
+    router.push("/(tabs)/home");
   };
 
   return (
@@ -39,7 +39,7 @@ export default function FinishScreen() {
       <View style={styles.buttonContainer}>
         <Pressable 
           style={styles.backButton} 
-          onPress={handleBackToPlayer}
+          onPress={handleBackToHome}
         >
           <Text style={styles.buttonText}>חזרה לעמוד הבית</Text>
         </Pressable>
@@ -107,6 +107,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     gap: 12,
+    marginBottom: Platform.OS === "ios" ? 32 : 24,
   },
   backButton: {
     backgroundColor: COLORS.primary,

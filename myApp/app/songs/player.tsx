@@ -56,12 +56,9 @@ export default function SongPlayerScreen() {
   const router = useRouter();
 
   // useLocalSearchParams has a generic constraint 'Route' — cast the result instead of passing a generic.
-  const params = useLocalSearchParams() as Partial<{
-    title: string;
-    artist: string;
-    lyrics: string;
-    song: string;
-  }>;
+
+  const params = useLocalSearchParams() as Partial<{ title: string; artist: string; lyrics: string; song: string; category: string; level: string }>;
+
   const title = params?.title || "Unknown Song";
   const artist = params?.artist || "Unknown Artist";
   const initialLyrics = params?.lyrics ?? "";
@@ -390,9 +387,11 @@ export default function SongPlayerScreen() {
       pathname: "/songs/question1",
       params: {
         words: JSON.stringify(words),
+        category: params.category || "",
+        level: params.level || 1,
       },
     });
-  }, [words, router]);
+  }, [words, router, params.category, params.level]);
 
   /** ===== Render ===== */
   const header = (
