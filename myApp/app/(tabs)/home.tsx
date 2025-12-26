@@ -1,6 +1,15 @@
 // app/(tabs)/home.tsx
 import React, { useState } from "react";
-import { View, Text, Image, Pressable, StyleSheet, FlatList, Modal, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  Pressable,
+  StyleSheet,
+  FlatList,
+  Modal,
+  TouchableOpacity,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack } from "expo-router";
 import * as SecureStore from "expo-secure-store";
@@ -28,14 +37,46 @@ type CatKey =
 type Category = { key: CatKey; label: string; src: any };
 
 const CATEGORIES: Category[] = [
-  { key: "Animals", label: "חיות", src: require("../../assets/categories/animals.jpg") },
-  { key: "Transport", label: "תחבורה", src: require("../../assets/categories/transport.jpg") },
-  { key: "Sports", label: "ספורט", src: require("../../assets/categories/sports.jpg") },
-  { key: "Emotions", label: "רגשות", src: require("../../assets/categories/emotions.jpg") },
-  { key: "Family", label: "משפחה", src: require("../../assets/categories/family.jpg") },
-  { key: "Body Parts", label: "איברי גוף", src: require("../../assets/categories/body.jpg") },
-  { key: "Food", label: "אוכל", src: require("../../assets/categories/food.jpg") },
-  { key: "Clothing", label: "הלבשה", src: require("../../assets/categories/clothing.jpg") },
+  {
+    key: "Animals",
+    label: "חיות",
+    src: require("../../assets/categories/animals.jpg"),
+  },
+  {
+    key: "Transport",
+    label: "תחבורה",
+    src: require("../../assets/categories/transport.jpg"),
+  },
+  {
+    key: "Sports",
+    label: "ספורט",
+    src: require("../../assets/categories/sports.jpg"),
+  },
+  {
+    key: "Emotions",
+    label: "רגשות",
+    src: require("../../assets/categories/emotions.jpg"),
+  },
+  {
+    key: "Family",
+    label: "משפחה",
+    src: require("../../assets/categories/family.jpg"),
+  },
+  {
+    key: "Body Parts",
+    label: "איברי גוף",
+    src: require("../../assets/categories/body.jpg"),
+  },
+  {
+    key: "Food",
+    label: "אוכל",
+    src: require("../../assets/categories/food.jpg"),
+  },
+  {
+    key: "Clothing",
+    label: "הלבשה",
+    src: require("../../assets/categories/clothing.jpg"),
+  },
 ];
 
 export default function Home() {
@@ -45,7 +86,10 @@ export default function Home() {
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
-      <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.bgLight }}>
+      <SafeAreaView
+        edges={["left", "right"]}
+        style={{ flex: 1, backgroundColor: COLORS.bgLight }}
+      >
         {/* פס עליון */}
         <View style={styles.topBar}>
           {/* כפתור התנתקות בצד שמאל */}
@@ -72,7 +116,7 @@ export default function Home() {
             accessibilityLabel="תמונת פרופיל - להצגה מוגדלת"
           >
             <Image
-              source={require("../../assets/images/avatar.png")}
+              source={require("../../assets/images/icon.png")}
               style={styles.avatar}
             />
           </Pressable>
@@ -107,7 +151,7 @@ export default function Home() {
               </TouchableOpacity>
 
               <Image
-                source={require("../../assets/images/avatar.png")}
+                source={require("../../assets/images/icon.png")}
                 style={{ width: 250, height: 250, borderRadius: 125 }}
                 resizeMode="cover"
               />
@@ -133,12 +177,19 @@ export default function Home() {
                   params: { cat: item.key },
                 })
               }
-              style={({ pressed }) => [styles.card, pressed && { transform: [{ scale: 0.995 }] }]}
+              style={({ pressed }) => [
+                styles.card,
+                pressed && { transform: [{ scale: 0.995 }] },
+              ]}
               accessibilityRole="button"
               accessibilityLabel={`כניסה לקטגוריה ${item.label}`}
             >
               <View style={styles.thumbWrap}>
-                <Image source={item.src} style={styles.thumb} resizeMode="cover" />
+                <Image
+                  source={item.src}
+                  style={styles.thumb}
+                  resizeMode="cover"
+                />
               </View>
               <Text style={styles.cardLabel}>{item.label}</Text>
             </Pressable>
@@ -158,7 +209,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between", // תמונה מימין, כפתור משמאל
     alignItems: "center",
-    backgroundColor: COLORS.bgLight,
+    backgroundColor: COLORS.accent,
   },
   logoutBtn: {
     padding: 6,
@@ -172,6 +223,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFF",
   },
   heading: {
+    paddingTop: 12,
     fontSize: 20,
     fontWeight: "700",
     color: COLORS.secondary,
