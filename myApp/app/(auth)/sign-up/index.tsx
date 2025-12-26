@@ -21,20 +21,19 @@ export default function SignUp() {
         { method: "GET", headers: { "Content-Type": "application/json" } }
       );
 
-      if (res.status === 404) return false; 
-      if (res.ok) return true;              
+      if (res.status === 404) return false;
+      if (res.ok) return true;
 
-      Alert.alert("שגיאה", "לא ניתן לבדוק זמינות שם משתמש כרגע. נסו שוב בעוד רגע.");
-      return true; 
+      Alert.alert(
+        "שגיאה",
+        "לא ניתן לבדוק זמינות שם משתמש כרגע. נסו שוב בעוד רגע."
+      );
+      return true;
     } catch {
       Alert.alert("שגיאה", "בעיה בחיבור לשרת. נסו שוב מאוחר יותר.");
       return true;
     }
   };
-
-  
-
-  
 
   const onSubmit = async () => {
     if (!username.trim()) {

@@ -1,28 +1,77 @@
 // app/(onboarding)/choose-genres/index.tsx
 import React, { useMemo, useState } from "react";
 import { View, Text, Pressable, Image, Alert, FlatList } from "react-native";
-import { Stack, router , Href} from "expo-router";
+import { Stack, router, Href } from "expo-router";
 import { loadSignupData, clearSignupData } from "../../../utils/storage";
 import styles from "./_styles";
 
 type GenreKey =
-  | "rock" | "pop" | "rnb" | "hiphop" | "metal" | "jazz"
-  | "folk" | "electronic" | "country" | "indie" | "kids";
+  | "rock"
+  | "pop"
+  | "rnb"
+  | "hiphop"
+  | "metal"
+  | "jazz"
+  | "folk"
+  | "electronic"
+  | "country"
+  | "indie"
+  | "kids";
 
 type GenreItem = { key: GenreKey; label: string; src: any };
 
 const GENRES: GenreItem[] = [
-  { key: "rock",        label: "רוק",              src: require("../../../assets/genres/rock.jpg") },
-  { key: "pop",         label: "פופ",              src: require("../../../assets/genres/pop.jpg") },
-  { key: "rnb",         label: "רית'ם אנד בלוז",  src: require("../../../assets/genres/rnb.jpg") },
-  { key: "hiphop",      label: "היפ-הופ",         src: require("../../../assets/genres/hiphop.jpg") },
-  { key: "metal",       label: "מטאל",            src: require("../../../assets/genres/metal.jpg") },
-  { key: "jazz",        label: "ג'אז",            src: require("../../../assets/genres/jazz.jpg") },
-  { key: "folk",        label: "פולק",            src: require("../../../assets/genres/folk.jpg") },
-  { key: "electronic",  label: "אלקטרוני",        src: require("../../../assets/genres/electronic.jpg") },
-  { key: "country",     label: "קאנטרי",          src: require("../../../assets/genres/country.jpg") },
-  { key: "indie",       label: "אינדי",           src: require("../../../assets/genres/indie.jpg") },
-  { key: "kids",        label: "ילדים",           src: require("../../../assets/genres/kids.jpg") },
+  {
+    key: "rock",
+    label: "רוק",
+    src: require("../../../assets/genres/rock.jpg"),
+  },
+  { key: "pop", label: "פופ", src: require("../../../assets/genres/pop.jpg") },
+  {
+    key: "rnb",
+    label: "רית'ם אנד בלוז",
+    src: require("../../../assets/genres/rnb.jpg"),
+  },
+  {
+    key: "hiphop",
+    label: "היפ-הופ",
+    src: require("../../../assets/genres/hiphop.jpg"),
+  },
+  {
+    key: "metal",
+    label: "מטאל",
+    src: require("../../../assets/genres/metal.jpg"),
+  },
+  {
+    key: "jazz",
+    label: "ג'אז",
+    src: require("../../../assets/genres/jazz.jpg"),
+  },
+  {
+    key: "folk",
+    label: "פולק",
+    src: require("../../../assets/genres/folk.jpg"),
+  },
+  {
+    key: "electronic",
+    label: "אלקטרוני",
+    src: require("../../../assets/genres/electronic.jpg"),
+  },
+  {
+    key: "country",
+    label: "קאנטרי",
+    src: require("../../../assets/genres/country.jpg"),
+  },
+  {
+    key: "indie",
+    label: "אינדי",
+    src: require("../../../assets/genres/indie.jpg"),
+  },
+  {
+    key: "kids",
+    label: "ילדים",
+    src: require("../../../assets/genres/kids.jpg"),
+  },
 ];
 
 export default function ChooseGenres() {
@@ -38,7 +87,7 @@ export default function ChooseGenres() {
 
   const toggle = (key?: GenreKey) => {
     if (!key) return;
-    setSelected(prev => {
+    setSelected((prev) => {
       const next = new Set(prev);
       next.has(key) ? next.delete(key) : next.add(key);
       return next;
