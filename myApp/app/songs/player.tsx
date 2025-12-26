@@ -10,10 +10,10 @@ import {
   Platform,
   Alert,
 } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { Audio, AVPlaybackStatusSuccess } from "expo-av";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { audioMap } from "@/assets/audioMap";
-
 
 /**
  * ===== How this page works =====
@@ -46,8 +46,10 @@ const GEMINI_MODEL = "gemini-2.5-pro";
 
 /** ===== Page Component ===== */
 export default function SongPlayerScreen() {
+  const router = useRouter();
+  
   // useLocalSearchParams has a generic constraint 'Route' — cast the result instead of passing a generic.
-  const params = useLocalSearchParams() as Partial<{ title: string; artist: string; lyrics: string}>;
+  const params = useLocalSearchParams() as Partial<{ title: string; artist: string; lyrics: string; song: string }>;
   const title = params?.title || "Unknown Song";
   const artist = params?.artist || "Unknown Artist";
   const initialLyrics = params?.lyrics ?? "";
@@ -67,6 +69,7 @@ if (!audioMap[normalizedTitle]) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [durationMs, setDurationMs] = useState<number | null>(null);
   const [positionMs, setPositionMs] = useState(0);
+  const [words, setWords] = useState<string[]>([]);
 
   const [lyrics, setLyrics] = useState<LyricLine[] | null>(() => {
     if (!initialLyrics) return null;
@@ -82,6 +85,32 @@ if (!audioMap[normalizedTitle]) {
 
   const listRef = useRef<FlatList<LyricLine>>(null);
   const lastAutoScrollIndex = useRef<number>(-1);
+  const songId = String(params.song ?? "").trim();
+
+  /** ===== Load words from AsyncStorage ===== */
+  useEffect(() => {
+    let mounted = true;
+
+    async function loadWords() {
+      try {
+        const wordsRaw = await AsyncStorage.getItem(`@newWords/${songId}`);
+        const wordsParsed = wordsRaw ? (JSON.parse(wordsRaw) as string[]) : [];
+        if (mounted) {
+          setWords(Array.isArray(wordsParsed) ? wordsParsed : []);
+        }
+      } catch (e) {
+        console.warn("[player] failed to load words from storage:", e);
+        if (mounted) {
+          setWords([]);
+        }
+      }
+    }
+
+    if (songId) loadWords();
+    return () => {
+      mounted = false;
+    };
+  }, [songId]);
 
   /** ====== Derived sync helpers ======
    * Evenly assign time per line: totalDuration / lineCount.
@@ -286,6 +315,20 @@ if (!audioMap[normalizedTitle]) {
     [sound, msPerLine]
   );
 
+  const startStudy = useCallback(() => {
+    if (words.length === 0) {
+      Alert.alert("No words", "Please ensure words are saved in AsyncStorage.");
+      return;
+    }
+    // Navigate to Question1 with words as parameter
+    router.push({
+      pathname: "/songs/question1",
+      params: {
+        words: JSON.stringify(words),
+      },
+    });
+  }, [words, router]);
+
   /** ===== Render ===== */
   const header = (
     <View style={styles.header}>
@@ -366,6 +409,11 @@ if (!audioMap[normalizedTitle]) {
           }}
         />
       )}
+
+      {/* Study Start Button at Bottom-Right */}
+      <Pressable style={styles.studyButton} onPress={startStudy}>
+        <Text style={styles.studyButtonText}>התחל לימוד</Text>
+      </Pressable>
     </View>
   );
 }
@@ -535,5 +583,24 @@ const styles = StyleSheet.create({
   },
   activeLyricHe: {
     color: COLORS.activeText,
+  },
+  studyButton: {
+    position: "absolute",
+    bottom: 24,
+    right: 24,
+    backgroundColor: COLORS.primary,
+    paddingHorizontal: 20,
+    paddingVertical: 14,
+    borderRadius: 12,
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+  },
+  studyButtonText: {
+    color: "white",
+    fontWeight: "700",
+    fontSize: 16,
   },
 });
