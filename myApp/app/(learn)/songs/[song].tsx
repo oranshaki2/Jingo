@@ -102,6 +102,7 @@ export default function SongScreen() {
         title: meta?.title ?? "Unknown", 
         artist: meta?.artist ?? "Unknown", 
         lyrics: lyrics || null,
+        song: songId,
       },
     });
   };
