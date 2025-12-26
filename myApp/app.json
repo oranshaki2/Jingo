@@ -32,11 +32,18 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
-      ]
+      ],
+      "expo-font",
+      "expo-secure-store",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true
     },
-    "extra": { "router": { "sourceDir": "app" } }
+    "extra": {
+      "router": {
+        "sourceDir": "app"
+      }
+    }
   }
 }
