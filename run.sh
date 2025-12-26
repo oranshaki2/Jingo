@@ -124,9 +124,23 @@ echo "✅ LocalTunnel URL: $LT_URL"
 # --- Step 3: Update .env.local with the new API URL ---
 cd "$ROOT_DIR"
 ENV_FILE="$APP_DIR/.env.local"
-echo "EXPO_PUBLIC_API_URL=${LT_URL}/api" > "$ENV_FILE"
-echo "📁 Wrote to $ENV_FILE:"
-cat "$ENV_FILE"
+# Ensure app dir and env file exist, then update only EXPO_PUBLIC_API_URL
+mkdir -p "$APP_DIR"
+touch "$ENV_FILE"
+TMP_ENV="$(mktemp "${ENV_FILE}.XXXXXX")"
+if grep -q '^EXPO_PUBLIC_API_URL=' "$ENV_FILE"; then
+  sed -E "s~^EXPO_PUBLIC_API_URL=.*~EXPO_PUBLIC_API_URL=${LT_URL}/api~" "$ENV_FILE" > "$TMP_ENV"
+else
+  cat "$ENV_FILE" > "$TMP_ENV"
+  echo "EXPO_PUBLIC_API_URL=${LT_URL}/api" >> "$TMP_ENV"
+fi
+mv "$TMP_ENV" "$ENV_FILE"
+echo "📁 Updated $ENV_FILE (contents not printed for security)."
+# Do not print the full env file (avoid showing API keys/secrets).
+# Optionally indicate that the important variable was set without revealing secrets.
+if grep -q '^EXPO_PUBLIC_API_URL=' "$ENV_FILE"; then
+  echo "🔐 EXPO_PUBLIC_API_URL is set (value hidden)."
+fi
 
 # --- Step 4: Start the Expo app (tunnel mode) ---
 echo "🎵 Starting Expo app with tunnel..."

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { Image } from "expo-image";
 import {
   View,
@@ -11,8 +11,22 @@ import {
   PixelRatio,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useFocusEffect } from "@react-navigation/native";
 import * as SecureStore from "expo-secure-store";
-import { Stack } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Stack, router } from "expo-router";
+import { artistImages } from "@/assets/artistsMap";
+
+// translations generated from dataset/semantics/category_in_hebrew.py
+const translations: Record<
+  string,
+  string
+> = require("../../assets/translations_he.json");
+
+const getHebrew = (word: string) => {
+  if (!word) return null;
+  return translations[String(word).trim().toLowerCase()] ?? null;
+};
 
 const COLORS = {
   primary: "#4EC4C4",
@@ -23,6 +37,12 @@ const COLORS = {
 };
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL!;
+
+const getImageSource = (picture?: string | null) => {
+  if (!picture) return null;
+  if (/^https?:\/\//.test(picture)) return { uri: picture };
+  return artistImages[picture] ?? null;
+};
 
 // convert cm to device pixels (approx)
 const cmToPx = (cm: number) => {
@@ -35,7 +55,7 @@ export default function Profile() {
   const [mistakes, setMistakes] = useState<string[]>([]);
   const [learned, setLearned] = useState<string[]>([]);
   const [favorites, setFavorites] = useState<
-    { title: string; artist: string }[]
+    { id?: string; title: string; artist: string }[]
   >([]);
   const [err, setErr] = useState<string | null>(null);
 
@@ -114,6 +134,7 @@ export default function Profile() {
             // if already an object with title -> use it
             if (typeof fav === "object" && (fav.title || fav.name)) {
               return {
+                id: fav._id ?? fav.id ?? undefined,
                 title: fav.title ?? fav.name ?? "",
                 artist: fav.artist ?? fav.performer ?? "",
               };
@@ -125,11 +146,16 @@ export default function Profile() {
                 headers: { Authorization: `Bearer ${token}` },
               });
               if (!songRes.ok) {
-                console.warn("Failed to fetch favorite song", id, songRes.status);
+                console.warn(
+                  "Failed to fetch favorite song",
+                  id,
+                  songRes.status
+                );
                 return null;
               }
               const song = await songRes.json();
               return {
+                id,
                 title: song.title ?? song.name ?? `#${id.slice(0, 6)}`,
                 artist: song.artist ?? song.performer ?? "",
               };
@@ -140,7 +166,9 @@ export default function Profile() {
           })
         );
         if (mounted)
-          setFavorites(resolvedFavs.filter(Boolean) as { title: string; artist: string }[]);
+          setFavorites(
+            resolvedFavs.filter(Boolean) as { title: string; artist: string }[]
+          );
       } catch (e: any) {
         console.warn("Profile fetch error:", e);
         setErr(e?.message ?? "אירעה שגיאה בטעינת פרופיל");
@@ -154,6 +182,201 @@ export default function Profile() {
       mounted = false;
     };
   }, []);
+
+  // Close any open lists when the screen gains focus (e.g. when returning)
+  useFocusEffect(
+    useCallback(() => {
+      setOpenMistakes(false);
+      setOpenLearned(false);
+      setOpenFavorites(false);
+      return () => {};
+    }, [])
+  );
+
+  // Handle favorite press: fetch song info, store meta/lyrics, pick random category, navigate
+  const handleFavoritePress = async (fav: {
+    id?: string;
+    title: string;
+    artist: string;
+  }) => {
+    try {
+      const id = fav.id;
+
+      // prepare fallback meta values (used for routing & caching)
+      let metaTitle = fav.title;
+      let metaArtist = fav.artist ?? "";
+      let picture: string | null = "";
+      let lyrics: string | null = null;
+
+      if (id) {
+        const token = await SecureStore.getItemAsync("auth_token");
+        const res = await fetch(`${API_URL}/songs/${id}`, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
+        if (res.ok) {
+          const song = await res.json();
+
+          // prefer common picture fields
+          picture =
+            song.picture ?? song.cover ?? song.image ?? song.albumArt ?? null;
+
+          metaTitle = song.title ?? song.name ?? metaTitle;
+          metaArtist = song.artist ?? song.performer ?? metaArtist;
+
+          if (song.lyrics) {
+            const lyricsStr =
+              typeof song.lyrics === "string"
+                ? song.lyrics
+                : JSON.stringify(song.lyrics);
+            lyrics = lyricsStr;
+            await AsyncStorage.setItem(`@lyrics/${id}`, lyricsStr);
+          }
+
+          // store meta for the song page to read (include id + lyrics to match category flow)
+          await AsyncStorage.setItem(
+            `@songMeta/${id}`,
+            JSON.stringify({
+              id,
+              title: metaTitle,
+              artist: metaArtist,
+              genre: song.genre ?? undefined,
+              picture,
+              lyrics: lyrics ?? null,
+            })
+          );
+
+          // extract categories -> words mapping from the API response
+          const extractCategoryMap = (
+            s: any
+          ): Record<string, string[]> | null => {
+            const candidates = [
+              s.categoryWords,
+              s.wordsByCategory,
+              s.words_by_category,
+              s.category_map,
+              s.categories_map,
+            ];
+            for (const c of candidates) {
+              if (c && typeof c === "object" && !Array.isArray(c)) return c;
+            }
+
+            if (Array.isArray(s.category_words) && s.category_words.length) {
+              const cw = s.category_words;
+              let cats: string[] = [];
+              if (
+                Array.isArray(s.categories) &&
+                s.categories.length === cw.length
+              ) {
+                cats = s.categories as string[];
+              } else {
+                for (let i = 0; i < cw.length; i++) cats.push(`cat${i + 1}`);
+              }
+              const map: Record<string, string[]> = {};
+              for (let i = 0; i < cw.length; i++) {
+                const entry = cw[i];
+                if (Array.isArray(entry)) {
+                  const words = entry.filter(
+                    (w: any) => typeof w === "string" && !/^\d+$/.test(w)
+                  );
+                  map[cats[i]] = words.map((w: any) => String(w));
+                } else {
+                  map[cats[i]] = [];
+                }
+              }
+              return map;
+            }
+
+            if (Array.isArray(s.categories) && s.categories.length) {
+              const first = s.categories[0];
+              if (
+                first &&
+                typeof first === "object" &&
+                Array.isArray(first.words)
+              ) {
+                const map: Record<string, string[]> = {};
+                for (const cat of s.categories) {
+                  if (cat && cat.name)
+                    map[cat.name] = Array.isArray(cat.words) ? cat.words : [];
+                }
+                return map;
+              }
+            }
+
+            if (
+              Array.isArray(s.categories) &&
+              s.words &&
+              typeof s.words === "object"
+            ) {
+              return s.words;
+            }
+
+            return null;
+          };
+
+          const catMap = extractCategoryMap(song);
+          if (catMap) {
+            const keys = Object.keys(catMap).filter(Boolean);
+            if (keys.length > 0) {
+              const chosen = keys[Math.floor(Math.random() * keys.length)];
+              const allWords = Array.isArray(catMap[chosen])
+                ? catMap[chosen].filter(Boolean).map((w: any) => String(w))
+                : [];
+              const pickCount = Math.min(8, allWords.length);
+              const picked: string[] = [];
+              while (picked.length < pickCount && allWords.length) {
+                const idx = Math.floor(Math.random() * allWords.length);
+                picked.push(allWords.splice(idx, 1)[0]);
+              }
+              if (picked.length)
+                await AsyncStorage.setItem(
+                  `@newWords/${id}`,
+                  JSON.stringify(picked)
+                );
+            }
+          }
+        }
+
+        // navigate to the song detail page (include meta so [song] shows cover like Category flow)
+        router.push({
+          pathname: "/songs/[song]",
+          params: {
+            song: id,
+            title: metaTitle,
+            artist: metaArtist,
+            picture: picture ?? "",
+            lyrics: lyrics ?? null,
+          },
+        });
+        return;
+      }
+
+      // fallback: if no id, try to navigate by title (encode title)
+      const encoded = encodeURIComponent(fav.title.trim());
+      await AsyncStorage.setItem(
+        `@songMeta/${encoded}`,
+        JSON.stringify({
+          id: encoded,
+          title: fav.title,
+          artist: fav.artist ?? "",
+          picture: "",
+          lyrics: null,
+        })
+      );
+      router.push({
+        pathname: "/songs/[song]",
+        params: {
+          song: encoded,
+          title: fav.title,
+          artist: fav.artist ?? "",
+          picture: "",
+          lyrics: null,
+        },
+      });
+    } catch (e) {
+      console.warn("Favorite navigation failed:", e);
+      Alert.alert("שגיאה", "לא ניתן לפתוח את השיר כרגע.");
+    }
+  };
 
   if (loading) {
     return (
@@ -234,6 +457,11 @@ export default function Profile() {
                       ]}
                     >
                       {w}
+                      {getHebrew(w) ? (
+                        <Text style={styles.translationText}>
+                          {"\n" + getHebrew(w)}
+                        </Text>
+                      ) : null}
                     </Text>
                   ))
                 ) : (
@@ -297,6 +525,11 @@ export default function Profile() {
                       ]}
                     >
                       {w}
+                      {getHebrew(w) ? (
+                        <Text style={styles.translationText}>
+                          {"\n" + getHebrew(w)}
+                        </Text>
+                      ) : null}
                     </Text>
                   ))
                 ) : (
@@ -353,11 +586,13 @@ export default function Profile() {
               <ScrollView nestedScrollEnabled>
                 {favorites.length ? (
                   favorites.map((s, i) => (
-                    <View
+                    <Pressable
                       key={`${s.title}-${i}`}
-                      style={[
+                      onPress={() => handleFavoritePress(s)}
+                      style={({ pressed }) => [
                         styles.favoriteRow,
                         openFavorites && styles.favoriteRowActive,
+                        pressed && styles.pressed,
                         // highlight difference when favorite title not present in words
                         isFavoriteDifferent(s.title) && styles.diffLineFavRow,
                       ]}
@@ -373,7 +608,7 @@ export default function Profile() {
                       >
                         {s.artist ? `${s.title} — ${s.artist}` : s.title}
                       </Text>
-                    </View>
+                    </Pressable>
                   ))
                 ) : (
                   <Text style={styles.emptyText}>לא הוספת שירים למועדפים.</Text>
@@ -545,5 +780,12 @@ const styles = StyleSheet.create({
   },
   songArtistActive: {
     color: "#073238",
+  },
+  translationText: {
+    fontSize: 14,
+    color: "#666",
+    marginTop: 4,
+    fontWeight: "600",
+    textAlign: "center",
   },
 });

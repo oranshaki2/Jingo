@@ -1,5 +1,11 @@
 // app/songs/player.tsx
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   View,
   Text,
@@ -11,6 +17,7 @@ import {
   Alert,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { useIsFocused } from "@react-navigation/native";
 import { Audio, AVPlaybackStatusSuccess } from "expo-av";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { audioMap } from "@/assets/audioMap";
@@ -47,24 +54,30 @@ const GEMINI_MODEL = "gemini-2.5-pro";
 /** ===== Page Component ===== */
 export default function SongPlayerScreen() {
   const router = useRouter();
-  
+
   // useLocalSearchParams has a generic constraint 'Route' — cast the result instead of passing a generic.
-  const params = useLocalSearchParams() as Partial<{ title: string; artist: string; lyrics: string; song: string }>;
+  const params = useLocalSearchParams() as Partial<{
+    title: string;
+    artist: string;
+    lyrics: string;
+    song: string;
+  }>;
   const title = params?.title || "Unknown Song";
   const artist = params?.artist || "Unknown Artist";
   const initialLyrics = params?.lyrics ?? "";
 
   // Normalize title for file naming (lowercase, no extra spaces)
-const normalizedTitle = title.trim().toLowerCase();
+  const normalizedTitle = title.trim().toLowerCase();
 
-const LOCAL_AUDIO =
-  audioMap[normalizedTitle] ?? audioMap["you belong with me"];
+  const LOCAL_AUDIO =
+    audioMap[normalizedTitle] ?? audioMap["you belong with me"];
 
-if (!audioMap[normalizedTitle]) {
-  console.warn(`Audio not found for "${normalizedTitle}", using fallback.`);
-}
+  if (!audioMap[normalizedTitle]) {
+    console.warn(`Audio not found for "${normalizedTitle}", using fallback.`);
+  }
 
   const [sound, setSound] = useState<Audio.Sound | null>(null);
+  const soundRef = useRef<Audio.Sound | null>(null);
   const [isLoadingAudio, setIsLoadingAudio] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
   const [durationMs, setDurationMs] = useState<number | null>(null);
@@ -128,9 +141,14 @@ if (!audioMap[normalizedTitle]) {
     return Math.max(0, Math.min(lyrics.length - 1, idx));
   }, [positionMs, msPerLine, lyrics]);
 
-  /** ===== Load audio ===== */
+  const isFocused = useIsFocused();
+
+  /** ===== Load audio when screen is focused ===== */
   useEffect(() => {
     let mounted = true;
+
+    // Only initialize when the screen is focused and we don't already have a sound
+    if (!isFocused || soundRef.current) return;
 
     (async () => {
       try {
@@ -156,6 +174,7 @@ if (!audioMap[normalizedTitle]) {
         }
 
         setSound(s);
+        soundRef.current = s;
 
         // Grab duration after loading
         const st = await s.getStatusAsync();
@@ -171,10 +190,35 @@ if (!audioMap[normalizedTitle]) {
 
     return () => {
       mounted = false;
-      // Clean up sound on unmount
-      if (sound) {
-        sound.unloadAsync().catch(() => {});
+      // If the screen is blurring/unmounting and we have a sound, unload it
+      if (soundRef.current) {
+        soundRef.current.unloadAsync().catch(() => {});
+        soundRef.current = null;
       }
+    };
+    // Re-run when focus changes or the audio source changes
+  }, [isFocused, LOCAL_AUDIO]);
+
+  // Ensure audio stops, resets to start, and unloads when the component unmounts
+  useEffect(() => {
+    return () => {
+      if (!soundRef.current) return;
+      (async () => {
+        try {
+          const s = soundRef.current!;
+          const st = await s.getStatusAsync();
+          if (st.isLoaded) {
+            // stop playback and reset to start
+            await s.stopAsync().catch(() => {});
+            await s.setPositionAsync(0).catch(() => {});
+          }
+          await s.unloadAsync().catch(() => {});
+        } catch (e) {
+          // ignore
+        } finally {
+          soundRef.current = null;
+        }
+      })();
     };
   }, []);
 
@@ -186,60 +230,59 @@ if (!audioMap[normalizedTitle]) {
       return;
     }
 
-  let cancelled = false;
+    let cancelled = false;
 
-  (async () => {
-    try {
-      if (!GEMINI_API_KEY) {
-        throw new Error("Missing Gemini API key.");
-      }
-
-      setIsLoadingLyrics(true);
-      setError(null);
-
-      const prompt = buildGeminiPrompt(title, artist);
-
-      const res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: [{ role: "user", parts: [{ text: prompt }] }],
-            generationConfig: { temperature: 0.2 },
-          }),
+    (async () => {
+      try {
+        if (!GEMINI_API_KEY) {
+          throw new Error("Missing Gemini API key.");
         }
-      );
 
-      if (!res.ok) {
-        const txt = await res.text();
-        throw new Error(`Gemini HTTP ${res.status}: ${txt}`);
+        setIsLoadingLyrics(true);
+        setError(null);
+
+        const prompt = buildGeminiPrompt(title, artist);
+
+        const res = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              contents: [{ role: "user", parts: [{ text: prompt }] }],
+              generationConfig: { temperature: 0.2 },
+            }),
+          }
+        );
+
+        if (!res.ok) {
+          const txt = await res.text();
+          throw new Error(`Gemini HTTP ${res.status}: ${txt}`);
+        }
+
+        const data = await res.json();
+        const raw =
+          data?.candidates?.[0]?.content?.parts?.[0]?.text ??
+          data?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data ??
+          "";
+
+        const jsonText = extractFirstJsonObject(raw);
+        const parsed = JSON.parse(jsonText) as LyricsPayload;
+
+        if (!cancelled && Array.isArray(parsed.lines)) {
+          setLyrics(parsed.lines);
+        }
+      } catch (e: any) {
+        setError(`Lyrics fetch failed: ${String(e?.message || e)}`);
+      } finally {
+        if (!cancelled) setIsLoadingLyrics(false);
       }
+    })();
 
-      const data = await res.json();
-      const raw =
-        data?.candidates?.[0]?.content?.parts?.[0]?.text ??
-        data?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data ??
-        "";
-
-      const jsonText = extractFirstJsonObject(raw);
-      const parsed = JSON.parse(jsonText) as LyricsPayload;
-
-      if (!cancelled && Array.isArray(parsed.lines)) {
-        setLyrics(parsed.lines);
-      }
-
-    } catch (e: any) {
-      setError(`Lyrics fetch failed: ${String(e?.message || e)}`);
-    } finally {
-      if (!cancelled) setIsLoadingLyrics(false);
-    }
-  })();
-
-  return () => {
-    cancelled = true;
-  };
-}, [title, artist, lyrics]);
+    return () => {
+      cancelled = true;
+    };
+  }, [title, artist, lyrics]);
 
   /** ===== Playback status listener ===== */
   const onPlaybackStatusUpdate = useCallback(
@@ -247,7 +290,10 @@ if (!audioMap[normalizedTitle]) {
       if (!status || !("isLoaded" in status) || !status.isLoaded) return;
 
       setIsPlaying(status.isPlaying);
-      if ("positionMillis" in status && typeof status.positionMillis === "number") {
+      if (
+        "positionMillis" in status &&
+        typeof status.positionMillis === "number"
+      ) {
         setPositionMs(status.positionMillis);
       }
       if (
@@ -315,11 +361,30 @@ if (!audioMap[normalizedTitle]) {
     [sound, msPerLine]
   );
 
-  const startStudy = useCallback(() => {
+  const startStudy = useCallback(async () => {
     if (words.length === 0) {
       Alert.alert("No words", "Please ensure words are saved in AsyncStorage.");
       return;
     }
+
+    // Stop, reset and unload the audio before navigating away
+    try {
+      if (soundRef.current) {
+        const s = soundRef.current;
+        const st = await s.getStatusAsync().catch(() => ({}) as any);
+        if (st && st.isLoaded) {
+          await s.stopAsync().catch(() => {});
+          await s.setPositionAsync(0).catch(() => {});
+        }
+        await s.unloadAsync().catch(() => {});
+      }
+    } catch (e) {
+      // ignore cleanup errors
+    } finally {
+      setSound(null);
+      soundRef.current = null;
+    }
+
     // Navigate to Question1 with words as parameter
     router.push({
       pathname: "/songs/question1",
@@ -339,11 +404,13 @@ if (!audioMap[normalizedTitle]) {
 
       <View style={styles.controlsRow}>
         <Pressable style={styles.controlBtn} onPress={togglePlay}>
-          <Text style={styles.controlBtnText}>{isPlaying ? "Pause" : "Play"}</Text>
+          <Text style={styles.controlBtnText}>
+            {isPlaying ? "השהה" : "נגן"}
+          </Text>
         </Pressable>
 
         <Pressable style={styles.secondaryBtn} onPress={stopAndReset}>
-          <Text style={styles.secondaryBtnText}>Stop</Text>
+          <Text style={styles.secondaryBtnText}>עצור</Text>
         </Pressable>
       </View>
 
@@ -363,7 +430,7 @@ if (!audioMap[normalizedTitle]) {
         <View style={styles.loadingBox}>
           <ActivityIndicator size="large" />
           <Text style={styles.loadingText}>
-            {isLoadingAudio ? "Loading audio..." : "Fetching lyrics..."}
+            {isLoadingAudio ? "טוען שמע..." : "טוען מילים..."}
           </Text>
         </View>
       )}
@@ -389,19 +456,33 @@ if (!audioMap[normalizedTitle]) {
           renderItem={({ item, index }) => {
             const isActive = index === currentIndex;
             return (
-              <Pressable onPress={() => seekToLine(index)} style={styles.linePressable}>
-                <View style={[styles.lineBox, isActive && styles.activeLineBox]}>
-                  <Text
-                    style={[styles.lyricEn, isActive && styles.activeLyricEn]}
-                    selectable={false}
-                  >
-                    {item.english}
+              <Pressable
+                onPress={() => seekToLine(index)}
+                style={styles.linePressable}
+              >
+                <View
+                  style={[styles.lineBox, isActive && styles.activeLineBox]}
+                >
+                  <Text selectable={false}>
+                    {renderHighlightedParts(
+                      item.english,
+                      words,
+                      styles.lyricEn,
+                      styles.activeLyricEn,
+                      styles.highlightWord,
+                      isActive
+                    )}
                   </Text>
-                  <Text
-                    style={[styles.lyricHe, isActive && styles.activeLyricHe]}
-                    selectable={false}
-                  >
-                    {item.hebrew}
+
+                  <Text selectable={false}>
+                    {renderHighlightedParts(
+                      item.hebrew,
+                      words,
+                      styles.lyricHe,
+                      styles.activeLyricHe,
+                      styles.highlightWord,
+                      isActive
+                    )}
                   </Text>
                 </View>
               </Pressable>
@@ -459,6 +540,54 @@ function formatMs(ms: number) {
   const m = Math.floor(total / 60);
   const s = total % 60;
   return `${m}:${s.toString().padStart(2, "0")}`;
+}
+
+/** Escape for safe regex usage */
+function escapeRegExp(s: string) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/**
+ * Render a text string with parts that match any of `highlights` wrapped
+ * in a Text node with `highlightStyle`. Returns an array of <Text/> nodes.
+ */
+function renderHighlightedParts(
+  text: string,
+  highlights: string[],
+  baseStyle: any,
+  activeStyle: any,
+  highlightStyle: any,
+  isActive: boolean
+) {
+  if (!highlights || highlights.length === 0) {
+    return <Text style={[baseStyle, isActive && activeStyle]}>{text}</Text>;
+  }
+
+  const cleaned = highlights
+    .filter(Boolean)
+    .map((h) => escapeRegExp(h.trim()))
+    .sort((a, b) => b.length - a.length);
+
+  const pattern = cleaned.join("|");
+  if (!pattern)
+    return <Text style={[baseStyle, isActive && activeStyle]}>{text}</Text>;
+
+  const regex = new RegExp(`(${pattern})`, "i");
+  // Split while preserving matches via a global split pattern (we'll iterate)
+  const parts = text.split(new RegExp(`(${pattern})`, "gi"));
+
+  return parts.map((part, idx) => {
+    if (!part) return null;
+    const isMatch = cleaned.some((e) => new RegExp(`^${e}$`, "i").test(part));
+    const style = isMatch
+      ? [baseStyle, isActive && activeStyle, highlightStyle]
+      : [baseStyle, isActive && activeStyle];
+    return (
+      <Text key={String(idx)} style={style}>
+        {part}
+      </Text>
+    );
+  });
 }
 
 /** ===== Styles ===== */
@@ -583,6 +712,10 @@ const styles = StyleSheet.create({
   },
   activeLyricHe: {
     color: COLORS.activeText,
+  },
+  highlightWord: {
+    color: "#b00020",
+    fontWeight: "700",
   },
   studyButton: {
     position: "absolute",
