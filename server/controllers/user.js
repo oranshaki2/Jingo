@@ -1,14 +1,6 @@
 // server/controllers/user.js
 const userService = require('../services/user');
-const mongoose = require('mongoose');
-const fs = require('fs');
-const path = require('path');
 
-// Get the path to the directory containing the profile pictures
-const pictureDirectory = path.join(__dirname, '../profilePics');
-
-// Load the list of picture files once
-const pictureFiles = fs.readdirSync(pictureDirectory).filter(file => file.endsWith('.jpg'));
 
 const createUser = async (req, res) => {
   try {
@@ -17,8 +9,6 @@ const createUser = async (req, res) => {
 
     const { username, password, genres, level } = userData;
 
-    // Handle profile picture upload
-    const picture = req.file ? req.file.path : 'default.jpg';
 
     // Validate required fields
     if (!password || password.length < 8) {
@@ -29,7 +19,6 @@ const createUser = async (req, res) => {
     const user = await userService.createUser({
       username,
       password,
-      picture,
       genres,
       level,
       wordHistory: [],

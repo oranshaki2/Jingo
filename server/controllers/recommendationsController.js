@@ -1,22 +1,7 @@
 // controllers/recommendationsController.js
 const path = require("path");
-const fs = require('fs');
 const { recommendOnlyNewWords } = require("../services/recommendOnlyNew");
 
-
-/*
-  * Resolves the CSV file path from environment variable or defaults.
-*/
-function resolveCsvPath() {
-  const fromEnv = process.env.SONGS_CSV_PATH && String(process.env.SONGS_CSV_PATH).trim();
-  if (fromEnv) {
-    // Resolve relative to the process working dir (where you run `node app.js`, i.e., /server)
-    const abs = path.isAbsolute(fromEnv) ? fromEnv : path.resolve(process.cwd(), fromEnv);
-    return abs;
-  }
-  // Fallback to the repo default (resolve relative to the server working dir)
-  return path.resolve(process.cwd());
-}
 
 /*
   * Handles POST /api/recommendations/only-new
@@ -25,11 +10,6 @@ function resolveCsvPath() {
 */
 async function postOnlyNew(req, res) {
   try {
-    // const csvPath = resolveCsvPath();
-    // if (!fs.existsSync(csvPath)) {
-    //   return res.status(500).json({ error: `CSV file not found at: ${csvPath}` });
-    // }
-
     const { user, category } = req.body || {};
     if (
       !user ||

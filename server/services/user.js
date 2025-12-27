@@ -2,11 +2,10 @@
 const User = require('../models/user');
 
 // Create a new user
-const createUser = async ({ username, password, picture, genres, level }) => {
+const createUser = async ({ username, password, genres, level }) => {
     const user = new User({
         username,
         password,
-        picture,
         genres,
         level,
         wordHistory: [],

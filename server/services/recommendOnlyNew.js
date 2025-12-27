@@ -2,14 +2,14 @@
 const Song = require('../models/song');
 
 /**
- * קורא את כל השירים מה-DB
+ * gets all songs from the database
  */
 const getSongsFromDB = async () => {
-  return await Song.find().lean(); // .lean() כדי לקבל אובייקטים רגילים
+  return await Song.find().lean(); // .lean() to get plain objects
 };
 
 /**
- * מנרמל תמונה (אם לא URL)
+ * normalizes picture key
  */
 function normalizePictureKey(s) {
   if (!s) return null;
@@ -24,7 +24,7 @@ function normalizePictureKey(s) {
 }
 
 /**
- * בוחר את רשימת המילים לקטגוריה
+ * picks the list of words for a category
  */
 function pickWordsForCategory(song, selectedCategory) {
   if (!song || !Array.isArray(song.categories) || !Array.isArray(song.category_words)) return null;
@@ -35,17 +35,17 @@ function pickWordsForCategory(song, selectedCategory) {
   );
 
   if (idx === -1) return null;
-  return song.category_words[idx]; // ← כאן השתנה!
+  return song.category_words[idx]; 
 }
 
 /**
- * מסנן מילים חדשות – תומך ב-level כמחרוזת
+ * Filters new words – supports level as a string
  */
 function filterWordsByHistory(singleCategoryWordList, userHistory, userLevel) {
   if (!Array.isArray(singleCategoryWordList) || singleCategoryWordList.length === 0) return [];
 
   const maybeLevel = singleCategoryWordList[singleCategoryWordList.length - 1];
-  const level = Number(maybeLevel); // ← הופך '1' → 1
+  const level = Number(maybeLevel); 
 
   if (!Number.isFinite(level) || level !== Number(userLevel)) return [];
 
@@ -57,7 +57,7 @@ function filterWordsByHistory(singleCategoryWordList, userHistory, userLevel) {
 }
 
 /**
- * ממליץ שירים עם מילים חדשות
+ * Recommends only new words based on user history and selected category
  */
 async function recommendOnlyNewWords(user, selectedCategory) {
   const allSongs = await getSongsFromDB();
@@ -69,34 +69,34 @@ async function recommendOnlyNewWords(user, selectedCategory) {
     const recommendations = [];
 
     for (const song of allSongs) {
-      // 1. התאמת ז'אנר (case-insensitive)
+      // 1. Match genre (case-insensitive)
       if (String(song.genre || '').trim().toLowerCase() !== String(genre || '').trim().toLowerCase()) {
         continue;
       }
 
-      // 2. האם יש את הקטגוריה?
+      // 2. Does the song have the selected category?
       const hasCategory = Array.isArray(song.categories) && song.categories.some(
         c => String(c || '').trim().toLowerCase() === String(selectedCategory).trim().toLowerCase()
       );
       if (!hasCategory) continue;
 
-      // 3. קבלת רשימת מילים לקטגוריה
+      // 3. Get list of words for the category
       const listForCategory = pickWordsForCategory(song, selectedCategory);
       if (!listForCategory) continue;
 
-      // 4. סינון מילים חדשות
+      // 4. Filter new words
       const newWords = filterWordsByHistory(listForCategory, user.wordHistory || [], user.level);
-      if (newWords.length <= 1) continue; // דורש לפחות 2 מילים חדשות
+      if (newWords.length <= 1) continue; // requires at least 2 new words
 
-      // 5. נירמול תמונה
+      // 5. Normalize picture
       let picture = song.picture;
       if (picture && !/^https?:\/\//i.test(picture)) {
         picture = normalizePictureKey(picture);
       }
 
-      // 6. הוספת שיר
+      // 6. Add to recommendations
       recommendations.push({
-        title: song.name,           // ← כאן השתנה מ-title ל-name
+        title: song.name,           
         artist: song.artist,
         genre: song.genre,
         newWords,

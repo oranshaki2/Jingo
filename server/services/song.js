@@ -1,9 +1,7 @@
 // server/services/song.js
 const Song = require("../models/song");
-// const axios = require('axios');
-// const net = require('net');
 const mongoose = require("mongoose");
-const User = require("../models/user"); // added user model
+const User = require("../models/user"); 
 
 // Create a new song
 const createSong = async (

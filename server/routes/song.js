@@ -1,6 +1,6 @@
 const express = require('express'); // Import Express for routing.
 const router = express.Router(); // Create a new router instance.
-const songController = require('../controllers/song'); // Import the movie controller.
+const songController = require('../controllers/song'); // Import the song controller.
 
 router.route('/')
     .get(songController.getSongs)  // Get songs.

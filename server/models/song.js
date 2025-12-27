@@ -11,7 +11,6 @@ const song = new Schema({
     name: { // Name of the song
         type: String, 
         required: true,
-        unique: true
     },
     artist: { // Artist of the song
         type: String,
@@ -44,6 +43,9 @@ const song = new Schema({
     }
 
 }, {versionKey: false}); // Disable the version key from the schema.
+
+// Create a compound unique index on name + artist
+song.index({ name: 1, artist: 1 }, { unique: true });
 
 // Export the Mongoose model for categories to use it elsewhere in the application.
 module.exports = mongoose.model('Song', song);
