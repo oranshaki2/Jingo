@@ -215,10 +215,17 @@ export default function Profile() {
         });
         if (res.ok) {
           const song = await res.json();
-
-          // prefer common picture fields
-          picture =
-            song.picture ?? song.cover ?? song.image ?? song.albumArt ?? null;
+          let displayPicture: string | null = null;
+          if (song.artist) {
+            const artistKey = String(song.artist ?? "")
+              .toLowerCase()
+              .trim()
+              .replace(/\s+/g, '_');
+            
+            if (artistImages[artistKey]) {
+              displayPicture = artistKey; 
+            }
+          }
 
           metaTitle = song.title ?? song.name ?? metaTitle;
           metaArtist = song.artist ?? song.performer ?? metaArtist;
@@ -232,7 +239,7 @@ export default function Profile() {
             await AsyncStorage.setItem(`@lyrics/${id}`, lyricsStr);
           }
 
-          // store meta for the song page to read (include id + lyrics to match category flow)
+          // store meta for the song page
           await AsyncStorage.setItem(
             `@songMeta/${id}`,
             JSON.stringify({
@@ -240,7 +247,7 @@ export default function Profile() {
               title: metaTitle,
               artist: metaArtist,
               genre: song.genre ?? undefined,
-              picture,
+              picture: displayPicture ?? null,
               lyrics: lyrics ?? null,
             })
           );
@@ -334,31 +341,45 @@ export default function Profile() {
                 );
             }
           }
-        }
 
-        // navigate to the song detail page (include meta so [song] shows cover like Category flow)
-        router.push({
-          pathname: "/songs/[song]",
-          params: {
-            song: id,
-            title: metaTitle,
-            artist: metaArtist,
-            picture: picture ?? "",
-            lyrics: lyrics ?? null,
-          },
-        });
-        return;
+          // Navigate with explicit picture param
+          router.push({
+            pathname: "/songs/[song]",
+            params: {
+              song: id,
+              title: metaTitle,
+              artist: metaArtist,
+              picture: displayPicture ?? "", // pass explicitly (empty string if null)
+              lyrics: lyrics ?? null,
+            },
+          });
+          return;
+        }
       }
 
-      // fallback: if no id, try to navigate by title (encode title)
+      // fallback: if no id or fetch failed
       const encoded = encodeURIComponent(fav.title.trim());
+      
+      // Create artist key from favorite artist (spaces → underscores)
+      let fallbackPicture = "";
+      if (fav.artist) {
+        const artistKey = String(fav.artist)
+          .toLowerCase()
+          .trim()
+          .replace(/\s+/g, '_');
+        
+        if (artistImages[artistKey]) {
+          fallbackPicture = artistKey;
+        }
+      }
+      
       await AsyncStorage.setItem(
         `@songMeta/${encoded}`,
         JSON.stringify({
           id: encoded,
           title: fav.title,
           artist: fav.artist ?? "",
-          picture: "",
+          picture: fallbackPicture,
           lyrics: null,
         })
       );
@@ -368,7 +389,7 @@ export default function Profile() {
           song: encoded,
           title: fav.title,
           artist: fav.artist ?? "",
-          picture: "",
+          picture: fallbackPicture,
           lyrics: null,
         },
       });
@@ -593,7 +614,6 @@ export default function Profile() {
                         styles.favoriteRow,
                         openFavorites && styles.favoriteRowActive,
                         pressed && styles.pressed,
-                        // highlight difference when favorite title not present in words
                         isFavoriteDifferent(s.title) && styles.diffLineFavRow,
                       ]}
                     >
@@ -674,19 +694,17 @@ const styles = StyleSheet.create({
     borderColor: "#E6EEF0",
   },
 
-  // active wrapper (applies to the whole section when open)
   accordionActive: {
     backgroundColor: COLORS.primary,
     borderColor: COLORS.primary,
   },
 
-  // Header (button)
   accordionHeader: {
     flexDirection: "row-reverse",
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 14,
-    paddingVertical: 18, // increased padding for larger button
+    paddingVertical: 18,
     backgroundColor: "#FFFFFF",
   },
   accordionHeaderActive: {
@@ -695,13 +713,13 @@ const styles = StyleSheet.create({
   pressed: { opacity: 0.9 },
 
   accordionTitle: {
-    fontSize: 18, // larger font
+    fontSize: 18,
     fontWeight: "700",
     color: COLORS.secondary,
     textAlign: "right",
   },
   accordionTitleActive: {
-    color: "#003B3B", // darker text on primary background for readability
+    color: "#003B3B",
   },
 
   accordionToggle: {
@@ -713,7 +731,6 @@ const styles = StyleSheet.create({
     color: "#003B3B",
   },
 
-  // Body
   accordionBody: {
     paddingHorizontal: 14,
     paddingVertical: 10,
@@ -730,14 +747,12 @@ const styles = StyleSheet.create({
     color: COLORS.textDark,
     fontSize: 16,
     textAlign: "center",
-    fontWeight: "700", // make learned/mistake words bold like favorites
+    fontWeight: "700",
   },
-  // common diff line style (used for words)
   diffLine: {
     backgroundColor: "#E6EEF0",
     borderBottomColor: "#E6EEF0",
   },
-  // favorite-specific row/text tweaks
   diffLineFavRow: {
     backgroundColor: "#E6EEF0",
     borderBottomColor: "#E6EEF0",
@@ -771,15 +786,6 @@ const styles = StyleSheet.create({
   },
   songTitleActive: {
     color: "#003B3B",
-  },
-  songArtist: {
-    fontSize: 14,
-    color: "#666",
-    marginTop: 2,
-    textAlign: "center",
-  },
-  songArtistActive: {
-    color: "#073238",
   },
   translationText: {
     fontSize: 14,
