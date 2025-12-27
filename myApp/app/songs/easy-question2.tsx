@@ -22,9 +22,11 @@ const GEMINI_MODEL = "gemini-2.5-pro";
 
 export default function Question2Screen() {
   const router = useRouter();
-  const params = useLocalSearchParams() as Partial<{ remainingWords: string; category: string; level: string }>;
+  const params = useLocalSearchParams() as Partial<{ remainingWords: string; category: string; level: string; correctWords?: string; incorrectWords?: string }>;
   
   const [words, setWords] = useState<string[]>([]);
+  const [correctWords, setCorrectWords] = useState<string[]>([]);
+  const [incorrectWords, setIncorrectWords] = useState<string[]>([]);
   const [currentWord, setCurrentWord] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingQuestion, setIsLoadingQuestion] = useState(false);
@@ -45,6 +47,14 @@ export default function Question2Screen() {
         } else {
           Alert.alert("Error", "No words received or words list is empty.");
         }
+      }
+      
+      // Parse tracking lists if they exist
+      if (params.correctWords) {
+        setCorrectWords(JSON.parse(params.correctWords));
+      }
+      if (params.incorrectWords) {
+        setIncorrectWords(JSON.parse(params.incorrectWords));
       }
     } catch (e) {
       console.error("Failed to parse remaining words:", e);
@@ -119,6 +129,17 @@ export default function Question2Screen() {
   const handleContinue = () => {
     if (!currentWord) return;
 
+    // Determine if answer is correct
+    const isAnswerCorrect = selectedOption === questionData?.correctAnswerIndex;
+    
+    // Update tracking lists
+    const newCorrectWords = isAnswerCorrect 
+      ? [...correctWords, currentWord] 
+      : correctWords;
+    const newIncorrectWords = !isAnswerCorrect 
+      ? [...incorrectWords, currentWord] 
+      : incorrectWords;
+
     // Create remaining words array (original list minus the selected word)
     const remainingWords = words.filter((word) => word !== currentWord);
 
@@ -128,13 +149,21 @@ export default function Question2Screen() {
         pathname: "/songs/easy-question3" as any,
         params: {
           remainingWords: JSON.stringify(remainingWords),
+          correctWords: JSON.stringify(newCorrectWords),
+          incorrectWords: JSON.stringify(newIncorrectWords),
           category: params.category || "",
           level: params.level || "",
         },
       });
     } else {
       // No remaining words, navigate to finish
-      router.push("/songs/finish");
+      router.push({
+        pathname: "/songs/finish",
+        params: {
+          correctWords: JSON.stringify(newCorrectWords),
+          incorrectWords: JSON.stringify(newIncorrectWords),
+        },
+      });
     }
   };
 
@@ -161,7 +190,7 @@ export default function Question2Screen() {
 
         {/* ===== Question Title ===== */}
         <View style={styles.questionBox}>
-          <Text style={styles.questionText}>השלימו את המשפט: אתם בעמוד הקל</Text>
+          <Text style={styles.questionText}>השלימו את המשפט:</Text>
         </View>
 
         {/* ===== Sentence with Blank ===== */}
@@ -242,7 +271,7 @@ Return ONLY valid JSON, with "sentence", "options" and "correctAnswerIndex".
 Generate a fill-the-blank exercise:
 - Create a sentence in Hebrew that uses the word "${word}" (from category "${category}")
 - Replace the word with a blank (shown as _______ in the sentence)
-- Provide 4 options: the correct word and 3 plausible but incorrect distractors
+- Provide 4 options in English: the correct word and 3 plausible but incorrect distractors
 `;
 }
 

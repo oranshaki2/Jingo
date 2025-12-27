@@ -31,10 +31,25 @@ cd ..
 # Start ngrok to expose the local API to the internet
 echo "🌍 Starting ngrok tunnel for port 3000..."
 ngrok http 3000 > /tmp/ngrok.log &
-sleep 3  # Give ngrok a few seconds to initialize
+echo "⏳ Waiting for ngrok tunnel..."
 
-# Extract the public URL created by ngrok and update the .env.local files
-URL=$(curl -s http://127.0.0.1:4040/api/tunnels | jq -r '.tunnels[0].public_url')
+for i in {1..10}; do
+  URL=$(curl -s http://127.0.0.1:4040/api/tunnels \
+    | jq -r '.tunnels[]?.public_url' \
+    | grep https)
+
+  if [ -n "$URL" ]; then
+    break
+  fi
+
+  sleep 1
+done
+
+if [ -z "$URL" ]; then
+  echo "❌ Could not retrieve ngrok URL after waiting."
+  cleanup
+fi
+# Validate the URL
 if [ -z "$URL" ] || [ "$URL" = "null" ]; then
   echo "❌ Could not retrieve ngrok URL. Is ngrok running and authtoken configured?"
   cleanup

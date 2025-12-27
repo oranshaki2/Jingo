@@ -1,40 +1,95 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
   Pressable,
   Platform,
+  ScrollView,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 
 export default function FinishScreen() {
   const router = useRouter();
+  const params = useLocalSearchParams() as Partial<{ correctWords?: string; incorrectWords?: string }>;
+  
+  const [correctWords, setCorrectWords] = useState<string[]>([]);
+  const [incorrectWords, setIncorrectWords] = useState<string[]>([]);
+
+  useEffect(() => {
+    try {
+      if (params.correctWords) {
+        setCorrectWords(JSON.parse(params.correctWords));
+      }
+      if (params.incorrectWords) {
+        setIncorrectWords(JSON.parse(params.incorrectWords));
+      }
+    } catch (e) {
+      console.error("Failed to parse results:", e);
+    }
+  }, [params.correctWords, params.incorrectWords]);
 
   const handleBackToHome = () => {
     // Navigate back to home screen
     router.push("/(tabs)/home");
   };
 
+  const totalWords = correctWords.length + incorrectWords.length;
+  const successRate = totalWords > 0 ? Math.round((correctWords.length / totalWords) * 100) : 0;
+
   return (
     <View style={styles.container}>
-      <View style={styles.contentContainer}>
+      <ScrollView contentContainerStyle={styles.contentContainer}>
         <View style={styles.celebrationBox}>
           <Text style={styles.celebrationEmoji}>🎉</Text>
         </View>
 
-        <Text style={styles.title}>Study Complete!</Text>
+        <Text style={styles.title}>סיימנו!</Text>
         
         <Text style={styles.message}>
-          Great job! You've successfully completed all the questions for all the words.
+          כל הכבוד! השלמת בהצלחה את כל השאלות.
         </Text>
 
-        <View style={styles.statsBox}>
-          <Text style={styles.statsText}>
-            You've studied all the words in your list!
-          </Text>
+        {/* Summary Stats */}
+        <View style={styles.summaryBox}>
+          <View style={styles.statRow}>
+            <Text style={styles.statLabel}>סה״כ מילים:</Text>
+            <Text style={styles.statValue}>{totalWords}</Text>
+          </View>
+          <View style={styles.statRow}>
+            <Text style={styles.statLabel}>שיעור הצלחה:</Text>
+            <Text style={[styles.statValue, styles.successColor]}>{successRate}%</Text>
+          </View>
         </View>
-      </View>
+
+        {/* Correct Answers */}
+        {correctWords.length > 0 && (
+          <View style={styles.resultBox}>
+            <Text style={[styles.resultTitle, styles.successText]}>✓ הצלחות ({correctWords.length})</Text>
+            <View style={styles.wordsList}>
+              {correctWords.map((word, index) => (
+                <View key={index} style={styles.wordItem}>
+                  <Text style={[styles.wordText, styles.successText]}>{word}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+        )}
+
+        {/* Incorrect Answers */}
+        {incorrectWords.length > 0 && (
+          <View style={styles.resultBox}>
+            <Text style={[styles.resultTitle, styles.errorText]}>✗ טעויות ({incorrectWords.length})</Text>
+            <View style={styles.wordsList}>
+              {incorrectWords.map((word, index) => (
+                <View key={index} style={styles.wordItem}>
+                  <Text style={[styles.wordText, styles.errorText]}>{word}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+        )}
+      </ScrollView>
 
       <View style={styles.buttonContainer}>
         <Pressable 
@@ -55,6 +110,7 @@ const COLORS = {
   text: "#222",
   textDim: "#4a4a4a",
   success: "#10B981",
+  error: "#EF4444",
 };
 
 const styles = StyleSheet.create({
@@ -66,12 +122,13 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   contentContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    flexGrow: 1,
+    justifyContent: "flex-start",
+    paddingBottom: 16,
   },
   celebrationBox: {
     marginBottom: 24,
+    alignItems: "center",
   },
   celebrationEmoji: {
     fontSize: 64,
@@ -90,20 +147,64 @@ const styles = StyleSheet.create({
     lineHeight: 28,
     marginBottom: 32,
   },
-  statsBox: {
-    backgroundColor: "#E6FAF7",
+  summaryBox: {
+    backgroundColor: "white",
     borderRadius: 12,
     borderWidth: 1,
     borderColor: COLORS.primary,
     padding: 20,
-    width: "100%",
+    marginBottom: 24,
   },
-  statsText: {
+  statRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  statLabel: {
     fontSize: 16,
+    color: COLORS.textDim,
+    fontWeight: "500",
+  },
+  statValue: {
+    fontSize: 18,
+    fontWeight: "700",
     color: COLORS.text,
-    textAlign: "center",
-    fontWeight: "600",
-    lineHeight: 24,
+  },
+  successColor: {
+    color: COLORS.success,
+  },
+  resultBox: {
+    backgroundColor: "white",
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: COLORS.primary,
+    padding: 16,
+    marginBottom: 16,
+  },
+  resultTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    marginBottom: 12,
+  },
+  successText: {
+    color: COLORS.success,
+  },
+  errorText: {
+    color: COLORS.error,
+  },
+  wordsList: {
+    gap: 8,
+  },
+  wordItem: {
+    backgroundColor: "#F3F4F6",
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+  wordText: {
+    fontSize: 14,
+    fontWeight: "500",
   },
   buttonContainer: {
     gap: 12,
