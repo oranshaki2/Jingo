@@ -22,7 +22,8 @@ const COLORS = {
 };
 
 type Params = {
-  song?: string;        
+  song?: string;
+  userId?: string;        
 };
 
 type SongMeta = {
@@ -35,6 +36,7 @@ type SongMeta = {
 export default function SongScreen() {
   const params = useLocalSearchParams<Params>();
   const songId = String(params.song ?? "").trim();
+  const userId = params.userId;
 
   const [level, setLevel] = useState<number | null>(null);
   const [meta, setMeta] = useState<SongMeta | null>(null);
@@ -103,6 +105,7 @@ export default function SongScreen() {
         artist: meta?.artist ?? "Unknown", 
         lyrics: lyrics || null,
         song: songId,
+        userId,
       },
     });
   };

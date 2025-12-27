@@ -21,7 +21,7 @@ const GEMINI_MODEL = "gemini-2.5-pro";
 
 export default function Question1Screen() {
   const router = useRouter();
-  const params = useLocalSearchParams() as Partial<{ words: string; category: string; level: string; correctWords?: string; incorrectWords?: string }>;
+  const params = useLocalSearchParams() as Partial<{ words: string; category: string; level: string; correctWords?: string; incorrectWords?: string; userId?: string }>;
 
   const [words, setWords] = useState<string[]>([]);
   const [correctWords, setCorrectWords] = useState<string[]>([]);
@@ -152,17 +152,64 @@ export default function Question1Screen() {
           incorrectWords: JSON.stringify(newIncorrectWords),
           category: params.category || "",
           level: params.level || "",
+          userId: params.userId,
         },
       });
     } else {
-      router.push({
-        pathname: "/songs/finish",
-        params: {
-          correctWords: JSON.stringify(newCorrectWords),
-          incorrectWords: JSON.stringify(newIncorrectWords),
-        },
-      });
+      // Save progress to server before finishing
+      saveProgressToServer(newCorrectWords, newIncorrectWords);
     }
+  };
+
+  const saveProgressToServer = async (correctWords: string[], mistakenWords: string[]) => {
+    try {
+      if (!params.userId) {
+        console.warn("No userId found, skipping server update");
+        navigateToFinish(correctWords, mistakenWords);
+        return;
+      }
+
+      const API_URL = process.env.EXPO_PUBLIC_API_URL;
+      if (!API_URL) {
+        console.warn("API_URL not configured");
+        navigateToFinish(correctWords, mistakenWords);
+        return;
+      }
+
+      const response = await fetch(
+        `${API_URL}/users/${params.userId}/history`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            correctWords,
+            mistakenWords,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        console.warn(`Failed to save progress: ${response.status}`);
+      }
+    } catch (error) {
+      console.error("Error saving progress to server:", error);
+    } finally {
+      // Always navigate to finish, regardless of server response
+      navigateToFinish(correctWords, mistakenWords);
+    }
+  };
+
+  const navigateToFinish = (correctWords: string[], mistakenWords: string[]) => {
+    router.push({
+      pathname: "/songs/finish",
+      params: {
+        correctWords: JSON.stringify(correctWords),
+        incorrectWords: JSON.stringify(mistakenWords),
+        userId: params.userId,
+      },
+    });
   };
 
   if (isLoading) {

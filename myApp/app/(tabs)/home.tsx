@@ -1,5 +1,5 @@
 // app/(tabs)/home.tsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -82,6 +82,19 @@ const CATEGORIES: Category[] = [
 export default function Home() {
   const router = useRouter();
   const [modalVisible, setModalVisible] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const getUserId = async () => {
+      try {
+        const id = await SecureStore.getItemAsync("user_id");
+        setUserId(id);
+      } catch (error) {
+        console.error("Failed to retrieve user_id:", error);
+      }
+    };
+    getUserId();
+  }, []);
 
   return (
     <>
@@ -174,7 +187,7 @@ export default function Home() {
               onPress={() =>
                 router.push({
                   pathname: "/(learn)/category/[cat]",
-                  params: { cat: item.key },
+                  params: { cat: item.key, userId },
                 })
               }
               style={({ pressed }) => [
