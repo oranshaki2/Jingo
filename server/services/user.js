@@ -1,44 +1,44 @@
 // server/services/user.js
-const User = require('../models/user');
+const User = require("../models/user");
 
 // Create a new user
 const createUser = async ({ username, password, genres, level }) => {
-    const user = new User({
-        username,
-        password,
-        genres,
-        level,
-        wordHistory: [],
-        mistakes: [],
-        favorites: [],
-    });
+  const user = new User({
+    username,
+    password,
+    genres,
+    level,
+    wordHistory: [],
+    mistakes: [],
+    favorites: [],
+  });
 
-    await user.save();
-    return user;
+  await user.save();
+  return user;
 };
 
 // Get user's details by id
 const getUserById = async (id) => {
-    return await User.findById(id);
+  return await User.findById(id);
 };
 
 // Get user's details by username
 const getUserByUsername = async (username) => {
-    return await User.findOne({ username });
+  return await User.findOne({ username });
 };
 
 const getAllUsers = async () => {
-    return await User.find({});
+  return await User.find({});
 };
 
 // Update user's favorite songs- If the song already exists, delete it, otherwise add it
 const updateUserFavorites = async (userId, songId) => {
-const user = await User.findById(userId);
+  const user = await User.findById(userId);
   if (!user) {
-    throw new Error('User not found');
+    throw new Error("User not found");
   }
 
-  const songIdStr = songId.toString(); 
+  const songIdStr = songId.toString();
   const index = user.favorites.indexOf(songIdStr);
 
   if (index === -1) {
@@ -55,22 +55,22 @@ const user = await User.findById(userId);
 
 // Update user's level
 const updateUserLevel = async (user, level) => {
-    if (!user) {
-        throw new Error('User not found');
-    }
+  if (!user) {
+    throw new Error("User not found");
+  }
 
-    user.level = level;
-    await user.save();
+  user.level = level;
+  await user.save();
 };
 
 // Update user's genres
 const updateUserGenres = async (user, genres) => {
-    if (!user) {
-        throw new Error('User not found');
-    }
+  if (!user) {
+    throw new Error("User not found");
+  }
 
-    user.genres = genres;
-    await user.save();
+  user.genres = genres;
+  await user.save();
 };
 
 // Update word history and mistakes
@@ -80,16 +80,16 @@ const updateHistoryAndMistakes = async (user, correctWords, mistakenWords) => {
   }
 
   // get existing words from history and mistakes
-  let existingCorrect = new Set(user.wordHistory.flatMap(entry => entry.words));
-  let existingMistakes = new Set(user.mistakes.flatMap(entry => entry.words));
+  let existingCorrect = new Set(user.wordHistory);
+  let existingMistakes = new Set(user.mistakes);
 
   // remove words that were confused with each other
-  mistakenWords.forEach(word => existingCorrect.delete(word));
-  correctWords.forEach(word => existingMistakes.delete(word));
+  mistakenWords.forEach((word) => existingCorrect.delete(word));
+  correctWords.forEach((word) => existingMistakes.delete(word));
 
   // add new words to existing lists
-  correctWords.forEach(word => existingCorrect.add(word));
-  mistakenWords.forEach(word => existingMistakes.add(word));
+  correctWords.forEach((word) => existingCorrect.add(word));
+  mistakenWords.forEach((word) => existingMistakes.add(word));
 
   // update user with new lists
   user.wordHistory = Array.from(existingCorrect);
@@ -98,17 +98,13 @@ const updateHistoryAndMistakes = async (user, correctWords, mistakenWords) => {
   await user.save();
 };
 
-
-
-
-
 module.exports = {
-    createUser,
-    getUserById,
-    getUserByUsername,
-    getAllUsers,
-    updateUserFavorites,
-    updateUserLevel,
-    updateUserGenres,
-    updateHistoryAndMistakes
+  createUser,
+  getUserById,
+  getUserByUsername,
+  getAllUsers,
+  updateUserFavorites,
+  updateUserLevel,
+  updateUserGenres,
+  updateHistoryAndMistakes,
 };
