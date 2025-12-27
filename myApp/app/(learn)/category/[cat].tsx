@@ -76,7 +76,7 @@ type Section = { title: string; data: SongItem[] };
 
 
 export default function CategoryScreen() {
-  const { cat } = useLocalSearchParams<{ cat: string }>();
+  const { cat, userId: passedUserId } = useLocalSearchParams<{ cat: string; userId?: string }>();
   const category = useMemo(() => String(cat ?? "").trim(), [cat]);
   const categoryHebrew = categoryHebrewMap[category] || category;
 
@@ -249,9 +249,10 @@ export default function CategoryScreen() {
         picture: item.picture ?? "",
         lyrics: item.lyrics || null,
         level: userLevel,
+        userId: passedUserId,
       } });
         },
-    [userLevel]
+    [userLevel, passedUserId]
   );
 
   const getImageSource = (picture?: string | null) => {

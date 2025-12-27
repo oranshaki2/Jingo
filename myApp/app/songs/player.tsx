@@ -57,11 +57,12 @@ export default function SongPlayerScreen() {
 
   // useLocalSearchParams has a generic constraint 'Route' — cast the result instead of passing a generic.
 
-  const params = useLocalSearchParams() as Partial<{ title: string; artist: string; lyrics: string; song: string; category: string; level: string }>;
+  const params = useLocalSearchParams() as Partial<{ title: string; artist: string; lyrics: string; song: string; category: string; level: string; userId: string }>;
 
   const title = params?.title || "Unknown Song";
   const artist = params?.artist || "Unknown Artist";
   const initialLyrics = params?.lyrics ?? "";
+  const userId = params?.userId;
 
   // Normalize title for file naming (lowercase, no extra spaces)
   const normalizedTitle = title.trim().toLowerCase();
@@ -389,9 +390,10 @@ export default function SongPlayerScreen() {
         words: JSON.stringify(words),
         category: params.category || "",
         level: params.level || 1,
+        userId,
       },
     });
-  }, [words, router, params.category, params.level]);
+  }, [words, router, params.category, params.level, userId]);
 
   /** ===== Render ===== */
   const header = (

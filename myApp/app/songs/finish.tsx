@@ -11,7 +11,7 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 
 export default function FinishScreen() {
   const router = useRouter();
-  const params = useLocalSearchParams() as Partial<{ correctWords?: string; incorrectWords?: string }>;
+  const params = useLocalSearchParams() as Partial<{ correctWords?: string; incorrectWords?: string; userId?: string }>;
   
   const [correctWords, setCorrectWords] = useState<string[]>([]);
   const [incorrectWords, setIncorrectWords] = useState<string[]>([]);
@@ -29,9 +29,12 @@ export default function FinishScreen() {
     }
   }, [params.correctWords, params.incorrectWords]);
 
-  const handleBackToHome = () => {
-    // Navigate back to home screen
-    router.push("/(tabs)/home");
+  const handleNavigateToSuggestions = () => {
+    // Navigate to songs suggestions screen with userId
+    router.push({
+      pathname: "/songs/songs-suggestions",
+      params: { userId: params.userId },
+    });
   };
 
   const totalWords = correctWords.length + incorrectWords.length;
@@ -94,9 +97,9 @@ export default function FinishScreen() {
       <View style={styles.buttonContainer}>
         <Pressable 
           style={styles.backButton} 
-          onPress={handleBackToHome}
+          onPress={handleNavigateToSuggestions}
         >
-          <Text style={styles.buttonText}>חזרה לעמוד הבית</Text>
+          <Text style={styles.buttonText}>המשך</Text>
         </Pressable>
       </View>
     </View>
