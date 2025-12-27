@@ -564,7 +564,7 @@ export default function Profile() {
                 openFavorites && styles.accordionTitleActive,
               ]}
             >
-              מועדפים
+              היסטוריית שירים
             </Text>
             <Text
               style={[

@@ -10,25 +10,19 @@ import {
   TextInput,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import translationsHe from "@/assets/translations_he.json";
 
-/** ===== Types ===== */
-type QuestionData = {
-  sentence: string;
-  correctAnswer: string;
-};
 
-const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
-const GEMINI_MODEL = "gemini-2.5-pro";
 
 export default function Question3Screen() {
   const router = useRouter();
-  const params = useLocalSearchParams() as Partial<{ remainingWords: string; category: string; level: string }>;
+  const params = useLocalSearchParams() as Partial<{ remainingWords: string; category: string; level: string; correctWords?: string; incorrectWords?: string }>;
   
   const [words, setWords] = useState<string[]>([]);
+  const [correctWords, setCorrectWords] = useState<string[]>([]);
+  const [incorrectWords, setIncorrectWords] = useState<string[]>([]);
   const [currentWord, setCurrentWord] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isLoadingQuestion, setIsLoadingQuestion] = useState(false);
-  const [questionData, setQuestionData] = useState<QuestionData | null>(null);
   const [userAnswer, setUserAnswer] = useState<string>("");
   const [isChecked, setIsChecked] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -46,6 +40,14 @@ export default function Question3Screen() {
           Alert.alert("Error", "No words received or words list is empty.");
         }
       }
+      
+      // Parse tracking lists if they exist
+      if (params.correctWords) {
+        setCorrectWords(JSON.parse(params.correctWords));
+      }
+      if (params.incorrectWords) {
+        setIncorrectWords(JSON.parse(params.incorrectWords));
+      }
     } catch (e) {
       console.error("Failed to parse remaining words:", e);
       Alert.alert("Error", "Failed to parse remaining words.");
@@ -53,60 +55,6 @@ export default function Question3Screen() {
       setIsLoading(false);
     }
   }, [params.remainingWords]);
-
-  /** ===== Fetch question from Gemini ===== */
-  useEffect(() => {
-    if (!currentWord) return;
-
-    let cancelled = false;
-
-    (async () => {
-      try {
-        if (!GEMINI_API_KEY) {
-          throw new Error("Missing Gemini API key.");
-        }
-
-        setIsLoadingQuestion(true);
-        setError(null);
-
-        const prompt = buildGeminiPrompt(currentWord, params.category);
-
-        const res = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              contents: [{ role: "user", parts: [{ text: prompt }] }],
-              generationConfig: { temperature: 0.2 },
-            }),
-          }
-        );
-
-        if (!res.ok) {
-          throw new Error(`Gemini HTTP ${res.status}`);
-        }
-
-        const data = await res.json();
-        const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
-
-        const jsonText = extractFirstJsonObject(raw);
-        const parsed = JSON.parse(jsonText) as QuestionData;
-
-        if (!cancelled) {
-          setQuestionData(parsed);
-        }
-      } catch (e: any) {
-        setError(`Question fetch failed: ${e.message}`);
-      } finally {
-        if (!cancelled) setIsLoadingQuestion(false);
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [currentWord]);
 
   const handleCheck = () => {
     if (!userAnswer.trim()) {
@@ -119,6 +67,17 @@ export default function Question3Screen() {
   const handleContinue = () => {
     if (!currentWord) return;
 
+    // Determine if answer is correct
+    const isAnswerCorrect = userAnswer.trim().toLowerCase() === currentWord.toLowerCase();
+    
+    // Update tracking lists
+    const newCorrectWords = isAnswerCorrect 
+      ? [...correctWords, currentWord] 
+      : correctWords;
+    const newIncorrectWords = !isAnswerCorrect 
+      ? [...incorrectWords, currentWord] 
+      : incorrectWords;
+
     // Create remaining words array (original list minus the selected word)
     const remainingWords = words.filter((word) => word !== currentWord);
 
@@ -128,13 +87,21 @@ export default function Question3Screen() {
         pathname: "/songs/question1",
         params: {
           words: JSON.stringify(remainingWords),
+          correctWords: JSON.stringify(newCorrectWords),
+          incorrectWords: JSON.stringify(newIncorrectWords),
           category: params.category || "",
           level: params.level || "",
         },
       });
     } else {
       // No remaining words, navigate to finish
-      router.push("/songs/finish");
+      router.push({
+        pathname: "/songs/finish",
+        params: {
+          correctWords: JSON.stringify(newCorrectWords),
+          incorrectWords: JSON.stringify(newIncorrectWords),
+        },
+      });
     }
   };
 
@@ -155,53 +122,56 @@ export default function Question3Screen() {
     );
   }
 
-  const isAnswerCorrect = userAnswer.trim().toLowerCase() === (questionData?.correctAnswer.toLowerCase() || "");
-
   return (
     <View style={styles.container}>
       <View style={styles.contentContainer}>
 
         {/* ===== Question Title ===== */}
         <View style={styles.questionBox}>
-          <Text style={styles.questionText}>מלאו את המילה החסרה: אתם בעמוד הקל</Text>
+          <Text style={styles.questionText}>מה פירוש המילה באנגלית?</Text>
         </View>
 
-        {/* ===== Sentence with Blank ===== */}
-        {!isLoadingQuestion && questionData && (
-          <View style={styles.sentenceBox}>
-            <Text style={styles.sentenceText}>{questionData.sentence}</Text>
+        {/* ===== Hebrew Translation ===== */}
+        {currentWord && translationsHe[currentWord as keyof typeof translationsHe] && (
+          <View style={styles.wordBox}>
+            <Text style={styles.wordLabel}>המילה בעברית:</Text>
+            <Text style={styles.word}>
+              {translationsHe[currentWord as keyof typeof translationsHe]}
+            </Text>
           </View>
         )}
 
-        {/* ===== Loader or Input ===== */}
-        {isLoadingQuestion ? (
-          <ActivityIndicator size="large" color={COLORS.primary} />
-        ) : (
-          <TextInput
-            style={[
-              styles.textInput,
-              isChecked && isAnswerCorrect && styles.correctInput,
-              isChecked && !isAnswerCorrect && styles.wrongInput,
-            ]}
-            placeholder="הקלידו את התשובה..."
-            placeholderTextColor={COLORS.textDim}
-            value={userAnswer}
-            onChangeText={setUserAnswer}
-            editable={!isChecked}
-          />
-        )}
+        {/* ===== Text Input ===== */}
+        {currentWord && (
+          <>
+            <TextInput
+              style={[
+                styles.textInput,
+                isChecked && userAnswer.trim().toLowerCase() === currentWord.toLowerCase() && styles.correctInput,
+                isChecked && userAnswer.trim().toLowerCase() !== currentWord.toLowerCase() && styles.wrongInput,
+              ]}
+              placeholder="הקלידו את התשובה באנגלית..."
+              placeholderTextColor={COLORS.textDim}
+              value={userAnswer}
+              onChangeText={setUserAnswer}
+              editable={!isChecked}
+            />
 
-        {/* ===== Feedback Message ===== */}
-        {isChecked && (
-          <Text
-            style={[
-              styles.feedbackText,
-              isAnswerCorrect && styles.correctFeedback,
-              !isAnswerCorrect && styles.wrongFeedback,
-            ]}
-          >
-            {isAnswerCorrect ? "✓ תשובה נכונה!" : `✗ תשובה שגויה. התשובה הנכונה: ${questionData?.correctAnswer}`}
-          </Text>
+            {/* ===== Feedback Message ===== */}
+            {isChecked && (
+              <Text
+                style={[
+                  styles.feedbackText,
+                  userAnswer.trim().toLowerCase() === currentWord.toLowerCase() && styles.correctFeedback,
+                  userAnswer.trim().toLowerCase() !== currentWord.toLowerCase() && styles.wrongFeedback,
+                ]}
+              >
+                {userAnswer.trim().toLowerCase() === currentWord.toLowerCase() 
+                  ? "✓ תשובה נכונה!" 
+                  : `✗ תשובה שגויה. התשובה הנכונה: ${currentWord}`}
+              </Text>
+            )}
+          </>
         )}
       </View>
 
@@ -223,25 +193,7 @@ export default function Question3Screen() {
   );
 }
 
-/** ===== Helpers ===== */
-function buildGeminiPrompt(word: string, category: string | undefined): string {
-  return `
-Return ONLY valid JSON, with "sentence" and "correctAnswer".
-Generate a fill-the-blank exercise:
-- Create a sentence in Hebrew that uses the word "${word}" (from category "${category}")
-- Replace the word with "___" in the sentence
-- Provide the correct word as the answer
-`;
-}
 
-function extractFirstJsonObject(s: string): string {
-  const start = s.indexOf("{");
-  const end = s.lastIndexOf("}");
-  if (start === -1 || end === -1) {
-    throw new Error("No JSON found");
-  }
-  return s.slice(start, end + 1);
-}
 
 const COLORS = {
   primary: "#4EC4C4",
@@ -266,6 +218,27 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  wordBox: {
+    backgroundColor: "white",
+    borderRadius: 16,
+    borderWidth: 2,
+    borderColor: COLORS.primary,
+    padding: 24,
+    width: "100%",
+    marginBottom: 24,
+    alignItems: "center",
+  },
+  wordLabel: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: COLORS.textDim,
+    marginBottom: 8,
+  },
+  word: {
+    fontSize: 32,
+    fontWeight: "700",
+    color: COLORS.primary,
   },
   questionBox: {
     marginBottom: 24,

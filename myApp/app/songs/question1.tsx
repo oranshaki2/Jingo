@@ -21,9 +21,11 @@ const GEMINI_MODEL = "gemini-2.5-pro";
 
 export default function Question1Screen() {
   const router = useRouter();
-  const params = useLocalSearchParams() as Partial<{ words: string; category: string; level: string }>;
+  const params = useLocalSearchParams() as Partial<{ words: string; category: string; level: string; correctWords?: string; incorrectWords?: string }>;
 
   const [words, setWords] = useState<string[]>([]);
+  const [correctWords, setCorrectWords] = useState<string[]>([]);
+  const [incorrectWords, setIncorrectWords] = useState<string[]>([]);
   const [currentWord, setCurrentWord] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingQuestion, setIsLoadingQuestion] = useState(false);
@@ -32,7 +34,7 @@ export default function Question1Screen() {
   const [isChecked, setIsChecked] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  /** ===== Parse words ===== */
+  /** ===== Parse words and tracking lists ===== */
   useEffect(() => {
     try {
       if (params.words) {
@@ -44,6 +46,14 @@ export default function Question1Screen() {
         } else {
           Alert.alert("שגיאה", "לא נטענו מילים ללמוד");
         }
+      }
+      
+      // Parse tracking lists if they exist
+      if (params.correctWords) {
+        setCorrectWords(JSON.parse(params.correctWords));
+      }
+      if (params.incorrectWords) {
+        setIncorrectWords(JSON.parse(params.incorrectWords));
       }
     } catch (e) {
       Alert.alert("שגיאה", "טעינת המילים נכשלה");
@@ -116,7 +126,18 @@ export default function Question1Screen() {
   };
 
   const handleContinue = () => {
-    if (!currentWord) return;
+    if (!currentWord || selectedOption === null || questionData === null) return;
+
+    // Determine if answer is correct
+    const isAnswerCorrect = selectedOption === questionData.correctAnswerIndex;
+    
+    // Update tracking lists
+    const newCorrectWords = isAnswerCorrect 
+      ? [...correctWords, currentWord] 
+      : correctWords;
+    const newIncorrectWords = !isAnswerCorrect 
+      ? [...incorrectWords, currentWord] 
+      : incorrectWords;
 
     const remainingWords = words.filter((w) => w !== currentWord);
     const levelNum = params.level ? Number(params.level) : 0;
@@ -127,12 +148,20 @@ export default function Question1Screen() {
         pathname: nextPath,
         params: { 
           remainingWords: JSON.stringify(remainingWords),
+          correctWords: JSON.stringify(newCorrectWords),
+          incorrectWords: JSON.stringify(newIncorrectWords),
           category: params.category || "",
           level: params.level || "",
         },
       });
     } else {
-      router.push("/songs/finish");
+      router.push({
+        pathname: "/songs/finish",
+        params: {
+          correctWords: JSON.stringify(newCorrectWords),
+          incorrectWords: JSON.stringify(newIncorrectWords),
+        },
+      });
     }
   };
 
