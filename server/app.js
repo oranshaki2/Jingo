@@ -29,17 +29,6 @@ app.use(express.json({ limit: "2mb" }));
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
-// const connectDB = async () => {
-//   try {
-//     await mongoose.connect(process.env.CONNECTION_STRING);
-//     console.log("MongoDB connected successfully");
-//   } catch (error) {
-//     console.error("MongoDB connection error:", error);
-//     process.exit(1);
-//   }
-// };
-
-// connectDB();
 
 connectDB().then(() => {
     // Initialize the database with movies and categories
