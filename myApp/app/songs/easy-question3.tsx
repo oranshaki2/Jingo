@@ -12,12 +12,18 @@ import {
 import { useLocalSearchParams, useRouter } from "expo-router";
 import translationsHe from "@/assets/translations_he.json";
 
-
-
 export default function Question3Screen() {
   const router = useRouter();
-  const params = useLocalSearchParams() as Partial<{ remainingWords: string; category: string; level: string; correctWords?: string; incorrectWords?: string; userId?: string }>;
-  
+  const params = useLocalSearchParams() as Partial<{
+    remainingWords: string;
+    category: string;
+    level: string;
+    correctWords?: string;
+    incorrectWords?: string;
+    userId?: string;
+    songId?: string;
+  }>;
+
   const [words, setWords] = useState<string[]>([]);
   const [correctWords, setCorrectWords] = useState<string[]>([]);
   const [incorrectWords, setIncorrectWords] = useState<string[]>([]);
@@ -27,27 +33,22 @@ export default function Question3Screen() {
   const [isChecked, setIsChecked] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Parse remaining words and tracking lists
   useEffect(() => {
     try {
       if (params.remainingWords) {
         const parsedWords = JSON.parse(params.remainingWords);
         if (Array.isArray(parsedWords) && parsedWords.length > 0) {
           setWords(parsedWords);
-          // Select a random word as the current word
           const randomIndex = Math.floor(Math.random() * parsedWords.length);
           setCurrentWord(parsedWords[randomIndex]);
         } else {
           Alert.alert("Error", "No words received or words list is empty.");
         }
       }
-      
-      // Parse tracking lists if they exist
-      if (params.correctWords) {
-        setCorrectWords(JSON.parse(params.correctWords));
-      }
-      if (params.incorrectWords) {
+      if (params.correctWords) setCorrectWords(JSON.parse(params.correctWords));
+      if (params.incorrectWords)
         setIncorrectWords(JSON.parse(params.incorrectWords));
-      }
     } catch (e) {
       console.error("Failed to parse remaining words:", e);
       Alert.alert("Error", "Failed to parse remaining words.");
@@ -68,14 +69,15 @@ export default function Question3Screen() {
     if (!currentWord) return;
 
     // Determine if answer is correct
-    const isAnswerCorrect = userAnswer.trim().toLowerCase() === currentWord.toLowerCase();
-    
+    const isAnswerCorrect =
+      userAnswer.trim().toLowerCase() === currentWord.toLowerCase();
+
     // Update tracking lists
-    const newCorrectWords = isAnswerCorrect 
-      ? [...correctWords, currentWord] 
+    const newCorrectWords = isAnswerCorrect
+      ? [...correctWords, currentWord]
       : correctWords;
-    const newIncorrectWords = !isAnswerCorrect 
-      ? [...incorrectWords, currentWord] 
+    const newIncorrectWords = !isAnswerCorrect
+      ? [...incorrectWords, currentWord]
       : incorrectWords;
 
     // Create remaining words array (original list minus the selected word)
@@ -92,61 +94,26 @@ export default function Question3Screen() {
           category: params.category || "",
           level: params.level || "",
           userId: params.userId,
+          songId: params.songId,
         },
       });
     } else {
-      // Save progress to server before finishing
-      saveProgressToServer(newCorrectWords, newIncorrectWords);
+      // Finish flow: navigate to finish; finish screen posts history
+      navigateToFinish(newCorrectWords, newIncorrectWords);
     }
   };
 
-  const saveProgressToServer = async (correctWords: string[], mistakenWords: string[]) => {
-    try {
-      if (!params.userId) {
-        console.warn("No userId found, skipping server update");
-        navigateToFinish(correctWords, mistakenWords);
-        return;
-      }
-
-      const API_URL = process.env.EXPO_PUBLIC_API_URL;
-      if (!API_URL) {
-        console.warn("API_URL not configured");
-        navigateToFinish(correctWords, mistakenWords);
-        return;
-      }
-
-      const response = await fetch(
-        `${API_URL}/users/${params.userId}/history`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            correctWords,
-            mistakenWords,
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        console.warn(`Failed to save progress: ${response.status}`);
-      }
-    } catch (error) {
-      console.error("Error saving progress to server:", error);
-    } finally {
-      // Always navigate to finish, regardless of server response
-      navigateToFinish(correctWords, mistakenWords);
-    }
-  };
-
-  const navigateToFinish = (correctWords: string[], mistakenWords: string[]) => {
+  const navigateToFinish = (
+    correctWords: string[],
+    mistakenWords: string[]
+  ) => {
     router.push({
       pathname: "/songs/finish",
       params: {
         correctWords: JSON.stringify(correctWords),
         incorrectWords: JSON.stringify(mistakenWords),
         userId: params.userId,
+        songId: params.songId,
       },
     });
   };
@@ -171,21 +138,21 @@ export default function Question3Screen() {
   return (
     <View style={styles.container}>
       <View style={styles.contentContainer}>
-
         {/* ===== Question Title ===== */}
         <View style={styles.questionBox}>
           <Text style={styles.questionText}>מה פירוש המילה באנגלית?</Text>
         </View>
 
         {/* ===== Hebrew Translation ===== */}
-        {currentWord && translationsHe[currentWord as keyof typeof translationsHe] && (
-          <View style={styles.wordBox}>
-            <Text style={styles.wordLabel}>המילה בעברית:</Text>
-            <Text style={styles.word}>
-              {translationsHe[currentWord as keyof typeof translationsHe]}
-            </Text>
-          </View>
-        )}
+        {currentWord &&
+          translationsHe[currentWord as keyof typeof translationsHe] && (
+            <View style={styles.wordBox}>
+              <Text style={styles.wordLabel}>המילה בעברית:</Text>
+              <Text style={styles.word}>
+                {translationsHe[currentWord as keyof typeof translationsHe]}
+              </Text>
+            </View>
+          )}
 
         {/* ===== Text Input ===== */}
         {currentWord && (
@@ -193,8 +160,14 @@ export default function Question3Screen() {
             <TextInput
               style={[
                 styles.textInput,
-                isChecked && userAnswer.trim().toLowerCase() === currentWord.toLowerCase() && styles.correctInput,
-                isChecked && userAnswer.trim().toLowerCase() !== currentWord.toLowerCase() && styles.wrongInput,
+                isChecked &&
+                  userAnswer.trim().toLowerCase() ===
+                    currentWord.toLowerCase() &&
+                  styles.correctInput,
+                isChecked &&
+                  userAnswer.trim().toLowerCase() !==
+                    currentWord.toLowerCase() &&
+                  styles.wrongInput,
               ]}
               placeholder="הקלידו את התשובה באנגלית..."
               placeholderTextColor={COLORS.textDim}
@@ -208,12 +181,14 @@ export default function Question3Screen() {
               <Text
                 style={[
                   styles.feedbackText,
-                  userAnswer.trim().toLowerCase() === currentWord.toLowerCase() && styles.correctFeedback,
-                  userAnswer.trim().toLowerCase() !== currentWord.toLowerCase() && styles.wrongFeedback,
+                  userAnswer.trim().toLowerCase() ===
+                    currentWord.toLowerCase() && styles.correctFeedback,
+                  userAnswer.trim().toLowerCase() !==
+                    currentWord.toLowerCase() && styles.wrongFeedback,
                 ]}
               >
-                {userAnswer.trim().toLowerCase() === currentWord.toLowerCase() 
-                  ? "✓ תשובה נכונה!" 
+                {userAnswer.trim().toLowerCase() === currentWord.toLowerCase()
+                  ? "✓ תשובה נכונה!"
                   : `✗ תשובה שגויה. התשובה הנכונה: ${currentWord}`}
               </Text>
             )}
@@ -238,8 +213,6 @@ export default function Question3Screen() {
     </View>
   );
 }
-
-
 
 const COLORS = {
   primary: "#4EC4C4",

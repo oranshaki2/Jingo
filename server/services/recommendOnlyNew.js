@@ -96,6 +96,7 @@ async function recommendOnlyNewWords(user, selectedCategory) {
 
       // 6. Add to recommendations
       recommendations.push({
+        _id: song._id,
         title: song.name,           
         artist: song.artist,
         genre: song.genre,
