@@ -13,7 +13,6 @@ import {
 import { useLocalSearchParams, router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { saveLyrics, saveNewWords } from "../questions/shared/storage";
 import { artistImages } from "@/assets/artistsMap";
 
 const COLORS = {
@@ -25,6 +24,19 @@ const COLORS = {
 };
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL!;
+
+// Local helpers for lyrics/words persistence
+async function saveLyrics(songId: string, lyrics: string) {
+  await AsyncStorage.setItem(`@lyrics/${songId}`, lyrics);
+}
+
+async function loadLyrics(songId: string) {
+  return (await AsyncStorage.getItem(`@lyrics/${songId}`)) ?? "";
+}
+
+async function saveNewWords(songId: string, words: unknown) {
+  await AsyncStorage.setItem(`@newWords/${songId}`, JSON.stringify(words));
+}
 
 const categoryHebrewMap: Record<string, string> = {
   Animals: "בעלי חיים",
@@ -63,20 +75,23 @@ type UserPublic = {
 };
 
 type SongItem = {
-  id?: string | number; 
+  id?: string | number;
+  _id?: string; // MongoDB ID
   title: string;
   artist: string;
-  genre: string; 
+  genre: string;
   newWords: string[];
-  lyrics?: string; 
+  lyrics?: string;
   picture?: string | null;
 };
 
 type Section = { title: string; data: SongItem[] };
 
-
 export default function CategoryScreen() {
-  const { cat, userId: passedUserId } = useLocalSearchParams<{ cat: string; userId?: string }>();
+  const { cat, userId: passedUserId } = useLocalSearchParams<{
+    cat: string;
+    userId?: string;
+  }>();
   const category = useMemo(() => String(cat ?? "").trim(), [cat]);
   const categoryHebrew = categoryHebrewMap[category] || category;
 
@@ -130,7 +145,6 @@ export default function CategoryScreen() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
-      
 
       // Read raw text to print in case of invalid JSON
       const raw = await res.text();
@@ -158,7 +172,10 @@ export default function CategoryScreen() {
 
       // store in cache
       try {
-        await AsyncStorage.setItem("recommendations_cache", JSON.stringify(filtered));
+        await AsyncStorage.setItem(
+          "recommendations_cache",
+          JSON.stringify(filtered)
+        );
         await AsyncStorage.setItem("user_level", String(user.level));
       } catch (err) {
         console.warn("[CACHE] failed to save recommendations:", err);
@@ -217,14 +234,24 @@ export default function CategoryScreen() {
   // save newWords + lyrics, then navigate to /songs/[song]
   const handleOpenSong = useCallback(
     async (item: SongItem, genreLabel: string) => {
-      const songId = item.id ? String(item.id) : slugify(`${item.title}-${item.artist}`);
+      // Prioritize _id (MongoDB), then id, then create slug
+      const songId = item._id
+        ? String(item._id)
+        : item.id
+          ? String(item.id)
+          : slugify(`${item.title}-${item.artist}`);
 
       try {
         if (item.newWords?.length) {
           await saveNewWords(songId, item.newWords);
         }
         if (item.lyrics) {
-          await saveLyrics(songId, typeof item.lyrics === 'string' ? item.lyrics : JSON.stringify(item.lyrics));
+          await saveLyrics(
+            songId,
+            typeof item.lyrics === "string"
+              ? item.lyrics
+              : JSON.stringify(item.lyrics)
+          );
         }
         // Cache basic song data for display in /songs/[song]
         await AsyncStorage.setItem(
@@ -242,16 +269,19 @@ export default function CategoryScreen() {
         console.warn("[song/open] failed to cache song data:", e);
       }
 
-      router.push({ pathname: "/songs/[song]", 
-        params: { song: songId,            
-        title: item.title,       
-        artist: item.artist,      
-        picture: item.picture ?? "",
-        lyrics: item.lyrics || null,
-        level: userLevel,
-        userId: passedUserId,
-      } });
+      router.push({
+        pathname: "/songs/[song]",
+        params: {
+          song: songId,
+          title: item.title,
+          artist: item.artist,
+          picture: item.picture ?? "",
+          lyrics: item.lyrics || null,
+          level: userLevel,
+          userId: passedUserId,
         },
+      });
+    },
     [userLevel, passedUserId]
   );
 
@@ -268,7 +298,9 @@ export default function CategoryScreen() {
     return (
       <View style={styles.center}>
         <ActivityIndicator size="large" color={COLORS.primary} />
-        <Text style={styles.subtitle}>טוען שירים לקטגוריה: {categoryHebrew}</Text>
+        <Text style={styles.subtitle}>
+          טוען שירים לקטגוריה: {categoryHebrew}
+        </Text>
       </View>
     );
   }
@@ -324,7 +356,7 @@ export default function CategoryScreen() {
 
                   return (
                     <Pressable
-                      onPress={() => handleOpenSong(item, genreLabel)} 
+                      onPress={() => handleOpenSong(item, genreLabel)}
                       style={({ pressed }) => [{ opacity: pressed ? 0.85 : 1 }]}
                     >
                       <View style={styles.vcard}>
@@ -333,7 +365,9 @@ export default function CategoryScreen() {
                           return src ? (
                             <Image source={src} style={styles.vcover} />
                           ) : (
-                            <View style={[styles.vcover, styles.coverPlaceholder]}>
+                            <View
+                              style={[styles.vcover, styles.coverPlaceholder]}
+                            >
                               <Text style={styles.coverPhText}>♪</Text>
                             </View>
                           );
@@ -358,9 +392,27 @@ export default function CategoryScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, paddingHorizontal: 16, paddingTop: 8, backgroundColor: "#FFF" },
-  header: { fontSize: 20, fontWeight: "700", marginBottom: 8, color: COLORS.secondary, textAlign: "right" },
-  sectionTitle: { fontSize: 18, fontWeight: "700", marginTop: 4, marginBottom: 8, color: "#333", textAlign: "right" },
+  container: {
+    flex: 1,
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    backgroundColor: "#FFF",
+  },
+  header: {
+    fontSize: 20,
+    fontWeight: "700",
+    marginBottom: 8,
+    color: COLORS.secondary,
+    textAlign: "right",
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    marginTop: 4,
+    marginBottom: 8,
+    color: "#333",
+    textAlign: "right",
+  },
 
   // horizontal song card
   vcard: {
@@ -380,16 +432,60 @@ const styles = StyleSheet.create({
   coverPlaceholder: { alignItems: "center", justifyContent: "center" },
   coverPhText: { fontSize: 28, fontWeight: "700", color: COLORS.primary },
 
-  songTitleCenter: { fontSize: 14, fontWeight: "700", color: COLORS.secondary, textAlign: "center" },
-  songArtistCenter: { fontSize: 12, color: "#555", marginTop: 2, textAlign: "center" },
-  songGenreCenter: { fontSize: 11, color: "#777", marginTop: 2, textAlign: "center" },
+  songTitleCenter: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: COLORS.secondary,
+    textAlign: "center",
+  },
+  songArtistCenter: {
+    fontSize: 12,
+    color: "#555",
+    marginTop: 2,
+    textAlign: "center",
+  },
+  songGenreCenter: {
+    fontSize: 11,
+    color: "#777",
+    marginTop: 2,
+    textAlign: "center",
+  },
 
   sep: { height: 10 },
-  center: { flex: 1, alignItems: "center", justifyContent: "center", padding: 16, backgroundColor: COLORS.bgLight },
-  title: { fontSize: 18, fontWeight: "700", color: COLORS.secondary, marginBottom: 6, textAlign: "center" },
+  center: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 16,
+    backgroundColor: COLORS.bgLight,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: COLORS.secondary,
+    marginBottom: 6,
+    textAlign: "center",
+  },
   subtitle: { fontSize: 14, color: "#666", textAlign: "center" },
-  error: { fontSize: 16, fontWeight: "700", color: "#B00020", marginBottom: 6, textAlign: "center" },
-  errorSmall: { fontSize: 12, color: "#B00020", marginBottom: 12, textAlign: "center" },
-  retryBtn: { backgroundColor: COLORS.primary, paddingHorizontal: 16, paddingVertical: 10, borderRadius: 12, marginTop: 8 },
+  error: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#B00020",
+    marginBottom: 6,
+    textAlign: "center",
+  },
+  errorSmall: {
+    fontSize: 12,
+    color: "#B00020",
+    marginBottom: 12,
+    textAlign: "center",
+  },
+  retryBtn: {
+    backgroundColor: COLORS.primary,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 12,
+    marginTop: 8,
+  },
   retryText: { color: "#003B3B", fontWeight: "800" },
 });

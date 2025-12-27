@@ -21,7 +21,15 @@ const GEMINI_MODEL = "gemini-2.5-pro";
 
 export default function Question1Screen() {
   const router = useRouter();
-  const params = useLocalSearchParams() as Partial<{ words: string; category: string; level: string; correctWords?: string; incorrectWords?: string; userId?: string }>;
+  const params = useLocalSearchParams() as Partial<{
+    words: string;
+    category: string;
+    level: string;
+    correctWords?: string;
+    incorrectWords?: string;
+    userId?: string;
+    songId?: string;
+  }>;
 
   const [words, setWords] = useState<string[]>([]);
   const [correctWords, setCorrectWords] = useState<string[]>([]);
@@ -34,7 +42,7 @@ export default function Question1Screen() {
   const [isChecked, setIsChecked] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  /** ===== Parse words and tracking lists ===== */
+  // Parse words and tracking lists
   useEffect(() => {
     try {
       if (params.words) {
@@ -44,17 +52,13 @@ export default function Question1Screen() {
           const randomIndex = Math.floor(Math.random() * parsedWords.length);
           setCurrentWord(parsedWords[randomIndex]);
         } else {
-          Alert.alert("שגיאה", "לא נטענו מילים ללמוד");
+          Alert.alert("שגיאה", "לא התקבלו מילים או שהרשימה ריקה.");
         }
       }
-      
-      // Parse tracking lists if they exist
-      if (params.correctWords) {
-        setCorrectWords(JSON.parse(params.correctWords));
-      }
-      if (params.incorrectWords) {
+
+      if (params.correctWords) setCorrectWords(JSON.parse(params.correctWords));
+      if (params.incorrectWords)
         setIncorrectWords(JSON.parse(params.incorrectWords));
-      }
     } catch (e) {
       Alert.alert("שגיאה", "טעינת המילים נכשלה");
     } finally {
@@ -96,8 +100,7 @@ export default function Question1Screen() {
         }
 
         const data = await res.json();
-        const raw =
-          data?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+        const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
 
         const jsonText = extractFirstJsonObject(raw);
         const parsed = JSON.parse(jsonText) as QuestionData;
@@ -126,88 +129,56 @@ export default function Question1Screen() {
   };
 
   const handleContinue = () => {
-    if (!currentWord || selectedOption === null || questionData === null) return;
+    if (!currentWord || selectedOption === null || questionData === null)
+      return;
 
     // Determine if answer is correct
     const isAnswerCorrect = selectedOption === questionData.correctAnswerIndex;
-    
+
     // Update tracking lists
-    const newCorrectWords = isAnswerCorrect 
-      ? [...correctWords, currentWord] 
+    const newCorrectWords = isAnswerCorrect
+      ? [...correctWords, currentWord]
       : correctWords;
-    const newIncorrectWords = !isAnswerCorrect 
-      ? [...incorrectWords, currentWord] 
+    const newIncorrectWords = !isAnswerCorrect
+      ? [...incorrectWords, currentWord]
       : incorrectWords;
 
     const remainingWords = words.filter((w) => w !== currentWord);
     const levelNum = params.level ? Number(params.level) : 0;
-    const nextPath = (levelNum === 1 ? "/songs/easy-question2" : "/songs/question2") as any;
+    const nextPath = (
+      levelNum === 1 ? "/songs/easy-question2" : "/songs/question2"
+    ) as any;
 
     if (remainingWords.length > 0) {
       router.push({
         pathname: nextPath,
-        params: { 
+        params: {
           remainingWords: JSON.stringify(remainingWords),
           correctWords: JSON.stringify(newCorrectWords),
           incorrectWords: JSON.stringify(newIncorrectWords),
           category: params.category || "",
           level: params.level || "",
           userId: params.userId,
+          songId: params.songId,
         },
       });
     } else {
-      // Save progress to server before finishing
-      saveProgressToServer(newCorrectWords, newIncorrectWords);
+      // Finish flow: navigate to finish, posting is handled there
+      navigateToFinish(newCorrectWords, newIncorrectWords);
     }
   };
 
-  const saveProgressToServer = async (correctWords: string[], mistakenWords: string[]) => {
-    try {
-      if (!params.userId) {
-        console.warn("No userId found, skipping server update");
-        navigateToFinish(correctWords, mistakenWords);
-        return;
-      }
-
-      const API_URL = process.env.EXPO_PUBLIC_API_URL;
-      if (!API_URL) {
-        console.warn("API_URL not configured");
-        navigateToFinish(correctWords, mistakenWords);
-        return;
-      }
-
-      const response = await fetch(
-        `${API_URL}/users/${params.userId}/history`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            correctWords,
-            mistakenWords,
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        console.warn(`Failed to save progress: ${response.status}`);
-      }
-    } catch (error) {
-      console.error("Error saving progress to server:", error);
-    } finally {
-      // Always navigate to finish, regardless of server response
-      navigateToFinish(correctWords, mistakenWords);
-    }
-  };
-
-  const navigateToFinish = (correctWords: string[], mistakenWords: string[]) => {
+  const navigateToFinish = (
+    correctWords: string[],
+    mistakenWords: string[]
+  ) => {
     router.push({
       pathname: "/songs/finish",
       params: {
         correctWords: JSON.stringify(correctWords),
         incorrectWords: JSON.stringify(mistakenWords),
         userId: params.userId,
+        songId: params.songId,
       },
     });
   };

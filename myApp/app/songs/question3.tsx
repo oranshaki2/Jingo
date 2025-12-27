@@ -22,8 +22,16 @@ const GEMINI_MODEL = "gemini-2.5-pro";
 
 export default function Question3Screen() {
   const router = useRouter();
-  const params = useLocalSearchParams() as Partial<{ remainingWords: string; category: string; level: string; correctWords?: string; incorrectWords?: string; userId?: string }>;
-  
+  const params = useLocalSearchParams() as Partial<{
+    remainingWords: string;
+    category: string;
+    level: string;
+    correctWords?: string;
+    incorrectWords?: string;
+    userId?: string;
+    songId?: string;
+  }>;
+
   const [words, setWords] = useState<string[]>([]);
   const [correctWords, setCorrectWords] = useState<string[]>([]);
   const [incorrectWords, setIncorrectWords] = useState<string[]>([]);
@@ -48,7 +56,7 @@ export default function Question3Screen() {
           Alert.alert("Error", "No words received or words list is empty.");
         }
       }
-      
+
       // Parse tracking lists if they exist
       if (params.correctWords) {
         setCorrectWords(JSON.parse(params.correctWords));
@@ -130,14 +138,16 @@ export default function Question3Screen() {
     if (!currentWord) return;
 
     // Determine if answer is correct
-    const isAnswerCorrect = userAnswer.trim().toLowerCase() === (questionData?.correctAnswer.toLowerCase() || "");
-    
+    const isAnswerCorrect =
+      userAnswer.trim().toLowerCase() ===
+      (questionData?.correctAnswer.toLowerCase() || "");
+
     // Update tracking lists
-    const newCorrectWords = isAnswerCorrect 
-      ? [...correctWords, currentWord] 
+    const newCorrectWords = isAnswerCorrect
+      ? [...correctWords, currentWord]
       : correctWords;
-    const newIncorrectWords = !isAnswerCorrect 
-      ? [...incorrectWords, currentWord] 
+    const newIncorrectWords = !isAnswerCorrect
+      ? [...incorrectWords, currentWord]
       : incorrectWords;
 
     // Create remaining words array (original list minus the selected word)
@@ -154,61 +164,26 @@ export default function Question3Screen() {
           category: params.category || "",
           level: params.level || "",
           userId: params.userId,
+          songId: params.songId,
         },
       });
     } else {
-      // Save progress to server before finishing
-      saveProgressToServer(newCorrectWords, newIncorrectWords);
+      // Finish flow: navigate to finish; finish screen will post history
+      navigateToFinish(newCorrectWords, newIncorrectWords);
     }
   };
 
-  const saveProgressToServer = async (correctWords: string[], mistakenWords: string[]) => {
-    try {
-      if (!params.userId) {
-        console.warn("No userId found, skipping server update");
-        navigateToFinish(correctWords, mistakenWords);
-        return;
-      }
-
-      const API_URL = process.env.EXPO_PUBLIC_API_URL;
-      if (!API_URL) {
-        console.warn("API_URL not configured");
-        navigateToFinish(correctWords, mistakenWords);
-        return;
-      }
-
-      const response = await fetch(
-        `${API_URL}/users/${params.userId}/history`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            correctWords,
-            mistakenWords,
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        console.warn(`Failed to save progress: ${response.status}`);
-      }
-    } catch (error) {
-      console.error("Error saving progress to server:", error);
-    } finally {
-      // Always navigate to finish, regardless of server response
-      navigateToFinish(correctWords, mistakenWords);
-    }
-  };
-
-  const navigateToFinish = (correctWords: string[], mistakenWords: string[]) => {
+  const navigateToFinish = (
+    correctWords: string[],
+    mistakenWords: string[]
+  ) => {
     router.push({
       pathname: "/songs/finish",
       params: {
         correctWords: JSON.stringify(correctWords),
         incorrectWords: JSON.stringify(mistakenWords),
         userId: params.userId,
+        songId: params.songId,
       },
     });
   };
@@ -230,12 +205,13 @@ export default function Question3Screen() {
     );
   }
 
-  const isAnswerCorrect = userAnswer.trim().toLowerCase() === (questionData?.correctAnswer.toLowerCase() || "");
+  const isAnswerCorrect =
+    userAnswer.trim().toLowerCase() ===
+    (questionData?.correctAnswer.toLowerCase() || "");
 
   return (
     <View style={styles.container}>
       <View style={styles.contentContainer}>
-
         {/* ===== Question Title ===== */}
         <View style={styles.questionBox}>
           <Text style={styles.questionText}>מלאו את המילה החסרה:</Text>
@@ -275,7 +251,9 @@ export default function Question3Screen() {
               !isAnswerCorrect && styles.wrongFeedback,
             ]}
           >
-            {isAnswerCorrect ? "✓ תשובה נכונה!" : `✗ תשובה שגויה. התשובה הנכונה: ${questionData?.correctAnswer}`}
+            {isAnswerCorrect
+              ? "✓ תשובה נכונה!"
+              : `✗ תשובה שגויה. התשובה הנכונה: ${questionData?.correctAnswer}`}
           </Text>
         )}
       </View>
