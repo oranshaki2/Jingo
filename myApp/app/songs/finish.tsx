@@ -9,6 +9,8 @@ import {
 } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import * as SecureStore from "expo-secure-store";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { artistImages } from "@/assets/artistsMap";
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL!;
 
@@ -72,6 +74,53 @@ export default function FinishScreen() {
     addToFavorites();
   }, [params.songId]);
 
+  // Store song metadata with artist key when user completes the song
+  useEffect(() => {
+    const storeSongMeta = async () => {
+      if (!params.songId) return;
+
+      try {
+        const res = await fetch(`${API_URL}/songs/${params.songId}`);
+        if (!res.ok) return;
+
+        const song = await res.json();
+        let displayPicture: string | null = null;
+        if (song.artist) {
+          const artistKey = extractArtistKey(song.artist);
+          if (artistKey && artistImages[artistKey]) {
+            displayPicture = artistKey;
+          }
+        }
+
+        const metaTitle = song.title ?? song.name ?? "";
+        const metaArtist = song.artist ?? song.performer ?? "";
+
+        await AsyncStorage.setItem(
+          `@songMeta/${params.songId}`,
+          JSON.stringify({
+            id: params.songId,
+            title: metaTitle,
+            artist: metaArtist,
+            genre: song.genre ?? undefined,
+            picture: displayPicture ?? null,
+          })
+        );
+
+        if (song.lyrics) {
+          const lyricsStr =
+            typeof song.lyrics === "string"
+              ? song.lyrics
+              : JSON.stringify(song.lyrics);
+          await AsyncStorage.setItem(`@lyrics/${params.songId}`, lyricsStr);
+        }
+      } catch (e) {
+        console.warn("[finish] failed to store song meta", e);
+      }
+    };
+
+    storeSongMeta();
+  }, [params.songId]);
+
   // Post word history once on finish
   useEffect(() => {
     const postHistory = async () => {
@@ -115,6 +164,14 @@ export default function FinishScreen() {
       pathname: "/songs/songs-suggestions",
       params: { userId: params.userId, songId: params.songId },
     });
+  };
+
+  const extractArtistKey = (artist?: string): string | null => {
+    if (!artist) return null;
+    return String(artist)
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, "_");
   };
 
   const totalWords = correctWords.length + incorrectWords.length;
