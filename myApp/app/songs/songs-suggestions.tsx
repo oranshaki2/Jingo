@@ -109,6 +109,28 @@ export default function SongsSuggestionsScreen() {
             ? (data.songs as string[])
             : null;
 
+        const extractArtistKey = (artist?: string): string | null => {
+          if (!artist) return null;
+          return String(artist)
+            .toLowerCase()
+            .trim()
+            .replace(/\s+/g, "_");
+        };
+
+        const processSongPicture = (song: any): SuggestedSong => {
+          let displayPicture: string | null = null;
+          if (song.artist) {
+            const artistKey = extractArtistKey(song.artist);
+            if (artistKey && artistImages[artistKey]) {
+              displayPicture = artistKey;
+            }
+          }
+          return {
+            ...song,
+            picture: displayPicture || song.picture || undefined,
+          } as SuggestedSong;
+        };
+
         if (ids && ids.length > 0) {
           // Fetch each song by ID to get full details
           const detailed = await Promise.all(
@@ -117,7 +139,7 @@ export default function SongsSuggestionsScreen() {
                 const songRes = await fetch(`${API_URL}/songs/${sId}`);
                 if (!songRes.ok) throw new Error();
                 const songData = await songRes.json();
-                return songData as SuggestedSong;
+                return processSongPicture(songData);
               } catch {
                 return { _id: sId, id: sId } as SuggestedSong;
               }
@@ -125,9 +147,9 @@ export default function SongsSuggestionsScreen() {
           );
           setSuggestions(detailed);
         } else if (Array.isArray(data)) {
-          setSuggestions(data as SuggestedSong[]);
+          setSuggestions(data.map(processSongPicture));
         } else if (Array.isArray(data?.songs)) {
-          setSuggestions(data.songs as SuggestedSong[]);
+          setSuggestions(data.songs.map(processSongPicture));
         } else {
           setSuggestions([]);
         }
@@ -323,10 +345,11 @@ export default function SongsSuggestionsScreen() {
                 >
                   {song.picture ? (
                     <Image
-                      source={{
-                        uri:
-                          song.picture || "",
-                      }}
+                      source={
+                        getImageSource(song.picture) || {
+                          uri: song.picture || "",
+                        }
+                      }
                       style={styles.songImage}
                       resizeMode="cover"
                     />
