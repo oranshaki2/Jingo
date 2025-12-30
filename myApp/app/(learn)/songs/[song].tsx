@@ -3,12 +3,30 @@ import React, { useEffect, useMemo, useState } from "react";
 import { View, Text, Image, StyleSheet, ScrollView, Pressable } from "react-native";
 import { Stack, useLocalSearchParams, router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { artistImages } from "@/assets/artistsMap"; 
+import { artistImages } from "@/assets/artistsMap";
+import { loadTimestampsAsset } from "@/utils/timestampsLoader"; 
 
 const getImageSource = (picture?: string | null) => {
   if (!picture) return null;
   if (/^https?:\/\//.test(picture)) return { uri: picture };
   return artistImages[picture] ?? null;
+};
+
+/**
+ * Load timestamps from bundled JSON files in assets/timestamps/
+ * Normalizes song title to match the file naming convention
+ */
+const loadTimestampsForSong = (title: string): string => {
+  try {
+    const timestampArray = loadTimestampsAsset(title);
+    if (timestampArray && timestampArray.length > 0) {
+      return JSON.stringify({ timestamps: timestampArray });
+    }
+    return "";
+  } catch (e) {
+    console.warn("[song] Failed to load timestamps:", e);
+    return "";
+  }
 };
 
 const COLORS = {
@@ -42,6 +60,7 @@ export default function SongScreen() {
   const [meta, setMeta] = useState<SongMeta | null>(null);
   const [newWords, setNewWords] = useState<string[]>([]);
   const [lyrics, setLyrics] = useState<string>("");
+  const [timestamps, setTimestamps] = useState<string>("");
 
   // ----- Load Data from AsyncStorage -----
   useEffect(() => {
@@ -66,12 +85,20 @@ export default function SongScreen() {
         // lyrics (אופציונלי — אם תרצה להשתמש כאן)
         const lyr = (await AsyncStorage.getItem(`@lyrics/${songId}`)) || "";
         if (mounted) setLyrics(lyr || "");
+
+        // timestamps - try to load from bundled JSON files
+        // Format: { timestamps: [0, 2400, 4800, ...], lineCount: N }
+        if (metaParsed?.title) {
+          const tsString = loadTimestampsForSong(metaParsed.title);
+          if (mounted) setTimestamps(tsString);
+        }
       } catch (e) {
         console.warn("[song] failed to load storage:", e);
         if (mounted) {
           setMeta(null);
           setNewWords([]);
           setLyrics("");
+          setTimestamps("");
         }
       }
     }
@@ -104,6 +131,7 @@ export default function SongScreen() {
         title: meta?.title ?? "Unknown", 
         artist: meta?.artist ?? "Unknown", 
         lyrics: lyrics || null,
+        timestamps: timestamps || null,
         song: songId,
         userId,
       },
