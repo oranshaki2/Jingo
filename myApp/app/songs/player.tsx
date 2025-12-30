@@ -25,21 +25,24 @@ import { audioMap } from "@/assets/audioMap";
 /**
  * ===== How this page works =====
  * 1) Loads a local audio file (your MP3) and prepares the player.
- * 2) Calls Gemini with the provided prompt to fetch lyrics as JSON:
- *    { song, artist, lines: [{ english, hebrew }, ...] }
- * 3) Computes a naive sync: divides total audio duration by number of lines
- *    and highlights/scrolls to the current line during playback.
- * 4) Tapping a line seeks the audio to that line's estimated start time.
+ * 2) Loads real timestamps from data/timestamps (as JSON files converted from LRC).
+ *    If timestamps are unavailable, falls back to Gemini API or evenly distributes duration.
+ * 3) Computes sync using real timestamps, or estimates by dividing total audio duration
+ *    by number of lines if timestamps are missing.
+ * 4) Highlights/scrolls to the current line during playback.
+ * 5) Tapping a line seeks the audio to that line's actual (or estimated) start time.
  *
- * NOTE: Because the model doesn't provide timestamps, we estimate timing by
- * evenly distributing the song duration across lines. This works reasonably
- * well for a first pass. If you ever add real timestamps, swap the math below.
+ * Timestamps are passed through params from the parent screen, or loaded from bundled
+ * JSON files in myApp/assets/timestamps/. Format: { timestamps: [0, 2400, 4800, ...] }
  */
 
 /** ===== Types ===== */
-type LyricLine = { english: string; hebrew: string };
+type LyricLine = { english: string; hebrew: string; startTimeMs?: number };
 type LyricsPayload = {
   lines: LyricLine[];
+};
+type TimestampsData = {
+  timestamps: number[];
 };
 
 /**
@@ -57,7 +60,7 @@ export default function SongPlayerScreen() {
 
   // useLocalSearchParams has a generic constraint 'Route' — cast the result instead of passing a generic.
 
-  const params = useLocalSearchParams() as Partial<{ title: string; artist: string; lyrics: string; song: string; category: string; level: string; userId: string; songId: string }>;
+  const params = useLocalSearchParams() as Partial<{ title: string; artist: string; lyrics: string; timestamps?: string; song: string; category: string; level: string; userId: string; songId: string }>;
 
   const title = params?.title || "Unknown Song";
   const artist = params?.artist || "Unknown Artist";
@@ -88,6 +91,16 @@ export default function SongPlayerScreen() {
       return JSON.parse(initialLyrics);
     } catch (e) {
       console.warn("Failed to parse initialLyrics:", e);
+      return null;
+    }
+  });
+  const [timestamps, setTimestamps] = useState<number[] | null>(() => {
+    if (!params.timestamps) return null;
+    try {
+      const parsed = JSON.parse(params.timestamps) as TimestampsData;
+      return parsed.timestamps || null;
+    } catch (e) {
+      console.warn("Failed to parse timestamps:", e);
       return null;
     }
   });
@@ -124,20 +137,35 @@ export default function SongPlayerScreen() {
   }, [songId]);
 
   /** ====== Derived sync helpers ======
-   * Evenly assign time per line: totalDuration / lineCount.
-   * Current line index = floor(position / msPerLine).
+   * Uses real timestamps if available, otherwise falls back to evenly distributed timing.
+   * With timestamps: find the line where positionMs falls.
+   * Without timestamps: divide totalDuration by lineCount and estimate.
    */
   const msPerLine = useMemo(() => {
+    // Only compute fallback if we don't have real timestamps
+    if (timestamps && timestamps.length > 0) return null;
     if (!durationMs || !lyrics || lyrics.length === 0) return null;
     return durationMs / lyrics.length;
-  }, [durationMs, lyrics]);
+  }, [durationMs, lyrics, timestamps]);
 
   const currentIndex = useMemo(() => {
+    if (!lyrics || lyrics.length === 0) return 0;
+
+    // If we have real timestamps, use them
+    if (timestamps && timestamps.length > 0) {
+      for (let i = timestamps.length - 1; i >= 0; i--) {
+        if (positionMs >= timestamps[i]) {
+          return i;
+        }
+      }
+      return 0;
+    }
+
+    // Fallback: evenly distribute duration across lines
     if (!msPerLine) return 0;
     const idx = Math.floor(positionMs / msPerLine);
-    if (!lyrics) return 0;
     return Math.max(0, Math.min(lyrics.length - 1, idx));
-  }, [positionMs, msPerLine, lyrics]);
+  }, [positionMs, msPerLine, lyrics, timestamps]);
 
   const isFocused = useIsFocused();
 
@@ -303,8 +331,8 @@ export default function SongPlayerScreen() {
       }
 
       // Auto-scroll when the highlighted line changes
-      if (lyrics && msPerLine) {
-        const idx = Math.floor((status.positionMillis || 0) / msPerLine);
+      if (lyrics) {
+        const idx = currentIndex; // Use the memoized currentIndex calculation
         if (idx !== lastAutoScrollIndex.current) {
           lastAutoScrollIndex.current = idx;
           listRef.current?.scrollToIndex({
@@ -315,7 +343,7 @@ export default function SongPlayerScreen() {
         }
       }
     },
-    [lyrics, msPerLine, durationMs]
+    [lyrics, currentIndex, durationMs]
   );
 
   /** ===== Controls ===== */
@@ -345,8 +373,18 @@ export default function SongPlayerScreen() {
 
   const seekToLine = useCallback(
     async (lineIndex: number) => {
-      if (!sound || !msPerLine) return;
-      const target = Math.floor(lineIndex * msPerLine);
+      if (!sound || !lyrics || !lyrics[lineIndex]) return;
+      
+      // Determine target position: use real timestamp if available, otherwise estimate
+      let target = 0;
+      if (timestamps && timestamps.length > lineIndex) {
+        target = timestamps[lineIndex];
+      } else if (msPerLine) {
+        target = Math.floor(lineIndex * msPerLine);
+      } else {
+        return; // Can't seek without either timestamps or msPerLine
+      }
+
       try {
         await sound.setPositionAsync(target);
         // Optional: if paused, start playing when the user taps a line
@@ -356,7 +394,7 @@ export default function SongPlayerScreen() {
         // ignore
       }
     },
-    [sound, msPerLine]
+    [sound, lyrics, msPerLine, timestamps]
   );
 
   const startStudy = useCallback(async () => {
