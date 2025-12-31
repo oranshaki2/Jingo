@@ -9,6 +9,7 @@ import {
   Platform,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import questionsRegistry from "../../assets/questions";
 
 /** ===== Types ===== */
 type QuestionData = {
@@ -66,7 +67,7 @@ export default function Question1Screen() {
     }
   }, [params.words]);
 
-  /** ===== Fetch options from Gemini ===== */
+  /** ===== Fetch options from local assets or Gemini ===== */
   useEffect(() => {
     if (!currentWord) return;
 
@@ -74,12 +75,22 @@ export default function Question1Screen() {
 
     (async () => {
       try {
-        if (!GEMINI_API_KEY) {
-          throw new Error("Missing Gemini API key.");
-        }
-
         setIsLoadingQuestion(true);
         setError(null);
+
+        // First, try to load pre-made question from app assets
+        if (questionsRegistry[currentWord]?.question1) {
+          const questionFromAsset = questionsRegistry[currentWord].question1;
+          if (!cancelled) {
+            setQuestionData(questionFromAsset as QuestionData);
+          }
+          return;
+        }
+
+        // File not found, fall back to Gemini API
+        if (!GEMINI_API_KEY) {
+          throw new Error("Missing Gemini API key and no question file found.");
+        }
 
         const prompt = buildGeminiPrompt(currentWord, params.category);
 

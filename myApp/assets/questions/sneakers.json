@@ -1,0 +1,25 @@
+{
+  "question1": {
+      "options": ["מגפיים","נעלי ספורט","סנדלים","עקבים"],
+      "correctAnswerIndex": 1
+  },
+  "easy-question2": {
+  "sentence": "נעלתי את ה_______ החדשות שלי לפני שיצאתי לריצה.",
+  "options": [
+    "boots",
+    "sneakers",
+    "sandals",
+    "heels"
+  ],
+  "correctAnswerIndex": 1
+  },
+  "question2": {
+    "sentence": "I need to put on my _______ before we go for a run in the park.", 
+    "options": [ "heels", "sneakers", "sandals", "boots" ], 
+    "correctAnswerIndex": 1
+  },
+  "question3": {
+    "sentence": "I need to put on my ___ before we go for a long walk in the park.",
+    "correctAnswer": "sneakers"
+}
+}
