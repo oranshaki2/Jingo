@@ -10,6 +10,7 @@ import {
   TextInput,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import questionsRegistry from "../../assets/questions";
 
 /** ===== Types ===== */
 type QuestionData = {
@@ -80,12 +81,22 @@ export default function Question3Screen() {
 
     (async () => {
       try {
+        setIsLoadingQuestion(true);
+        setError(null);
+
+        // First, try to load pre-made question from app assets
+        if (questionsRegistry[currentWord]?.question3) {
+          const questionFromAsset = questionsRegistry[currentWord].question3;
+          if (!cancelled) {
+            setQuestionData(questionFromAsset as QuestionData);
+          }
+          return;
+        }
+
+        // File not found, fall back to Gemini API
         if (!GEMINI_API_KEY) {
           throw new Error("Missing Gemini API key.");
         }
-
-        setIsLoadingQuestion(true);
-        setError(null);
 
         const prompt = buildGeminiPrompt(currentWord, params.category);
 

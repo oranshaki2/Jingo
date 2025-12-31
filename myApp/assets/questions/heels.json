@@ -1,0 +1,20 @@
+{
+  "question1": {
+    "options": ["עקבים", "נעלי ספורט", "מגפיים", "נעלי בית"],
+    "correctAnswerIndex": 0
+  },
+  "easy-question2": {
+    "sentence": "היא קנתה נעלי _______ חדשות למסיבה.",
+    "options": ["Sneakers", "Boots", "Slippers", "Heels"],
+    "correctAnswerIndex": 3
+  },
+  "question2": {
+    "sentence": "She decided to wear her high _______ to the wedding, even though she knew her feet would hurt by the end of the night.",
+    "options": ["sneakers", "heels", "gloves", "scarves"],
+    "correctAnswerIndex": 1
+  },
+  "question3": {
+    "sentence": "She wore high _______ to the party.",
+    "correctAnswer": "heels"
+  }
+}
