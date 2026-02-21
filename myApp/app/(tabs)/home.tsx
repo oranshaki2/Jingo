@@ -14,7 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { useRouter } from "expo-router";
-import { LogOut } from "lucide-react-native"; // ← אייקון יציאה
+import { LogOut } from "lucide-react-native";
 
 const COLORS = {
   primary: "#4EC4C4",
