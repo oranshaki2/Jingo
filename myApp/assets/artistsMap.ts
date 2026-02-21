@@ -26,5 +26,5 @@ export const artistImages: Record<string, any> = {
   shawn_mendes: require('./artists/shawn_mendes.jpg'),
   sia: require('./artists/sia.jpg'),
   the_cure: require('./artists/the_cure.jpg'),
-  
+  frank_ocean: require('./artists/frank_ocean.jpg'),
 };
