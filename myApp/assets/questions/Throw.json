@@ -1,0 +1,35 @@
+{
+  "question1": {
+    "options": [
+      "לתפוס",
+      "לבעוט",
+      "לזרוק",
+      "לרוץ"
+    ],
+    "correctAnswerIndex": 2
+  },
+  "easy-question2": {
+    "sentence": "הוא יכול _______ את הכדור רחוק.",
+    "options": [
+      "sleep",
+      "read",
+      "draw",
+      "throw"
+    ],
+    "correctAnswerIndex": 3
+  },
+  "question2": {
+    "sentence": "Please _______ me the ball so we can continue practicing.",
+    "options": [
+      "throw",
+      "wash",
+      "paint",
+      "close"
+    ],
+    "correctAnswerIndex": 0
+  },
+  "question3": {
+    "sentence": "Don't ___ the paper on the floor.",
+    "correctAnswer": "throw"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "question1": {
+    "options": [
+      "אהבה",
+      "כעס",
+      "פחד",
+      "עצב"
+    ],
+    "correctAnswerIndex": 0
+  },
+  "easy-question2": {
+    "sentence": "אני מרגישה הרבה _______ למשפחה שלי.",
+    "options": [
+      "love",
+      "hate",
+      "noise",
+      "fear"
+    ],
+    "correctAnswerIndex": 0
+  },
+  "question2": {
+    "sentence": "Their _______ grew stronger after years of supporting each other.",
+    "options": [
+      "argument",
+      "love",
+      "silence",
+      "distance"
+    ],
+    "correctAnswerIndex": 1
+  },
+  "question3": {
+    "sentence": "True ___ takes time and trust.",
+    "correctAnswer": "love"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "question1": {
+    "options": [
+      "שלג",
+      "אש",
+      "קרח",
+      "מים"
+    ],
+    "correctAnswerIndex": 2
+  },
+  "easy-question2": {
+    "sentence": "הוספתי _______ למשקה הקר.",
+    "options": [
+      "salt",
+      "milk",
+      "ice",
+      "bread"
+    ],
+    "correctAnswerIndex": 2
+  },
+  "question2": {
+    "sentence": "The lake turned to _______ overnight because the temperature dropped below zero.",
+    "options": [
+      "steam",
+      "ice",
+      "sand",
+      "mud"
+    ],
+    "correctAnswerIndex": 1
+  },
+  "question3": {
+    "sentence": "Put some ___ in my water, please.",
+    "correctAnswer": "ice"
+  }
+}

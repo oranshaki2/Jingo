@@ -1,0 +1,35 @@
+{
+  "question1": {
+    "options": [
+      "מעיל",
+      "נעליים",
+      "חולצה",
+      "מכנסיים"
+    ],
+    "correctAnswerIndex": 2
+  },
+  "easy-question2": {
+    "sentence": "לבשתי _______ לבנה לבית הספר.",
+    "options": [
+      "Shoes",
+      "Shirt",
+      "Pants",
+      "Hat"
+    ],
+    "correctAnswerIndex": 1
+  },
+  "question2": {
+    "sentence": "He ironed his white _______ before the interview so he would look neat and professional.",
+    "options": [
+      "shirt",
+      "scarf",
+      "jacket",
+      "shoes"
+    ],
+    "correctAnswerIndex": 0
+  },
+  "question3": {
+    "sentence": "She bought a new ___ for the meeting.",
+    "correctAnswer": "shirt"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "question1": {
+    "options": [
+      "אימון",
+      "הפסד",
+      "משחק",
+      "ניצחון"
+    ],
+    "correctAnswerIndex": 3
+  },
+  "easy-question2": {
+    "sentence": "כל השחקנים חגגו אחרי ה_______.",
+    "options": [
+      "losing",
+      "winning",
+      "walking",
+      "reading"
+    ],
+    "correctAnswerIndex": 1
+  },
+  "question2": {
+    "sentence": "The crowd kept cheering because the team was _______ by two points.",
+    "options": [
+      "sleeping",
+      "traveling",
+      "winning",
+      "painting"
+    ],
+    "correctAnswerIndex": 2
+  },
+  "question3": {
+    "sentence": "They are ___ the match now.",
+    "correctAnswer": "winning"
+  }
+}

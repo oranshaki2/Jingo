@@ -1,0 +1,35 @@
+{
+  "question1": {
+    "options": [
+      "סוכריה",
+      "פיצה",
+      "עוגה",
+      "גלידה"
+    ],
+    "correctAnswerIndex": 0
+  },
+  "easy-question2": {
+    "sentence": "קיבלתי _______ טעימה מהחברה שלי.",
+    "options": [
+      "cheese",
+      "rice",
+      "candy",
+      "bread"
+    ],
+    "correctAnswerIndex": 2
+  },
+  "question2": {
+    "sentence": "The child chose a red _______ from the jar at the store.",
+    "options": [
+      "sandwich",
+      "tomato",
+      "cookie",
+      "candy"
+    ],
+    "correctAnswerIndex": 3
+  },
+  "question3": {
+    "sentence": "She put a piece of ___ in her pocket.",
+    "correctAnswer": "candy"
+  }
+}

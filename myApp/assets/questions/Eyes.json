@@ -1,0 +1,35 @@
+{
+  "question1": {
+    "options": [
+      "עיניים",
+      "שיניים",
+      "שפתיים",
+      "אוזניים"
+    ],
+    "correctAnswerIndex": 0
+  },
+  "easy-question2": {
+    "sentence": "יש לה _______ כחולות ויפות.",
+    "options": [
+      "eyes",
+      "hands",
+      "toes",
+      "bones"
+    ],
+    "correctAnswerIndex": 0
+  },
+  "question2": {
+    "sentence": "His _______ were red after working at the computer for many hours.",
+    "options": [
+      "shoulders",
+      "heels",
+      "knees",
+      "eyes"
+    ],
+    "correctAnswerIndex": 3
+  },
+  "question3": {
+    "sentence": "Close your ___ and relax.",
+    "correctAnswer": "eyes"
+  }
+}

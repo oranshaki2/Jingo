@@ -1,0 +1,35 @@
+{
+  "question1": {
+    "options": [
+      "עוגייה",
+      "שוקולד",
+      "עוגה",
+      "גלידה"
+    ],
+    "correctAnswerIndex": 2
+  },
+  "easy-question2": {
+    "sentence": "ליום ההולדת אכלנו _______ שוקולד.",
+    "options": [
+      "soup",
+      "cake",
+      "rice",
+      "salad"
+    ],
+    "correctAnswerIndex": 1
+  },
+  "question2": {
+    "sentence": "They baked a strawberry _______ to celebrate their anniversary.",
+    "options": [
+      "sandwich",
+      "steak",
+      "cake",
+      "juice"
+    ],
+    "correctAnswerIndex": 2
+  },
+  "question3": {
+    "sentence": "We shared a big piece of ___.",
+    "correctAnswer": "cake"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "question1": {
+    "options": [
+      "גשרים",
+      "תחנות",
+      "רחובות",
+      "כבישים"
+    ],
+    "correctAnswerIndex": 2
+  },
+  "easy-question2": {
+    "sentence": "בלילה ה_______ בעיר מלאים באורות.",
+    "options": [
+      "streets",
+      "cars",
+      "tickets",
+      "roads"
+    ],
+    "correctAnswerIndex": 0
+  },
+  "question2": {
+    "sentence": "The _______ were crowded after the concert ended and everyone left at once.",
+    "options": [
+      "rivers",
+      "tracks",
+      "airports",
+      "streets"
+    ],
+    "correctAnswerIndex": 3
+  },
+  "question3": {
+    "sentence": "The ___ were empty early in the morning.",
+    "correctAnswer": "streets"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "question1": {
+    "options": [
+      "חולצה",
+      "ג'ינס",
+      "שמלה",
+      "מעיל"
+    ],
+    "correctAnswerIndex": 1
+  },
+  "easy-question2": {
+    "sentence": "אני לובש _______ כחולים לעבודה היום.",
+    "options": [
+      "Shirt",
+      "Jeans",
+      "Socks",
+      "Dress"
+    ],
+    "correctAnswerIndex": 1
+  },
+  "question2": {
+    "sentence": "I decided to wear my favorite blue _______ and a t-shirt to the casual party last night.",
+    "options": [
+      "Jeans",
+      "Dresses",
+      "shorts",
+      "Skirts"
+    ],
+    "correctAnswerIndex": 0
+  },
+  "question3": {
+    "sentence": "He bought a new pair of denim ___ because his old ones had a hole in the knee.",
+    "correctAnswer": "Jeans"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "question1": {
+    "options": [
+      "הורים",
+      "אחיות",
+      "ילדים",
+      "אחים"
+    ],
+    "correctAnswerIndex": 1
+  },
+  "easy-question2": {
+    "sentence": "לי ולחברה שלי יש שתי _______.",
+    "options": [
+      "brothers",
+      "mothers",
+      "sisters",
+      "aunts"
+    ],
+    "correctAnswerIndex": 2
+  },
+  "question2": {
+    "sentence": "The two _______ always help each other with homework.",
+    "options": [
+      "cars",
+      "cities",
+      "sisters",
+      "teachers"
+    ],
+    "correctAnswerIndex": 2
+  },
+  "question3": {
+    "sentence": "They are ___ and best friends.",
+    "correctAnswer": "sisters"
+  }
+}

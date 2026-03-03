@@ -1,0 +1,35 @@
+{
+  "question1": {
+    "options": [
+      "זאב",
+      "נמר",
+      "קוף",
+      "אריה"
+    ],
+    "correctAnswerIndex": 3
+  },
+  "easy-question2": {
+    "sentence": "ה_______ נקרא מלך החיות.",
+    "options": [
+      "lion",
+      "duck",
+      "cow",
+      "bee"
+    ],
+    "correctAnswerIndex": 0
+  },
+  "question2": {
+    "sentence": "The _______ roared loudly and all the animals became quiet.",
+    "options": [
+      "pigeon",
+      "rabbit",
+      "fish",
+      "lion"
+    ],
+    "correctAnswerIndex": 3
+  },
+  "question3": {
+    "sentence": "The ___ sleeps most of the day.",
+    "correctAnswer": "lion"
+  }
+}

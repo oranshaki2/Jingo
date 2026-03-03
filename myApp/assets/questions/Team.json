@@ -1,0 +1,35 @@
+{
+  "question1": {
+    "options": [
+      "מגרש",
+      "קבוצה",
+      "מאמן",
+      "שופט"
+    ],
+    "correctAnswerIndex": 1
+  },
+  "easy-question2": {
+    "sentence": "ה_______ שלנו ניצחה בתחרות.",
+    "options": [
+      "shoe",
+      "team",
+      "clock",
+      "ticket"
+    ],
+    "correctAnswerIndex": 1
+  },
+  "question2": {
+    "sentence": "Every player on the _______ celebrated after the winning goal.",
+    "options": [
+      "forest",
+      "team",
+      "street",
+      "kitchen"
+    ],
+    "correctAnswerIndex": 1
+  },
+  "question3": {
+    "sentence": "Our ___ trains every Tuesday.",
+    "correctAnswer": "team"
+  }
+}

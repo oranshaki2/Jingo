@@ -1,0 +1,35 @@
+{
+  "question1": {
+    "options": [
+      "נלהב",
+      "רגוע",
+      "גאה",
+      "מפוחד"
+    ],
+    "correctAnswerIndex": 3
+  },
+  "easy-question2": {
+    "sentence": "הילד היה _______ מהרעש החזק.",
+    "options": [
+      "happy",
+      "ready",
+      "brave",
+      "scared"
+    ],
+    "correctAnswerIndex": 3
+  },
+  "question2": {
+    "sentence": "He was _______ to walk alone in the dark forest at night.",
+    "options": [
+      "famous",
+      "gentle",
+      "healthy",
+      "scared"
+    ],
+    "correctAnswerIndex": 3
+  },
+  "question3": {
+    "sentence": "She felt ___ during the storm.",
+    "correctAnswer": "scared"
+  }
+}

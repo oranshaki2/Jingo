@@ -1,0 +1,35 @@
+{
+  "question1": {
+    "options": [
+      "אצבעות",
+      "אוזניים",
+      "ברכיים",
+      "כתפיים"
+    ],
+    "correctAnswerIndex": 0
+  },
+  "easy-question2": {
+    "sentence": "ספרתי עשר _______ על הידיים.",
+    "options": [
+      "veins",
+      "heels",
+      "fingers",
+      "ankles"
+    ],
+    "correctAnswerIndex": 2
+  },
+  "question2": {
+    "sentence": "She wore rings on three _______ during the ceremony.",
+    "options": [
+      "noses",
+      "throats",
+      "fingers",
+      "elbows"
+    ],
+    "correctAnswerIndex": 2
+  },
+  "question3": {
+    "sentence": "My ___ are cold in winter.",
+    "correctAnswer": "fingers"
+  }
+}

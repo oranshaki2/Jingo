@@ -1,0 +1,35 @@
+{
+  "question1": {
+    "options": [
+      "פה",
+      "אף",
+      "עין",
+      "רגל"
+    ],
+    "correctAnswerIndex": 0
+  },
+  "easy-question2": {
+    "sentence": "פתחי את ה_______ אצל רופא השיניים.",
+    "options": [
+      "mouth",
+      "foot",
+      "ear",
+      "hand"
+    ],
+    "correctAnswerIndex": 0
+  },
+  "question2": {
+    "sentence": "The doctor asked him to open his _______ and say 'ah'.",
+    "options": [
+      "finger",
+      "ankle",
+      "mouth",
+      "elbow"
+    ],
+    "correctAnswerIndex": 2
+  },
+  "question3": {
+    "sentence": "He covered his ___ when he coughed.",
+    "correctAnswer": "mouth"
+  }
+}
