@@ -1,0 +1,35 @@
+{
+  "question1": {
+    "options": [
+      "משקפיים",
+      "כובע",
+      "חולצה",
+      "גרביים"
+    ],
+    "correctAnswerIndex": 0
+  },
+  "easy-question2": {
+    "sentence": "אני צריך _______ כדי לקרוא את הכתוב על הלוח.",
+    "options": [
+      "shoes",
+      "jacket",
+      "gloves",
+      "glasses"
+    ],
+    "correctAnswerIndex": 3
+  },
+  "question2": {
+    "sentence": "He put on his _______ to read the tiny text on the medicine bottle.",
+    "options": [
+      "watch",
+      "glasses",
+      "scarf",
+      "belt"
+    ],
+    "correctAnswerIndex": 1
+  },
+  "question3": {
+    "sentence": "She cannot see clearly without her ___.",
+    "correctAnswer": "glasses"
+  }
+}

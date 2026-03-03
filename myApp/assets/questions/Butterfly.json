@@ -1,0 +1,35 @@
+{
+  "question1": {
+    "options": [
+      "פרפר",
+      "חתול",
+      "ציפור",
+      "דג"
+    ],
+    "correctAnswerIndex": 0
+  },
+  "easy-question2": {
+    "sentence": "ראינו _______ צבעוני על הפרח.",
+    "options": [
+      "butterfly",
+      "lion",
+      "shark",
+      "horse"
+    ],
+    "correctAnswerIndex": 0
+  },
+  "question2": {
+    "sentence": "The _______ landed gently on the yellow flower in the garden.",
+    "options": [
+      "butterfly",
+      "wolf",
+      "snake",
+      "bear"
+    ],
+    "correctAnswerIndex": 0
+  },
+  "question3": {
+    "sentence": "A ___ has colorful wings.",
+    "correctAnswer": "butterfly"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "question1": {
+    "options": [
+      "עייף",
+      "בטוח",
+      "שמח",
+      "כועס"
+    ],
+    "correctAnswerIndex": 0
+  },
+  "easy-question2": {
+    "sentence": "אחרי האימון הארוך הייתי מאוד _______.",
+    "options": [
+      "strong",
+      "hungry",
+      "tired",
+      "quiet"
+    ],
+    "correctAnswerIndex": 2
+  },
+  "question2": {
+    "sentence": "She felt _______ after staying up all night to finish the project.",
+    "options": [
+      "lucky",
+      "careful",
+      "tired",
+      "clean"
+    ],
+    "correctAnswerIndex": 2
+  },
+  "question3": {
+    "sentence": "I am too ___ to go out tonight.",
+    "correctAnswer": "tired"
+  }
+}

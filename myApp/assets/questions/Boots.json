@@ -1,0 +1,35 @@
+{
+  "question1": {
+    "options": [
+      "נעלי בית",
+      "מגפיים",
+      "סנדלים",
+      "כפפות"
+    ],
+    "correctAnswerIndex": 1
+  },
+  "easy-question2": {
+    "sentence": "בחורף אני נועל _______ חמים.",
+    "options": [
+      "boots",
+      "belt",
+      "shirt",
+      "hat"
+    ],
+    "correctAnswerIndex": 0
+  },
+  "question2": {
+    "sentence": "She wore waterproof _______ because the trail was muddy after the rain.",
+    "options": [
+      "heels",
+      "socks",
+      "gloves",
+      "boots"
+    ],
+    "correctAnswerIndex": 3
+  },
+  "question3": {
+    "sentence": "He bought new winter ___.",
+    "correctAnswer": "boots"
+  }
+}

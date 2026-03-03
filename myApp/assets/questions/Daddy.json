@@ -1,0 +1,35 @@
+{
+  "question1": {
+    "options": [
+      "אחות",
+      "אמא",
+      "אבא",
+      "דוד"
+    ],
+    "correctAnswerIndex": 2
+  },
+  "easy-question2": {
+    "sentence": "ה_______ שלי לקח אותי לבית הספר.",
+    "options": [
+      "teacher",
+      "friend",
+      "driver",
+      "daddy"
+    ],
+    "correctAnswerIndex": 3
+  },
+  "question2": {
+    "sentence": "Her _______ taught her how to ride a bicycle in the park.",
+    "options": [
+      "cousin",
+      "daddy",
+      "neighbor",
+      "sister"
+    ],
+    "correctAnswerIndex": 1
+  },
+  "question3": {
+    "sentence": "My ___ is waiting outside.",
+    "correctAnswer": "daddy"
+  }
+}

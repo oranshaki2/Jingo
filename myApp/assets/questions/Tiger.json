@@ -1,0 +1,35 @@
+{
+  "question1": {
+    "options": [
+      "פיל",
+      "אריה",
+      "נמר",
+      "דוב"
+    ],
+    "correctAnswerIndex": 2
+  },
+  "easy-question2": {
+    "sentence": "בגן החיות ראינו _______ גדול.",
+    "options": [
+      "horse",
+      "bird",
+      "fish",
+      "tiger"
+    ],
+    "correctAnswerIndex": 3
+  },
+  "question2": {
+    "sentence": "A _______ has black stripes and is one of the strongest wild cats.",
+    "options": [
+      "bee",
+      "whale",
+      "rabbit",
+      "tiger"
+    ],
+    "correctAnswerIndex": 3
+  },
+  "question3": {
+    "sentence": "The ___ moved silently through the jungle.",
+    "correctAnswer": "tiger"
+  }
+}

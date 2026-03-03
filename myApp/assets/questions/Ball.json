@@ -1,0 +1,35 @@
+{
+  "question1": {
+    "options": [
+      "רשת",
+      "כיסא",
+      "דגל",
+      "כדור"
+    ],
+    "correctAnswerIndex": 3
+  },
+  "easy-question2": {
+    "sentence": "שיחקנו עם _______ גדול בפארק.",
+    "options": [
+      "plate",
+      "coat",
+      "book",
+      "ball"
+    ],
+    "correctAnswerIndex": 3
+  },
+  "question2": {
+    "sentence": "He kicked the _______ into the goal in the last minute.",
+    "options": [
+      "window",
+      "pillow",
+      "ball",
+      "bottle"
+    ],
+    "correctAnswerIndex": 2
+  },
+  "question3": {
+    "sentence": "Catch the ___ before it hits the ground.",
+    "correctAnswer": "ball"
+  }
+}

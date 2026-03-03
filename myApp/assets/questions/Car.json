@@ -1,0 +1,35 @@
+{
+  "question1": {
+    "options": [
+      "מכונית",
+      "אוטובוס",
+      "רכבת",
+      "אופניים"
+    ],
+    "correctAnswerIndex": 0
+  },
+  "easy-question2": {
+    "sentence": "אבא נוהג ב_______ אדומה לעבודה.",
+    "options": [
+      "plane",
+      "boat",
+      "train",
+      "car"
+    ],
+    "correctAnswerIndex": 3
+  },
+  "question2": {
+    "sentence": "She parked her _______ near the supermarket before going inside.",
+    "options": [
+      "car",
+      "station",
+      "helmet",
+      "ticket"
+    ],
+    "correctAnswerIndex": 0
+  },
+  "question3": {
+    "sentence": "We got into the ___ and drove home.",
+    "correctAnswer": "car"
+  }
+}

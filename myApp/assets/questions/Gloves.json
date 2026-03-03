@@ -1,0 +1,35 @@
+{
+  "question1": {
+    "options": [
+      "מעיל",
+      "מגפיים",
+      "צעיף",
+      "כפפות"
+    ],
+    "correctAnswerIndex": 3
+  },
+  "easy-question2": {
+    "sentence": "קר לי בידיים, אני צריך _______.",
+    "options": [
+      "cap",
+      "gloves",
+      "jeans",
+      "shoes"
+    ],
+    "correctAnswerIndex": 1
+  },
+  "question2": {
+    "sentence": "He put on thick _______ before riding his bike in the cold wind.",
+    "options": [
+      "rings",
+      "gloves",
+      "socks",
+      "shirts"
+    ],
+    "correctAnswerIndex": 1
+  },
+  "question3": {
+    "sentence": "Her ___ are made of soft wool.",
+    "correctAnswer": "gloves"
+  }
+}

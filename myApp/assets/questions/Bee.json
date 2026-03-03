@@ -1,0 +1,35 @@
+{
+  "question1": {
+    "options": [
+      "נמלה",
+      "דבורה",
+      "זבוב",
+      "פרפר"
+    ],
+    "correctAnswerIndex": 1
+  },
+  "easy-question2": {
+    "sentence": "ה_______ עפה מפרח לפרח.",
+    "options": [
+      "dog",
+      "bee",
+      "fish",
+      "horse"
+    ],
+    "correctAnswerIndex": 1
+  },
+  "question2": {
+    "sentence": "A _______ collects nectar and helps pollinate many plants.",
+    "options": [
+      "cat",
+      "bee",
+      "goat",
+      "turtle"
+    ],
+    "correctAnswerIndex": 1
+  },
+  "question3": {
+    "sentence": "The ___ made honey in the hive.",
+    "correctAnswer": "bee"
+  }
+}

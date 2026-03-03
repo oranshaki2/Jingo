@@ -1,0 +1,35 @@
+{
+  "question1": {
+    "options": [
+      "לב",
+      "יד",
+      "רגל",
+      "מוח"
+    ],
+    "correctAnswerIndex": 3
+  },
+  "easy-question2": {
+    "sentence": "המוח הוא ה_______ של הגוף.",
+    "options": [
+      "street",
+      "window",
+      "brain",
+      "shoe"
+    ],
+    "correctAnswerIndex": 2
+  },
+  "question2": {
+    "sentence": "The human _______ controls memory, thinking, and movement.",
+    "options": [
+      "wrist",
+      "brain",
+      "nose",
+      "stomach"
+    ],
+    "correctAnswerIndex": 1
+  },
+  "question3": {
+    "sentence": "Reading helps train your ___.",
+    "correctAnswer": "brain"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "question1": {
+    "options": [
+      "סטייק",
+      "מרק",
+      "עוגייה",
+      "סלט"
+    ],
+    "correctAnswerIndex": 2
+  },
+  "easy-question2": {
+    "sentence": "אני אוהב לאכול _______ עם תה.",
+    "options": [
+      "cookie",
+      "orange",
+      "soup",
+      "water"
+    ],
+    "correctAnswerIndex": 0
+  },
+  "question2": {
+    "sentence": "He baked a chocolate _______ for his afternoon snack.",
+    "options": [
+      "cookie",
+      "burger",
+      "pizza",
+      "apple"
+    ],
+    "correctAnswerIndex": 0
+  },
+  "question3": {
+    "sentence": "This ___ smells like vanilla.",
+    "correctAnswer": "cookie"
+  }
+}
