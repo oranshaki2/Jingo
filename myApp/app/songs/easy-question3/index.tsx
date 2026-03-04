@@ -27,7 +27,7 @@ export default function Question3Screen() {
 
   const getHebrewTranslation = (word: string | null) => {
     if (!word) return null;
-    const normalizedWord = String(word).trim().toLowerCase();
+    const normalizedWord = String(word).trim();
     return translationsHe[normalizedWord as keyof typeof translationsHe] ?? null;
   };
 
