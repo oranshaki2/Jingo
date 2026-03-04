@@ -1,15 +1,8 @@
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  ActivityIndicator,
-  Alert,
-  Platform,
-} from "react-native";
+import { View, Text, Pressable, ActivityIndicator, Alert } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import questionsRegistry from "../../assets/questions";
+import questionsRegistry from "@/assets/questions";
+import styles, { COLORS } from "./_styles";
 
 /** ===== Types ===== */
 type QuestionData = {
@@ -50,7 +43,6 @@ export default function Question2Screen() {
         const parsedWords = JSON.parse(params.remainingWords);
         if (Array.isArray(parsedWords) && parsedWords.length > 0) {
           setWords(parsedWords);
-          // Select a random word as the current word
           const randomIndex = Math.floor(Math.random() * parsedWords.length);
           setCurrentWord(parsedWords[randomIndex]);
         } else {
@@ -58,7 +50,6 @@ export default function Question2Screen() {
         }
       }
 
-      // Parse tracking lists if they exist
       if (params.correctWords) {
         setCorrectWords(JSON.parse(params.correctWords));
       }
@@ -84,7 +75,6 @@ export default function Question2Screen() {
         setIsLoadingQuestion(true);
         setError(null);
 
-        // First, try to load pre-made question from app assets
         if (questionsRegistry[currentWord]?.question2) {
           const questionFromAsset = questionsRegistry[currentWord].question2;
           if (!cancelled) {
@@ -93,7 +83,6 @@ export default function Question2Screen() {
           return;
         }
 
-        // File not found, fall back to Gemini API
         if (!GEMINI_API_KEY) {
           throw new Error("Missing Gemini API key.");
         }
@@ -109,7 +98,7 @@ export default function Question2Screen() {
               contents: [{ role: "user", parts: [{ text: prompt }] }],
               generationConfig: { temperature: 0.2 },
             }),
-          }
+          },
         );
 
         if (!res.ok) {
@@ -148,10 +137,8 @@ export default function Question2Screen() {
   const handleContinue = () => {
     if (!currentWord) return;
 
-    // Determine if answer is correct
     const isAnswerCorrect = selectedOption === questionData?.correctAnswerIndex;
 
-    // Update tracking lists
     const newCorrectWords = isAnswerCorrect
       ? [...correctWords, currentWord]
       : correctWords;
@@ -159,11 +146,9 @@ export default function Question2Screen() {
       ? [...incorrectWords, currentWord]
       : incorrectWords;
 
-    // Create remaining words array (original list minus the selected word)
     const remainingWords = words.filter((word) => word !== currentWord);
 
     if (remainingWords.length > 0) {
-      // Navigate to Question3 with remaining words
       router.push({
         pathname: "/songs/question3",
         params: {
@@ -177,14 +162,13 @@ export default function Question2Screen() {
         },
       });
     } else {
-      // Finish flow: navigate to finish; finish screen posts history
       navigateToFinish(newCorrectWords, newIncorrectWords);
     }
   };
 
   const navigateToFinish = (
     correctWords: string[],
-    mistakenWords: string[]
+    mistakenWords: string[],
   ) => {
     router.push({
       pathname: "/songs/finish",
@@ -217,19 +201,16 @@ export default function Question2Screen() {
   return (
     <View style={styles.container}>
       <View style={styles.contentContainer}>
-        {/* ===== Question Title ===== */}
         <View style={styles.questionBox}>
           <Text style={styles.questionText}>השלימו את המשפט:</Text>
         </View>
 
-        {/* ===== Sentence with Blank ===== */}
         {!isLoadingQuestion && questionData && (
           <View style={styles.sentenceBox}>
             <Text style={styles.sentenceText}>{questionData.sentence}</Text>
           </View>
         )}
 
-        {/* ===== Options / Loader ===== */}
         <View style={styles.optionsContainer}>
           {isLoadingQuestion && (
             <ActivityIndicator size="large" color={COLORS.primary} />
@@ -275,7 +256,6 @@ export default function Question2Screen() {
         </View>
       </View>
 
-      {/* ===== Buttons ===== */}
       <View style={styles.buttonContainer}>
         {!isChecked ? (
           <Pressable style={styles.checkButton} onPress={handleCheck}>
@@ -312,171 +292,3 @@ function extractFirstJsonObject(s: string): string {
   }
   return s.slice(start, end + 1);
 }
-
-const COLORS = {
-  primary: "#4EC4C4",
-  secondary: "#1A3D5A",
-  bg: "#F7FAFC",
-  text: "#222",
-  textDim: "#4a4a4a",
-  border: "#e9ecef",
-  success: "#22c55e",
-  error: "#ef4444",
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.bg,
-    paddingHorizontal: 16,
-    paddingVertical: 24,
-    justifyContent: "space-between",
-  },
-  contentContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "700",
-    color: COLORS.text,
-    marginBottom: 32,
-  },
-  wordBox: {
-    backgroundColor: "white",
-    borderRadius: 16,
-    borderWidth: 2,
-    borderColor: COLORS.primary,
-    padding: 24,
-    width: "100%",
-    marginBottom: 32,
-    alignItems: "center",
-  },
-  wordLabel: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: COLORS.textDim,
-    marginBottom: 8,
-  },
-  word: {
-    fontSize: 32,
-    fontWeight: "700",
-    color: COLORS.primary,
-  },
-  description: {
-    fontSize: 16,
-    color: COLORS.textDim,
-    textAlign: "center",
-    lineHeight: 24,
-  },
-  buttonContainer: {
-    gap: 12,
-    marginBottom: Platform.OS === "ios" ? 32 : 24,
-  },
-  continueButton: {
-    backgroundColor: COLORS.primary,
-    paddingVertical: 14,
-    borderRadius: 12,
-    alignItems: "center",
-    elevation: 4,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-  },
-  buttonText: {
-    color: "white",
-    fontWeight: "700",
-    fontSize: 16,
-  },
-  loadingText: {
-    marginTop: 12,
-    color: COLORS.textDim,
-    fontSize: 16,
-  },
-  errorText: {
-    color: COLORS.error,
-    fontSize: 14,
-    marginTop: 12,
-    textAlign: "center",
-  },
-  questionBox: {
-    marginBottom: 24,
-  },
-  questionText: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: COLORS.text,
-    marginBottom: 16,
-    textAlign: "center",
-  },
-  sentenceBox: {
-    backgroundColor: "white",
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: COLORS.primary,
-    padding: 16,
-    marginBottom: 24,
-    minHeight: 80,
-    justifyContent: "center",
-  },
-  sentenceText: {
-    fontSize: 18,
-    color: COLORS.text,
-    lineHeight: 28,
-    textAlign: "center",
-  },
-  optionsContainer: {
-    gap: 12,
-    marginBottom: 24,
-  },
-  optionButton: {
-    backgroundColor: "white",
-    borderWidth: 2,
-    borderColor: COLORS.primary,
-    borderRadius: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    minHeight: 50,
-    justifyContent: "center",
-  },
-  optionText: {
-    fontSize: 16,
-    color: COLORS.text,
-    textAlign: "center",
-    fontWeight: "500",
-  },
-  selectedOption: {
-    backgroundColor: COLORS.primary,
-    borderColor: COLORS.primary,
-  },
-  selectedText: {
-    color: "white",
-  },
-  correctOption: {
-    backgroundColor: COLORS.success,
-    borderColor: COLORS.success,
-  },
-  correctText: {
-    color: "white",
-  },
-  wrongOption: {
-    backgroundColor: COLORS.error,
-    borderColor: COLORS.error,
-  },
-  wrongText: {
-    color: "white",
-  },
-  checkButton: {
-    backgroundColor: COLORS.primary,
-    paddingVertical: 14,
-    borderRadius: 12,
-    alignItems: "center",
-    elevation: 4,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-  },
-});

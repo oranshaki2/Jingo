@@ -1,4 +1,4 @@
-// app/songs/player.tsx
+// app/songs/player/index.tsx
 import React, {
   useCallback,
   useEffect,
@@ -9,11 +9,9 @@ import React, {
 import {
   View,
   Text,
-  StyleSheet,
   Pressable,
   ActivityIndicator,
   FlatList,
-  Platform,
   Alert,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -21,6 +19,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { Audio, AVPlaybackStatusSuccess } from "expo-av";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { audioMap } from "@/assets/audioMap";
+import styles, { LINE_HEIGHT } from "./_styles";
 
 /**
  * ===== How this page works =====
@@ -60,7 +59,17 @@ export default function SongPlayerScreen() {
 
   // useLocalSearchParams has a generic constraint 'Route' — cast the result instead of passing a generic.
 
-  const params = useLocalSearchParams() as Partial<{ title: string; artist: string; lyrics: string; timestamps?: string; song: string; category: string; level: string; userId: string; songId: string }>;
+  const params = useLocalSearchParams() as Partial<{
+    title: string;
+    artist: string;
+    lyrics: string;
+    timestamps?: string;
+    song: string;
+    category: string;
+    level: string;
+    userId: string;
+    songId: string;
+  }>;
 
   const title = params?.title || "Unknown Song";
   const artist = params?.artist || "Unknown Artist";
@@ -191,7 +200,7 @@ export default function SongPlayerScreen() {
         const { sound: s } = await Audio.Sound.createAsync(
           LOCAL_AUDIO,
           { shouldPlay: false, progressUpdateIntervalMillis: 150 },
-          onPlaybackStatusUpdate
+          onPlaybackStatusUpdate,
         );
 
         if (!mounted) {
@@ -278,7 +287,7 @@ export default function SongPlayerScreen() {
               contents: [{ role: "user", parts: [{ text: prompt }] }],
               generationConfig: { temperature: 0.2 },
             }),
-          }
+          },
         );
 
         if (!res.ok) {
@@ -343,7 +352,7 @@ export default function SongPlayerScreen() {
         }
       }
     },
-    [lyrics, currentIndex, durationMs]
+    [lyrics, currentIndex, durationMs],
   );
 
   /** ===== Controls ===== */
@@ -374,7 +383,7 @@ export default function SongPlayerScreen() {
   const seekToLine = useCallback(
     async (lineIndex: number) => {
       if (!sound || !lyrics || !lyrics[lineIndex]) return;
-      
+
       // Determine target position: use real timestamp if available, otherwise estimate
       let target = 0;
       if (timestamps && timestamps.length > lineIndex) {
@@ -394,7 +403,7 @@ export default function SongPlayerScreen() {
         // ignore
       }
     },
-    [sound, lyrics, msPerLine, timestamps]
+    [sound, lyrics, msPerLine, timestamps],
   );
 
   const startStudy = useCallback(async () => {
@@ -510,7 +519,7 @@ export default function SongPlayerScreen() {
                       styles.lyricEn,
                       styles.activeLyricEn,
                       styles.highlightWord,
-                      isActive
+                      isActive,
                     )}
                   </Text>
 
@@ -521,7 +530,7 @@ export default function SongPlayerScreen() {
                       styles.lyricHe,
                       styles.activeLyricHe,
                       styles.highlightWord,
-                      isActive
+                      isActive,
                     )}
                   </Text>
                 </View>
@@ -597,7 +606,7 @@ function renderHighlightedParts(
   baseStyle: any,
   activeStyle: any,
   highlightStyle: any,
-  isActive: boolean
+  isActive: boolean,
 ) {
   if (!highlights || highlights.length === 0) {
     return <Text style={[baseStyle, isActive && activeStyle]}>{text}</Text>;
@@ -612,7 +621,6 @@ function renderHighlightedParts(
   if (!pattern)
     return <Text style={[baseStyle, isActive && activeStyle]}>{text}</Text>;
 
-  const regex = new RegExp(`(${pattern})`, "i");
   // Split while preserving matches via a global split pattern (we'll iterate)
   const parts = text.split(new RegExp(`(${pattern})`, "gi"));
 
@@ -629,151 +637,3 @@ function renderHighlightedParts(
     );
   });
 }
-
-/** ===== Styles ===== */
-const LINE_HEIGHT = 64;
-
-const COLORS = {
-  primary: "#4EC4C4",
-  secondary: "#1A3D5A",
-  bg: "#F7FAFC",
-  text: "#222",
-  textDim: "#4a4a4a",
-  activeBg: "#E6FAF7",
-  activeText: "#0F766E",
-  border: "#e9ecef",
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.bg,
-    paddingTop: Platform.select({ ios: 16, android: 8 }),
-  },
-  header: {
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: "700",
-    color: COLORS.text,
-  },
-  subtitle: {
-    marginTop: 2,
-    fontSize: 16,
-    fontWeight: "500",
-    color: COLORS.textDim,
-  },
-  controlsRow: {
-    flexDirection: "row",
-    gap: 12,
-    marginTop: 12,
-    alignItems: "center",
-  },
-  controlBtn: {
-    backgroundColor: COLORS.primary,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 12,
-  },
-  controlBtnText: {
-    color: "white",
-    fontWeight: "700",
-    fontSize: 16,
-  },
-  secondaryBtn: {
-    borderWidth: 1,
-    borderColor: COLORS.primary,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    borderRadius: 12,
-  },
-  secondaryBtnText: {
-    color: COLORS.primary,
-    fontWeight: "700",
-    fontSize: 16,
-  },
-  timing: {
-    marginTop: 8,
-    fontSize: 12,
-    color: COLORS.textDim,
-  },
-  loadingBox: {
-    padding: 24,
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 8,
-  },
-  loadingText: {
-    color: COLORS.textDim,
-  },
-  errorBox: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-  },
-  errorText: {
-    color: "#b00020",
-  },
-  listContent: {
-    padding: 12,
-    paddingBottom: 40,
-  },
-  linePressable: {
-    borderRadius: 14,
-    overflow: "hidden",
-  },
-  lineBox: {
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    marginBottom: 8,
-    minHeight: LINE_HEIGHT - 8,
-    justifyContent: "center",
-  },
-  activeLineBox: {
-    backgroundColor: COLORS.activeBg,
-    borderColor: COLORS.primary,
-  },
-  lyricEn: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: COLORS.text,
-    marginBottom: 4,
-  },
-  lyricHe: {
-    fontSize: 15,
-    color: COLORS.textDim,
-  },
-  activeLyricEn: {
-    color: COLORS.activeText,
-  },
-  activeLyricHe: {
-    color: COLORS.activeText,
-  },
-  highlightWord: {
-    color: "#b00020",
-    fontWeight: "700",
-  },
-  studyButton: {
-    position: "absolute",
-    bottom: 24,
-    right: 24,
-    backgroundColor: COLORS.primary,
-    paddingHorizontal: 20,
-    paddingVertical: 14,
-    borderRadius: 12,
-    elevation: 4,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-  },
-  studyButtonText: {
-    color: "white",
-    fontWeight: "700",
-    fontSize: 16,
-  },
-});

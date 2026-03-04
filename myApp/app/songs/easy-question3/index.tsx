@@ -1,16 +1,8 @@
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  ActivityIndicator,
-  Alert,
-  Platform,
-  TextInput,
-} from "react-native";
+import { View, Text, Pressable, ActivityIndicator, Alert, TextInput } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import translationsHe from "@/assets/translations_he.json";
+import styles, { COLORS } from "./_styles";
 
 export default function Question3Screen() {
   const router = useRouter();
@@ -33,7 +25,12 @@ export default function Question3Screen() {
   const [isChecked, setIsChecked] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Parse remaining words and tracking lists
+  const getHebrewTranslation = (word: string | null) => {
+    if (!word) return null;
+    const normalizedWord = String(word).trim().toLowerCase();
+    return translationsHe[normalizedWord as keyof typeof translationsHe] ?? null;
+  };
+
   useEffect(() => {
     try {
       if (params.remainingWords) {
@@ -68,11 +65,9 @@ export default function Question3Screen() {
   const handleContinue = () => {
     if (!currentWord) return;
 
-    // Determine if answer is correct
     const isAnswerCorrect =
       userAnswer.trim().toLowerCase() === currentWord.toLowerCase();
 
-    // Update tracking lists
     const newCorrectWords = isAnswerCorrect
       ? [...correctWords, currentWord]
       : correctWords;
@@ -80,11 +75,9 @@ export default function Question3Screen() {
       ? [...incorrectWords, currentWord]
       : incorrectWords;
 
-    // Create remaining words array (original list minus the selected word)
     const remainingWords = words.filter((word) => word !== currentWord);
 
     if (remainingWords.length > 0) {
-      // Words remain, loop back to Question1 with remaining words
       router.push({
         pathname: "/songs/question1",
         params: {
@@ -98,7 +91,6 @@ export default function Question3Screen() {
         },
       });
     } else {
-      // Finish flow: navigate to finish; finish screen posts history
       navigateToFinish(newCorrectWords, newIncorrectWords);
     }
   };
@@ -138,35 +130,29 @@ export default function Question3Screen() {
   return (
     <View style={styles.container}>
       <View style={styles.contentContainer}>
-        {/* ===== Question Title ===== */}
         <View style={styles.questionBox}>
           <Text style={styles.questionText}>מה פירוש המילה באנגלית?</Text>
         </View>
 
-        {/* ===== Hebrew Translation ===== */}
-        {currentWord &&
-          translationsHe[currentWord as keyof typeof translationsHe] && (
-            <View style={styles.wordBox}>
-              <Text style={styles.wordLabel}>המילה בעברית:</Text>
-              <Text style={styles.word}>
-                {translationsHe[currentWord as keyof typeof translationsHe]}
-              </Text>
-            </View>
-          )}
+        {currentWord && (
+          <View style={styles.wordBox}>
+            <Text style={styles.wordLabel}>המילה בעברית:</Text>
+            <Text style={styles.word}>
+              {getHebrewTranslation(currentWord) ?? "לא נמצא תרגום למילה זו"}
+            </Text>
+          </View>
+        )}
 
-        {/* ===== Text Input ===== */}
         {currentWord && (
           <>
             <TextInput
               style={[
                 styles.textInput,
                 isChecked &&
-                  userAnswer.trim().toLowerCase() ===
-                    currentWord.toLowerCase() &&
+                  userAnswer.trim().toLowerCase() === currentWord.toLowerCase() &&
                   styles.correctInput,
                 isChecked &&
-                  userAnswer.trim().toLowerCase() !==
-                    currentWord.toLowerCase() &&
+                  userAnswer.trim().toLowerCase() !== currentWord.toLowerCase() &&
                   styles.wrongInput,
               ]}
               placeholder="הקלידו את התשובה באנגלית..."
@@ -176,15 +162,14 @@ export default function Question3Screen() {
               editable={!isChecked}
             />
 
-            {/* ===== Feedback Message ===== */}
             {isChecked && (
               <Text
                 style={[
                   styles.feedbackText,
-                  userAnswer.trim().toLowerCase() ===
-                    currentWord.toLowerCase() && styles.correctFeedback,
-                  userAnswer.trim().toLowerCase() !==
-                    currentWord.toLowerCase() && styles.wrongFeedback,
+                  userAnswer.trim().toLowerCase() === currentWord.toLowerCase() &&
+                    styles.correctFeedback,
+                  userAnswer.trim().toLowerCase() !== currentWord.toLowerCase() &&
+                    styles.wrongFeedback,
                 ]}
               >
                 {userAnswer.trim().toLowerCase() === currentWord.toLowerCase()
@@ -196,7 +181,6 @@ export default function Question3Screen() {
         )}
       </View>
 
-      {/* ===== Buttons ===== */}
       <View style={styles.buttonContainer}>
         {!isChecked ? (
           <Pressable style={styles.checkButton} onPress={handleCheck}>
@@ -204,161 +188,10 @@ export default function Question3Screen() {
           </Pressable>
         ) : (
           <Pressable style={styles.continueButton} onPress={handleContinue}>
-            <Text style={styles.buttonText}>
-              {words.length > 1 ? "המשך" : "סיום"}
-            </Text>
+            <Text style={styles.buttonText}>{words.length > 1 ? "המשך" : "סיום"}</Text>
           </Pressable>
         )}
       </View>
     </View>
   );
 }
-
-const COLORS = {
-  primary: "#4EC4C4",
-  secondary: "#1A3D5A",
-  bg: "#F7FAFC",
-  text: "#222",
-  textDim: "#4a4a4a",
-  border: "#e9ecef",
-  success: "#22c55e",
-  error: "#ef4444",
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.bg,
-    paddingHorizontal: 16,
-    paddingVertical: 24,
-    justifyContent: "space-between",
-  },
-  contentContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  wordBox: {
-    backgroundColor: "white",
-    borderRadius: 16,
-    borderWidth: 2,
-    borderColor: COLORS.primary,
-    padding: 24,
-    width: "100%",
-    marginBottom: 24,
-    alignItems: "center",
-  },
-  wordLabel: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: COLORS.textDim,
-    marginBottom: 8,
-  },
-  word: {
-    fontSize: 32,
-    fontWeight: "700",
-    color: COLORS.primary,
-  },
-  questionBox: {
-    marginBottom: 24,
-  },
-  questionText: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: COLORS.text,
-    marginBottom: 16,
-    textAlign: "center",
-  },
-  sentenceBox: {
-    backgroundColor: "white",
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: COLORS.primary,
-    padding: 16,
-    marginBottom: 24,
-    minHeight: 80,
-    justifyContent: "center",
-  },
-  sentenceText: {
-    fontSize: 18,
-    color: COLORS.text,
-    lineHeight: 28,
-    textAlign: "center",
-  },
-  textInput: {
-    backgroundColor: "white",
-    borderWidth: 2,
-    borderColor: COLORS.primary,
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    fontSize: 16,
-    color: COLORS.text,
-    minHeight: 50,
-    width: "100%",
-    marginBottom: 24,
-    textAlign: "center",
-  },
-  correctInput: {
-    backgroundColor: COLORS.success,
-    borderColor: COLORS.success,
-  },
-  wrongInput: {
-    backgroundColor: COLORS.error,
-    borderColor: COLORS.error,
-  },
-  feedbackText: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginBottom: 24,
-    textAlign: "center",
-  },
-  correctFeedback: {
-    color: COLORS.success,
-  },
-  wrongFeedback: {
-    color: COLORS.error,
-  },
-  buttonContainer: {
-    gap: 12,
-    marginBottom: Platform.OS === "ios" ? 32 : 24,
-  },
-  checkButton: {
-    backgroundColor: COLORS.primary,
-    paddingVertical: 14,
-    borderRadius: 12,
-    alignItems: "center",
-    elevation: 4,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-  },
-  continueButton: {
-    backgroundColor: COLORS.primary,
-    paddingVertical: 14,
-    borderRadius: 12,
-    alignItems: "center",
-    elevation: 4,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-  },
-  buttonText: {
-    color: "white",
-    fontWeight: "700",
-    fontSize: 16,
-  },
-  loadingText: {
-    marginTop: 12,
-    color: COLORS.textDim,
-    fontSize: 16,
-  },
-  errorText: {
-    color: COLORS.error,
-    fontSize: 14,
-    marginTop: 12,
-    textAlign: "center",
-  },
-});
