@@ -1,19 +1,11 @@
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  ActivityIndicator,
-  Alert,
-  Platform,
-} from "react-native";
+import { View, Text, Pressable, ActivityIndicator, Alert } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import questionsRegistry from "../../assets/questions";
+import questionsRegistry from "@/assets/questions";
+import styles, { COLORS } from "./_styles";
 
 /** ===== Types ===== */
 type QuestionData = {
-  sentence: string;
   options: string[];
   correctAnswerIndex: number;
 };
@@ -21,10 +13,10 @@ type QuestionData = {
 const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
 const GEMINI_MODEL = "gemini-2.5-pro";
 
-export default function Question2Screen() {
+export default function Question1Screen() {
   const router = useRouter();
   const params = useLocalSearchParams() as Partial<{
-    remainingWords: string;
+    words: string;
     category: string;
     level: string;
     correctWords?: string;
@@ -44,36 +36,31 @@ export default function Question2Screen() {
   const [isChecked, setIsChecked] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Parse words and tracking lists
   useEffect(() => {
     try {
-      if (params.remainingWords) {
-        const parsedWords = JSON.parse(params.remainingWords);
+      if (params.words) {
+        const parsedWords = JSON.parse(params.words);
         if (Array.isArray(parsedWords) && parsedWords.length > 0) {
           setWords(parsedWords);
-          // Select a random word as the current word
           const randomIndex = Math.floor(Math.random() * parsedWords.length);
           setCurrentWord(parsedWords[randomIndex]);
         } else {
-          Alert.alert("Error", "No words received or words list is empty.");
+          Alert.alert("שגיאה", "לא התקבלו מילים או שהרשימה ריקה.");
         }
       }
 
-      // Parse tracking lists if they exist
-      if (params.correctWords) {
-        setCorrectWords(JSON.parse(params.correctWords));
-      }
-      if (params.incorrectWords) {
+      if (params.correctWords) setCorrectWords(JSON.parse(params.correctWords));
+      if (params.incorrectWords)
         setIncorrectWords(JSON.parse(params.incorrectWords));
-      }
     } catch (e) {
-      console.error("Failed to parse remaining words:", e);
-      Alert.alert("Error", "Failed to parse remaining words.");
+      Alert.alert("שגיאה", "טעינת המילים נכשלה");
     } finally {
       setIsLoading(false);
     }
-  }, [params.remainingWords]);
+  }, [params.words]);
 
-  /** ===== Fetch question from Gemini ===== */
+  /** ===== Fetch options from local assets or Gemini ===== */
   useEffect(() => {
     if (!currentWord) return;
 
@@ -85,9 +72,8 @@ export default function Question2Screen() {
         setError(null);
 
         // First, try to load pre-made question from app assets
-        if (questionsRegistry[currentWord]?.["easy-question2"]) {
-          const questionFromAsset =
-            questionsRegistry[currentWord]["easy-question2"];
+        if (questionsRegistry[currentWord]?.question1) {
+          const questionFromAsset = questionsRegistry[currentWord].question1;
           if (!cancelled) {
             setQuestionData(questionFromAsset as QuestionData);
           }
@@ -96,7 +82,7 @@ export default function Question2Screen() {
 
         // File not found, fall back to Gemini API
         if (!GEMINI_API_KEY) {
-          throw new Error("Missing Gemini API key.");
+          throw new Error("Missing Gemini API key and no question file found.");
         }
 
         const prompt = buildGeminiPrompt(currentWord, params.category);
@@ -110,7 +96,7 @@ export default function Question2Screen() {
               contents: [{ role: "user", parts: [{ text: prompt }] }],
               generationConfig: { temperature: 0.2 },
             }),
-          }
+          },
         );
 
         if (!res.ok) {
@@ -147,10 +133,11 @@ export default function Question2Screen() {
   };
 
   const handleContinue = () => {
-    if (!currentWord) return;
+    if (!currentWord || selectedOption === null || questionData === null)
+      return;
 
     // Determine if answer is correct
-    const isAnswerCorrect = selectedOption === questionData?.correctAnswerIndex;
+    const isAnswerCorrect = selectedOption === questionData.correctAnswerIndex;
 
     // Update tracking lists
     const newCorrectWords = isAnswerCorrect
@@ -160,13 +147,15 @@ export default function Question2Screen() {
       ? [...incorrectWords, currentWord]
       : incorrectWords;
 
-    // Create remaining words array (original list minus the selected word)
-    const remainingWords = words.filter((word) => word !== currentWord);
+    const remainingWords = words.filter((w) => w !== currentWord);
+    const levelNum = params.level ? Number(params.level) : 0;
+    const nextPath = (
+      levelNum === 1 ? "/songs/easy-question2" : "/songs/question2"
+    ) as any;
 
     if (remainingWords.length > 0) {
-      // Navigate to easy-question3 with remaining words
       router.push({
-        pathname: "/songs/easy-question3" as any,
+        pathname: nextPath,
         params: {
           remainingWords: JSON.stringify(remainingWords),
           correctWords: JSON.stringify(newCorrectWords),
@@ -178,14 +167,14 @@ export default function Question2Screen() {
         },
       });
     } else {
-      // Finish flow: navigate to finish; finish screen posts history
+      // Finish flow: navigate to finish, posting is handled there
       navigateToFinish(newCorrectWords, newIncorrectWords);
     }
   };
 
   const navigateToFinish = (
     correctWords: string[],
-    mistakenWords: string[]
+    mistakenWords: string[],
   ) => {
     router.push({
       pathname: "/songs/finish",
@@ -218,17 +207,20 @@ export default function Question2Screen() {
   return (
     <View style={styles.container}>
       <View style={styles.contentContainer}>
-        {/* ===== Question Title ===== */}
-        <View style={styles.questionBox}>
-          <Text style={styles.questionText}>השלימו את המשפט:</Text>
-        </View>
-
-        {/* ===== Sentence with Blank ===== */}
-        {!isLoadingQuestion && questionData && (
-          <View style={styles.sentenceBox}>
-            <Text style={styles.sentenceText}>{questionData.sentence}</Text>
+        {/* ===== Word ===== */}
+        {currentWord && (
+          <View style={styles.wordBox}>
+            <Text style={styles.wordLabel}>המילה הנלמדת:</Text>
+            <Text style={styles.word}>{currentWord}</Text>
           </View>
         )}
+
+        {/* ===== Static Question ===== */}
+        <View style={styles.questionBox}>
+          <Text style={styles.questionText}>
+            בחרו את התרגום הנכון של המילה:
+          </Text>
+        </View>
 
         {/* ===== Options / Loader ===== */}
         <View style={styles.optionsContainer}>
@@ -297,11 +289,10 @@ export default function Question2Screen() {
 /** ===== Helpers ===== */
 function buildGeminiPrompt(word: string, category: string | undefined): string {
   return `
-Return ONLY valid JSON, with "sentence", "options" and "correctAnswerIndex".
-Generate a fill-the-blank exercise:
-- Create a sentence in Hebrew that uses the word "${word}" (from category "${category}")
-- Replace the word with a blank (shown as _______ in the sentence)
-- Provide 4 options in English: the correct word and 3 plausible but incorrect distractors
+Return ONLY valid JSON, with "options" and "correctAnswerIndex".
+Generate 4 Hebrew translations for the English word "${word}" which belongs to the category "${category}":
+- One correct translation
+- Three plausible but incorrect distractors
 `;
 }
 
@@ -313,171 +304,3 @@ function extractFirstJsonObject(s: string): string {
   }
   return s.slice(start, end + 1);
 }
-
-const COLORS = {
-  primary: "#4EC4C4",
-  secondary: "#1A3D5A",
-  bg: "#F7FAFC",
-  text: "#222",
-  textDim: "#4a4a4a",
-  border: "#e9ecef",
-  success: "#22c55e",
-  error: "#ef4444",
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.bg,
-    paddingHorizontal: 16,
-    paddingVertical: 24,
-    justifyContent: "space-between",
-  },
-  contentContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "700",
-    color: COLORS.text,
-    marginBottom: 32,
-  },
-  wordBox: {
-    backgroundColor: "white",
-    borderRadius: 16,
-    borderWidth: 2,
-    borderColor: COLORS.primary,
-    padding: 24,
-    width: "100%",
-    marginBottom: 32,
-    alignItems: "center",
-  },
-  wordLabel: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: COLORS.textDim,
-    marginBottom: 8,
-  },
-  word: {
-    fontSize: 32,
-    fontWeight: "700",
-    color: COLORS.primary,
-  },
-  description: {
-    fontSize: 16,
-    color: COLORS.textDim,
-    textAlign: "center",
-    lineHeight: 24,
-  },
-  buttonContainer: {
-    gap: 12,
-    marginBottom: Platform.OS === "ios" ? 32 : 24,
-  },
-  continueButton: {
-    backgroundColor: COLORS.primary,
-    paddingVertical: 14,
-    borderRadius: 12,
-    alignItems: "center",
-    elevation: 4,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-  },
-  buttonText: {
-    color: "white",
-    fontWeight: "700",
-    fontSize: 16,
-  },
-  loadingText: {
-    marginTop: 12,
-    color: COLORS.textDim,
-    fontSize: 16,
-  },
-  errorText: {
-    color: COLORS.error,
-    fontSize: 14,
-    marginTop: 12,
-    textAlign: "center",
-  },
-  questionBox: {
-    marginBottom: 24,
-  },
-  questionText: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: COLORS.text,
-    marginBottom: 16,
-    textAlign: "center",
-  },
-  sentenceBox: {
-    backgroundColor: "white",
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: COLORS.primary,
-    padding: 16,
-    marginBottom: 24,
-    minHeight: 80,
-    justifyContent: "center",
-  },
-  sentenceText: {
-    fontSize: 18,
-    color: COLORS.text,
-    lineHeight: 28,
-    textAlign: "center",
-  },
-  optionsContainer: {
-    gap: 12,
-    marginBottom: 24,
-  },
-  optionButton: {
-    backgroundColor: "white",
-    borderWidth: 2,
-    borderColor: COLORS.primary,
-    borderRadius: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    minHeight: 50,
-    justifyContent: "center",
-  },
-  optionText: {
-    fontSize: 16,
-    color: COLORS.text,
-    textAlign: "center",
-    fontWeight: "500",
-  },
-  selectedOption: {
-    backgroundColor: COLORS.primary,
-    borderColor: COLORS.primary,
-  },
-  selectedText: {
-    color: "white",
-  },
-  correctOption: {
-    backgroundColor: COLORS.success,
-    borderColor: COLORS.success,
-  },
-  correctText: {
-    color: "white",
-  },
-  wrongOption: {
-    backgroundColor: COLORS.error,
-    borderColor: COLORS.error,
-  },
-  wrongText: {
-    color: "white",
-  },
-  checkButton: {
-    backgroundColor: COLORS.primary,
-    paddingVertical: 14,
-    borderRadius: 12,
-    alignItems: "center",
-    elevation: 4,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-  },
-});

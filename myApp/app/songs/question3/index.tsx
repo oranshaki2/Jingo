@@ -1,16 +1,8 @@
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  ActivityIndicator,
-  Alert,
-  Platform,
-  TextInput,
-} from "react-native";
+import { View, Text, Pressable, ActivityIndicator, Alert, TextInput } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import questionsRegistry from "../../assets/questions";
+import questionsRegistry from "@/assets/questions";
+import styles, { COLORS } from "./_styles";
 
 /** ===== Types ===== */
 type QuestionData = {
@@ -50,7 +42,6 @@ export default function Question3Screen() {
         const parsedWords = JSON.parse(params.remainingWords);
         if (Array.isArray(parsedWords) && parsedWords.length > 0) {
           setWords(parsedWords);
-          // Select a random word as the current word
           const randomIndex = Math.floor(Math.random() * parsedWords.length);
           setCurrentWord(parsedWords[randomIndex]);
         } else {
@@ -58,7 +49,6 @@ export default function Question3Screen() {
         }
       }
 
-      // Parse tracking lists if they exist
       if (params.correctWords) {
         setCorrectWords(JSON.parse(params.correctWords));
       }
@@ -84,7 +74,6 @@ export default function Question3Screen() {
         setIsLoadingQuestion(true);
         setError(null);
 
-        // First, try to load pre-made question from app assets
         if (questionsRegistry[currentWord]?.question3) {
           const questionFromAsset = questionsRegistry[currentWord].question3;
           if (!cancelled) {
@@ -93,7 +82,6 @@ export default function Question3Screen() {
           return;
         }
 
-        // File not found, fall back to Gemini API
         if (!GEMINI_API_KEY) {
           throw new Error("Missing Gemini API key.");
         }
@@ -148,12 +136,10 @@ export default function Question3Screen() {
   const handleContinue = () => {
     if (!currentWord) return;
 
-    // Determine if answer is correct
     const isAnswerCorrect =
       userAnswer.trim().toLowerCase() ===
       (questionData?.correctAnswer.toLowerCase() || "");
 
-    // Update tracking lists
     const newCorrectWords = isAnswerCorrect
       ? [...correctWords, currentWord]
       : correctWords;
@@ -161,11 +147,9 @@ export default function Question3Screen() {
       ? [...incorrectWords, currentWord]
       : incorrectWords;
 
-    // Create remaining words array (original list minus the selected word)
     const remainingWords = words.filter((word) => word !== currentWord);
 
     if (remainingWords.length > 0) {
-      // Words remain, loop back to Question1 with remaining words
       router.push({
         pathname: "/songs/question1",
         params: {
@@ -179,7 +163,6 @@ export default function Question3Screen() {
         },
       });
     } else {
-      // Finish flow: navigate to finish; finish screen will post history
       navigateToFinish(newCorrectWords, newIncorrectWords);
     }
   };
@@ -223,19 +206,16 @@ export default function Question3Screen() {
   return (
     <View style={styles.container}>
       <View style={styles.contentContainer}>
-        {/* ===== Question Title ===== */}
         <View style={styles.questionBox}>
           <Text style={styles.questionText}>מלאו את המילה החסרה:</Text>
         </View>
 
-        {/* ===== Sentence with Blank ===== */}
         {!isLoadingQuestion && questionData && (
           <View style={styles.sentenceBox}>
             <Text style={styles.sentenceText}>{questionData.sentence}</Text>
           </View>
         )}
 
-        {/* ===== Loader or Input ===== */}
         {isLoadingQuestion ? (
           <ActivityIndicator size="large" color={COLORS.primary} />
         ) : (
@@ -253,7 +233,6 @@ export default function Question3Screen() {
           />
         )}
 
-        {/* ===== Feedback Message ===== */}
         {isChecked && (
           <Text
             style={[
@@ -269,7 +248,6 @@ export default function Question3Screen() {
         )}
       </View>
 
-      {/* ===== Buttons ===== */}
       <View style={styles.buttonContainer}>
         {!isChecked ? (
           <Pressable style={styles.checkButton} onPress={handleCheck}>
@@ -277,9 +255,7 @@ export default function Question3Screen() {
           </Pressable>
         ) : (
           <Pressable style={styles.continueButton} onPress={handleContinue}>
-            <Text style={styles.buttonText}>
-              {words.length > 1 ? "המשך" : "סיום"}
-            </Text>
+            <Text style={styles.buttonText}>{words.length > 1 ? "המשך" : "סיום"}</Text>
           </Pressable>
         )}
       </View>
@@ -306,131 +282,3 @@ function extractFirstJsonObject(s: string): string {
   }
   return s.slice(start, end + 1);
 }
-
-const COLORS = {
-  primary: "#4EC4C4",
-  secondary: "#1A3D5A",
-  bg: "#F7FAFC",
-  text: "#222",
-  textDim: "#4a4a4a",
-  border: "#e9ecef",
-  success: "#22c55e",
-  error: "#ef4444",
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.bg,
-    paddingHorizontal: 16,
-    paddingVertical: 24,
-    justifyContent: "space-between",
-  },
-  contentContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  questionBox: {
-    marginBottom: 24,
-  },
-  questionText: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: COLORS.text,
-    marginBottom: 16,
-    textAlign: "center",
-  },
-  sentenceBox: {
-    backgroundColor: "white",
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: COLORS.primary,
-    padding: 16,
-    marginBottom: 24,
-    minHeight: 80,
-    justifyContent: "center",
-  },
-  sentenceText: {
-    fontSize: 18,
-    color: COLORS.text,
-    lineHeight: 28,
-    textAlign: "center",
-  },
-  textInput: {
-    backgroundColor: "white",
-    borderWidth: 2,
-    borderColor: COLORS.primary,
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    fontSize: 16,
-    color: COLORS.text,
-    minHeight: 50,
-    width: "100%",
-    marginBottom: 24,
-    textAlign: "center",
-  },
-  correctInput: {
-    backgroundColor: COLORS.success,
-    borderColor: COLORS.success,
-  },
-  wrongInput: {
-    backgroundColor: COLORS.error,
-    borderColor: COLORS.error,
-  },
-  feedbackText: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginBottom: 24,
-    textAlign: "center",
-  },
-  correctFeedback: {
-    color: COLORS.success,
-  },
-  wrongFeedback: {
-    color: COLORS.error,
-  },
-  buttonContainer: {
-    gap: 12,
-    marginBottom: Platform.OS === "ios" ? 32 : 24,
-  },
-  checkButton: {
-    backgroundColor: COLORS.primary,
-    paddingVertical: 14,
-    borderRadius: 12,
-    alignItems: "center",
-    elevation: 4,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-  },
-  continueButton: {
-    backgroundColor: COLORS.primary,
-    paddingVertical: 14,
-    borderRadius: 12,
-    alignItems: "center",
-    elevation: 4,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-  },
-  buttonText: {
-    color: "white",
-    fontWeight: "700",
-    fontSize: 16,
-  },
-  loadingText: {
-    marginTop: 12,
-    color: COLORS.textDim,
-    fontSize: 16,
-  },
-  errorText: {
-    color: COLORS.error,
-    fontSize: 14,
-    marginTop: 12,
-    textAlign: "center",
-  },
-});

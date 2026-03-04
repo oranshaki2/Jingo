@@ -2,9 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
-  StyleSheet,
   Pressable,
-  Platform,
   ScrollView,
   ActivityIndicator,
   Image,
@@ -13,12 +11,13 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { artistImages } from "@/assets/artistsMap";
+import styles, { COLORS } from "./_styles";
 
 type SuggestedSong = {
   _id?: string;
   id?: string;
-  title?: string; // some payloads might use title
-  name?: string; // server songs use name
+  title?: string;
+  name?: string;
   artist?: string;
   genre?: string;
   picture?: string;
@@ -36,8 +35,6 @@ const getImageSource = (picture?: string | null) => {
   if (/^https?:\/\//.test(picture)) return { uri: picture };
   return artistImages[picture] ?? null;
 };
-
- 
 
 export default function SongsSuggestionsScreen() {
   const router = useRouter();
@@ -59,7 +56,6 @@ export default function SongsSuggestionsScreen() {
         return;
       }
 
-      // userId for header, songId for path
       let userId = params.userId;
       if (!userId) {
         try {
@@ -132,7 +128,6 @@ export default function SongsSuggestionsScreen() {
         };
 
         if (ids && ids.length > 0) {
-          // Fetch each song by ID to get full details
           const detailed = await Promise.all(
             ids.map(async (sId) => {
               try {
@@ -164,7 +159,6 @@ export default function SongsSuggestionsScreen() {
   }, [params.userId, params.songId]);
 
   const handleBackToHome = () => {
-    // Navigate back to home screen
     router.push("/(tabs)/home");
   };
 
@@ -232,7 +226,6 @@ export default function SongsSuggestionsScreen() {
       const songId = song._id || song.id;
       if (!songId) return;
 
-      // Use existing song data; if minimal, try to refetch
       let full = song;
       if (!song.title && !song.name) {
         try {
@@ -243,10 +236,8 @@ export default function SongsSuggestionsScreen() {
 
       const title = full.title || full.name || "Unknown";
       const artist = full.artist || "";
-      const picture =
-        full.picture || "";
+      const picture = full.picture || "";
 
-      // persist meta
       await AsyncStorage.setItem(
         `@songMeta/${songId}`,
         JSON.stringify({
@@ -258,7 +249,6 @@ export default function SongsSuggestionsScreen() {
         })
       );
 
-      // lyrics if available
       if (full.lyrics) {
         const lyricsStr =
           typeof full.lyrics === "string"
@@ -267,7 +257,6 @@ export default function SongsSuggestionsScreen() {
         await AsyncStorage.setItem(`@lyrics/${songId}`, lyricsStr);
       }
 
-      // choose random category words
       const catMap = extractCategoryMap(full);
       if (catMap) {
         const keys = Object.keys(catMap).filter(Boolean);
@@ -313,9 +302,7 @@ export default function SongsSuggestionsScreen() {
 
         <Text style={styles.title}>עוד ממה שאתם אוהבים</Text>
 
-        <Text style={styles.message}>
-          הנה כמה הצעות לשירים נוספים שכדאי לנסות:
-        </Text>
+        <Text style={styles.message}>הנה כמה הצעות לשירים נוספים שכדאי לנסות:</Text>
 
         <View style={styles.suggestionsBox}>
           {loading && <ActivityIndicator size="large" color={COLORS.primary} />}
@@ -380,118 +367,3 @@ export default function SongsSuggestionsScreen() {
     </View>
   );
 }
-
-const COLORS = {
-  primary: "#4EC4C4",
-  secondary: "#1A3D5A",
-  bg: "#F7FAFC",
-  text: "#222",
-  textDim: "#4a4a4a",
-  error: "#EF4444",
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.bg,
-    paddingHorizontal: 16,
-    paddingVertical: 24,
-    justifyContent: "space-between",
-  },
-  contentContainer: {
-    flexGrow: 1,
-    justifyContent: "flex-start",
-    paddingBottom: 16,
-  },
-  headerBox: {
-    marginBottom: 24,
-    alignItems: "center",
-  },
-  headerEmoji: {
-    fontSize: 64,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: "700",
-    color: COLORS.text,
-    marginBottom: 16,
-    textAlign: "center",
-  },
-  message: {
-    fontSize: 18,
-    color: COLORS.textDim,
-    textAlign: "center",
-    lineHeight: 28,
-    marginBottom: 32,
-  },
-  suggestionsBox: {
-    backgroundColor: "white",
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: COLORS.primary,
-    padding: 20,
-    alignItems: "center",
-    justifyContent: "center",
-    minHeight: 200,
-  },
-  suggestionsText: {
-    fontSize: 16,
-    color: COLORS.textDim,
-    textAlign: "center",
-  },
-  list: {
-    width: "100%",
-    gap: 12,
-  },
-  listItem: {
-    backgroundColor: "#F3F4F6",
-    borderRadius: 10,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: COLORS.primary,
-    flexDirection: "row",
-    gap: 12,
-    alignItems: "center",
-  },
-  songImage: {
-    width: 56,
-    height: 56,
-    borderRadius: 10,
-    backgroundColor: "#e5e7eb",
-  },
-  songTitle: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: COLORS.text,
-  },
-  songArtist: {
-    fontSize: 14,
-    color: COLORS.textDim,
-    marginTop: 4,
-  },
-  songGenre: {
-    fontSize: 13,
-    color: COLORS.secondary,
-    marginTop: 4,
-  },
-  buttonContainer: {
-    gap: 12,
-    marginBottom: Platform.OS === "ios" ? 32 : 24,
-  },
-  homeButton: {
-    backgroundColor: COLORS.primary,
-    paddingVertical: 14,
-    borderRadius: 12,
-    alignItems: "center",
-    elevation: 4,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-  },
-  buttonText: {
-    color: "white",
-    fontWeight: "700",
-    fontSize: 16,
-  },
-});
