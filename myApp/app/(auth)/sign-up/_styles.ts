@@ -41,6 +41,24 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     color: COLORS.textDark,
   },
+  passwordWrapper: {
+    position: "relative",
+    justifyContent: "center",
+  },
+  passwordInput: {
+    paddingRight: 52,
+  },
+  eyeButton: {
+    position: "absolute",
+    right: 12,
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  eyeIcon: {
+    width: 22,
+    height: 22,
+  },
   primaryButton: {
     backgroundColor: COLORS.primary,
     paddingVertical: 14,

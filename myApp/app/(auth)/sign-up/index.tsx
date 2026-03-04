@@ -1,6 +1,14 @@
 // app/(auth)/sign-up.tsx
 import React, { useState } from "react";
-import { View, Text, TextInput, Pressable, Alert } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  Pressable,
+  Alert,
+  TouchableOpacity,
+  Image,
+} from "react-native";
 import { router, Href } from "expo-router";
 import { saveSignupData } from "../../../utils/storage";
 import styles, { COLORS } from "./_styles";
@@ -11,6 +19,8 @@ export default function SignUp() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [isPasswordHidden, setIsPasswordHidden] = useState(true);
+  const [isConfirmHidden, setIsConfirmHidden] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
   // check username availability
@@ -18,7 +28,7 @@ export default function SignUp() {
     try {
       const res = await fetch(
         `${API_URL}/users/by-username/${encodeURIComponent(name.trim())}`,
-        { method: "GET", headers: { "Content-Type": "application/json" } }
+        { method: "GET", headers: { "Content-Type": "application/json" } },
       );
 
       if (res.status === 404) return false;
@@ -26,7 +36,7 @@ export default function SignUp() {
 
       Alert.alert(
         "שגיאה",
-        "לא ניתן לבדוק זמינות שם משתמש כרגע. נסו שוב בעוד רגע."
+        "לא ניתן לבדוק זמינות שם משתמש כרגע. נסו שוב בעוד רגע.",
       );
       return true;
     } catch {
@@ -90,28 +100,64 @@ export default function SignUp() {
 
       <View style={styles.field}>
         <Text style={styles.label}>סיסמה</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="הקלד/י סיסמה (לפחות 8 תווים)"
-          placeholderTextColor="#7A7A7A"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-          textAlign="right"
-        />
+        <View style={styles.passwordWrapper}>
+          <TextInput
+            style={[styles.input, styles.passwordInput]}
+            placeholder="הקלד/י סיסמה (לפחות 8 תווים)"
+            placeholderTextColor="#7A7A7A"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry={isPasswordHidden}
+            textAlign="right"
+          />
+
+          <TouchableOpacity
+            onPress={() => setIsPasswordHidden((prev) => !prev)}
+            style={styles.eyeButton}
+            activeOpacity={0.7}
+          >
+            <Image
+              source={
+                isPasswordHidden
+                  ? require("@/assets/images/eyeHide.png")
+                  : require("@/assets/images/eyeShow.png")
+              }
+              style={styles.eyeIcon}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+        </View>
       </View>
 
       <View style={styles.field}>
         <Text style={styles.label}>וידוא סיסמה</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="הקלד/י שוב את הסיסמה"
-          placeholderTextColor="#7A7A7A"
-          value={confirm}
-          onChangeText={setConfirm}
-          secureTextEntry
-          textAlign="right"
-        />
+        <View style={styles.passwordWrapper}>
+          <TextInput
+            style={[styles.input, styles.passwordInput]}
+            placeholder="הקלד/י שוב את הסיסמה"
+            placeholderTextColor="#7A7A7A"
+            value={confirm}
+            onChangeText={setConfirm}
+            secureTextEntry={isConfirmHidden}
+            textAlign="right"
+          />
+
+          <TouchableOpacity
+            onPress={() => setIsConfirmHidden((prev) => !prev)}
+            style={styles.eyeButton}
+            activeOpacity={0.7}
+          >
+            <Image
+              source={
+                isConfirmHidden
+                  ? require("@/assets/images/eyeHide.png")
+                  : require("@/assets/images/eyeShow.png")
+              }
+              style={styles.eyeIcon}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Profile picture upload removed */}
