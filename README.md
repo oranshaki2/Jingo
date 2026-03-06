@@ -35,8 +35,6 @@ You will need to download "Expo Go" app to your mobile, scan the QR code, and th
 
 <img width="946" height="2048" alt="image" src="https://github.com/user-attachments/assets/b027d67d-53a0-4e9f-a9fd-cb20472a1414" />
 
-<img width="946" height="2048" alt="image" src="https://github.com/user-attachments/assets/8f0eced5-6672-4507-918c-8d98e99642db" />
-
 
 ### After Login
 
