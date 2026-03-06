@@ -1,8 +1,4 @@
-const Song= require('../models/song');
 const songService = require('../services/song');
-const mongoose = require('mongoose');
-const fs = require('fs');
-const path = require('path');
 require('dotenv').config();
 const User = require('../models/user');
 

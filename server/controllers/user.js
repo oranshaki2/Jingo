@@ -1,6 +1,7 @@
 // server/controllers/user.js
 const userService = require('../services/user');
 
+const MIN_PASSWORD_LENGTH = 8;
 
 const createUser = async (req, res) => {
   try {
@@ -11,8 +12,8 @@ const createUser = async (req, res) => {
 
 
     // Validate required fields
-    if (!password || password.length < 8) {
-      return res.status(400).json({ errors: ['Password must be at least 8 characters long.'] });
+    if (!password || password.length < MIN_PASSWORD_LENGTH) {
+      return res.status(400).json({ errors: [`Password must be at least ${MIN_PASSWORD_LENGTH} characters long.`] });
     }
 
     // Create the user
