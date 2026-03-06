@@ -147,7 +147,6 @@ const ALL_GENRES = [
   { key: "electronic", label: "אלקטרוני" },
   { key: "country", label: "קאנטרי" },
   { key: "indie", label: "אינדי" },
-  { key: "kids", label: "ילדים" },
 ];
 
 export default function Settings() {
