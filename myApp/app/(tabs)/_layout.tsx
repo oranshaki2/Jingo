@@ -1,6 +1,10 @@
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons"; // you can also use Feather, MaterialIcons, etc.
-
+/*
+  This is the root layout for the "(tabs)" group of screens.
+  It defines the bottom tab navigator that appears on all screens within this group.
+  Each screen in the group is defined as a child of this layout (e.g. home.tsx, settings.tsx).
+*/  
 export default function TabsLayout() {
   return (
     <Tabs
