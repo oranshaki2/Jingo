@@ -15,8 +15,7 @@ type GenreKey =
   | "folk"
   | "electronic"
   | "country"
-  | "indie"
-  | "kids";
+  | "indie";
 
 type GenreItem = { key: GenreKey; label: string; src: any };
 
@@ -67,11 +66,7 @@ const GENRES: GenreItem[] = [
     label: "אינדי",
     src: require("../../../assets/genres/indie.jpg"),
   },
-  {
-    key: "kids",
-    label: "ילדים",
-    src: require("../../../assets/genres/kids.jpg"),
-  },
+
 ];
 
 export default function ChooseGenres() {
