@@ -44,12 +44,6 @@ mongoose.connection.once('open', () => {
     console.error('Connection error:', error);
 });
 
-// Ensure the profilePics directory exists
-const profilePicsPath = path.join(__dirname, "profilePics");
-if (!fs.existsSync(profilePicsPath)) {
-  fs.mkdirSync(profilePicsPath);
-}
-app.use("/profilePics", express.static(profilePicsPath));
 
 app.use(express.json());
 // Set up routes

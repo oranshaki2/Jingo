@@ -1,6 +1,8 @@
 // services/recommendOnlyNew.js
 const Song = require('../models/song');
 
+const MAX_RECOMMENDATIONS = 10;
+
 /**
  * gets all songs from the database
  */
@@ -106,7 +108,7 @@ async function recommendOnlyNewWords(user, selectedCategory) {
         audioURL: song.audioURL || '',
       });
 
-      if (recommendations.length >= 20) break;
+      if (recommendations.length >= MAX_RECOMMENDATIONS) break;
     }
 
     genreRecommendations[genre] = recommendations;

@@ -3,6 +3,8 @@ const Song = require("../models/song");
 const mongoose = require("mongoose");
 const User = require("../models/user"); 
 
+const MAX_RECOMMENDATIONS = 10;
+
 // Create a new song
 const createSong = async (
   name,
@@ -105,7 +107,7 @@ const getFavoriteSuggestions = async (userId, currentSongId) => {
       if (a[0] > b[0]) return 1;
       return 0;
     })
-    .slice(0, 10) // top 10
+    .slice(0, MAX_RECOMMENDATIONS) // top MAX_RECOMMENDATIONS
     .map(([songId]) => songId);
 
   return sorted;
