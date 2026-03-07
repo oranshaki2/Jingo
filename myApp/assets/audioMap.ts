@@ -126,4 +126,9 @@ export const audioMap: Record<string, any> = {
   "you are": require("./audios/Carolyn Dawn Johnson - You Are - Carolyn Dawn Johnson.mp3"),
   "you belong with me": require("./audios/you belong with me.mp3"),
   "your sweet six six six": require("./audios/Your Sweet six six six- HIM.mp3"),
+  "fancy pants": require("./audios/Fancy Pants.mp3"),
+  "i don't know why": require("./audios/I Dont Know Why.mp3"),
+  "i'm so sorry": require("./audios/Im So Sorry.mp3"),
+  levitate: require("./audios/Levitate.mp3"),
+  "kandy life": require("./audios/Kandy Life.mp3"),
 };

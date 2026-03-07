@@ -1,0 +1,20 @@
+{
+  "question1": {
+    "options": ["חייל", "שחקן", "מאמן", "קפטן"],
+    "correctAnswerIndex": 3
+  },
+  "easy-question2": {
+    "sentence": "ה_______ של הספינה הוביל את הצוות בבטחה לנמל.",
+    "options": ["Sailor", "Captain", "Doctor", "Teacher"],
+    "correctAnswerIndex": 1
+  },
+  "question2": {
+    "sentence": "The _______ gave orders to the crew during the storm.",
+    "options": ["Player", "Coach", "Captain", "Pilot"],
+    "correctAnswerIndex": 2
+  },
+  "question3": {
+    "sentence": "She is the _______ of the football team.",
+    "correctAnswer": "Captain"
+  }
+}
