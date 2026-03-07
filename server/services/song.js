@@ -94,8 +94,7 @@ const getSongById = async (id) => {
 
 /**
  * Suggests songs the user might like based on what other users with similar
- * taste also added to their favorites — the classic "users who liked this
- * also liked…" approach.
+ * taste also added to their favorites — the classic "users who learned this song also learned…"  approach.
  *
  * Algorithm (collaborative filtering):
  *   1. Find every other user who has `currentSongId` in their favorites

@@ -1,0 +1,20 @@
+{
+  "question1": {
+    "options": ["מבולבל", "מרוצה", "עייף", "שמח"],
+    "correctAnswerIndex": 0
+  },
+  "easy-question2": {
+    "sentence": "התלמיד היה _______ מההוראות המסובכות.",
+    "options": ["Happy", "Tired", "Scared", "Confused"],
+    "correctAnswerIndex": 3
+  },
+  "question2": {
+    "sentence": "She was _______ about the directions and took the wrong turn.",
+    "options": ["Excited", "Confused", "Pleased", "Angry"],
+    "correctAnswerIndex": 1
+  },
+  "question3": {
+    "sentence": "He was _______ by all the math problems.",
+    "correctAnswer": "Confused"
+  }
+}

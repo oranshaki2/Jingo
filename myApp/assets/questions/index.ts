@@ -43,6 +43,12 @@ const questionsRegistry: Record<string, any> = {
   Butterfly: require("./Butterfly.json"),
   Lion: require("./Lion.json"),
   Bee: require("./Bee.json"),
+  Pleased: require("./Pleased.json"),
+  Confused: require("./Confused.json"),
+  Cheer: require("./Cheer.json"),
+  Captain: require("./Captain.json"),
+  "Broken Heart": require("./Broken Heart.json"),
+  Bleachers: require("./Bleachers.json"),
 };
 
 export default questionsRegistry;

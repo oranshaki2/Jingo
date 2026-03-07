@@ -1,0 +1,20 @@
+{
+  "question1": {
+    "options": ["עצוב", "כועס", "מרוצה", "מבולבל"],
+    "correctAnswerIndex": 2
+  },
+  "easy-question2": {
+    "sentence": "היא הייתה _______ מהציון הגבוה שקיבלה.",
+    "options": ["Pleased", "Angry", "Tired", "Scared"],
+    "correctAnswerIndex": 0
+  },
+  "question2": {
+    "sentence": "He was _______ with the results of the exam.",
+    "options": ["Worried", "Bored", "Confused", "Pleased"],
+    "correctAnswerIndex": 3
+  },
+  "question3": {
+    "sentence": "She was _______ with her new haircut.",
+    "correctAnswer": "Pleased"
+  }
+}
