@@ -39,8 +39,8 @@ import styles from "./_styles";
 type GenreKey =
   | "rock"
   | "pop"
-  | "rnb"
-  | "hiphop"
+  | "R&B"
+  | "Hip-Hop"
   | "metal"
   | "jazz"
   | "folk"
@@ -70,12 +70,12 @@ const GENRES: GenreItem[] = [
   },
   { key: "pop", label: "פופ", src: require("../../../assets/genres/pop.jpg") },
   {
-    key: "rnb",
+    key: "R&B",
     label: "רית'ם אנד בלוז",
     src: require("../../../assets/genres/rnb.jpg"),
   },
   {
-    key: "hiphop",
+    key: "Hip-Hop",
     label: "היפ-הופ",
     src: require("../../../assets/genres/hiphop.jpg"),
   },

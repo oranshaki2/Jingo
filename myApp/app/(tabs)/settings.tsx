@@ -228,8 +228,8 @@ const GenreCard: React.FC<{
 const ALL_GENRES = [
   { key: "rock", label: "רוק" },
   { key: "pop", label: "פופ" },
-  { key: "rnb", label: "רית'ם אנד בלוז" },
-  { key: "hiphop", label: "היפ-הופ" },
+  { key: "R&B", label: "רית'ם אנד בלוז" },
+  { key: "Hip-Hop", label: "היפ-הופ" },
   { key: "metal", label: "מטאל" },
   { key: "jazz", label: "ג'אז" },
   { key: "folk", label: "פולק" },
