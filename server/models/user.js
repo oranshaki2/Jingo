@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema({
     type: [String],
     default: []
   },
-
+  // List of song IDs the user has learned.
   favorites: {
     type: [String], 
     default: []

@@ -1,0 +1,20 @@
+{
+  "question1": {
+    "options": ["לבכות", "לעודד", "לשיר", "לישון"],
+    "correctAnswerIndex": 1
+  },
+  "easy-question2": {
+    "sentence": "אנחנו הולכים ל_______ לקבוצה שלנו במשחק.",
+    "options": ["Sing", "Cry", "Cheer", "Dance"],
+    "correctAnswerIndex": 2
+  },
+  "question2": {
+    "sentence": "The fans began to _______ as their team scored the winning goal.",
+    "options": ["Cheer", "Sleep", "Worry", "Whisper"],
+    "correctAnswerIndex": 0
+  },
+  "question3": {
+    "sentence": "The crowd began to _______ when the team won.",
+    "correctAnswer": "Cheer"
+  }
+}

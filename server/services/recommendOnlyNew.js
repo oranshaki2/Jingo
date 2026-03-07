@@ -23,7 +23,7 @@ const Song = require("../models/song");
 // Maximum number of recommended songs to return per genre in one request.
 // Keeps responses fast and avoids overwhelming the user with too many choices.
 const MAX_RECOMMENDATIONS = 10;
-const MIN_WORDS_PER_SONG = 1; // Minimum number of new words a song must have to be recommended
+const MIN_WORDS_PER_SONG = 2; // Minimum number of new words a song must have to be recommended
 
 // ---------------------------------------------------------------------------
 // Data access
@@ -213,7 +213,6 @@ function filterWordsByHistory(singleCategoryWordList, userHistory, userLevel) {
 async function recommendOnlyNewWords(user, selectedCategory) {
   // Load all songs from the database once (not per genre — more efficient)
   const allSongs = await getSongsFromDB();
-  console.log(`Loaded ${allSongs.length} songs from DB.`);
 
   // The result object — will be populated per genre below
   const genreRecommendations = {};
@@ -250,17 +249,17 @@ async function recommendOnlyNewWords(user, selectedCategory) {
       const listForCategory = pickWordsForCategory(song, selectedCategory);
       if (!listForCategory) continue;
 
-      // 4. Keep only words the user hasn't seen yet (at the right level)
+      // 4. Keep only words the user hasn't learned yet (at the right level)
       const newWords = filterWordsByHistory(
         listForCategory,
         user.wordHistory || [],
         user.level,
       );
       // Skip songs with fewer than the minimum required new words — not worth recommending
-      if (newWords.length < MIN_WORDS_PER_SONG) continue;
+      if (newWords.length <= MIN_WORDS_PER_SONG) continue;
 
       // 5. Normalise the picture reference.
-      // Pictures stored as full paths (e.g. "profilePics/image.png") are
+      // Pictures stored as full paths are
       // converted to a short key the front-end can use to find the asset.
       // Pictures that are already full URLs (http/https) are left as-is.
       let picture = song.picture;

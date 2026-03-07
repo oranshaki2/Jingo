@@ -1,0 +1,20 @@
+{
+  "question1": {
+    "options": ["גב כואב", "רגל שבורה", "לב שבור", "ראש כואב"],
+    "correctAnswerIndex": 2
+  },
+  "easy-question2": {
+    "sentence": "לאחר הפרידה, הרגיש שיש לו _______.",
+    "options": ["Broken Heart", "Headache", "Broken Leg", "Backache"],
+    "correctAnswerIndex": 0
+  },
+  "question2": {
+    "sentence": "She cried all night because she had a _______ after the breakup.",
+    "options": ["Headache", "Bad Dream", "Stomach Ache", "Broken Heart"],
+    "correctAnswerIndex": 3
+  },
+  "question3": {
+    "sentence": "He had a _______ after the girl he loved left him.",
+    "correctAnswer": "Broken Heart"
+  }
+}

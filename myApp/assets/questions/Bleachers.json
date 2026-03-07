@@ -1,0 +1,20 @@
+{
+  "question1": {
+    "options": ["יציעים", "מגרש", "אצטדיון", "מסדרון"],
+    "correctAnswerIndex": 0
+  },
+  "easy-question2": {
+    "sentence": "האוהדים ישבו ב_______ וצעקו לכבוד קבוצתם.",
+    "options": ["Field", "Gym", "Court", "Bleachers"],
+    "correctAnswerIndex": 3
+  },
+  "question2": {
+    "sentence": "The students sat in the _______ to watch the basketball game.",
+    "options": ["Locker Room", "Bleachers", "Parking Lot", "Gymnasium"],
+    "correctAnswerIndex": 1
+  },
+  "question3": {
+    "sentence": "The fans cheered from the _______ during the match.",
+    "correctAnswer": "Bleachers"
+  }
+}
