@@ -62,4 +62,10 @@ export const artistImages: Record<string, any> = {
   the_blood_brothers: require("./artists/the_blood_brothers.jpg"),
   the_cure: require("./artists/the_cure.jpg"),
   frank_ocean: require("./artists/frank_ocean.jpg"),
+  bob_dylan: require("./artists/Bob_Dylan.jpg"),
+  cramps: require("./artists/Cramps.jpg"),
+  elvis_presley: require("./artists/Elvis_Presley.jpg"),
+  iggy_pop: require("./artists/Iggy_Pop.jpg"),
+  lil_wayne: require("./artists/Lil_Wayne.jpg"),
+  r_e_m: require("./artists/R_E_M.jpg"),
 };
