@@ -65,7 +65,10 @@ export const artistImages: Record<string, any> = {
   bob_dylan: require("./artists/Bob_Dylan.jpg"),
   cramps: require("./artists/Cramps.jpg"),
   elvis_presley: require("./artists/Elvis_Presley.jpg"),
+  hinder: require("./artists/hinder.jpg"),
   iggy_pop: require("./artists/Iggy_Pop.jpg"),
   lil_wayne: require("./artists/Lil_Wayne.jpg"),
+  oar: require("./artists/oar.jpg"),
+  panic_at_the_disco: require("./artists/panic_at_the_disco.jpg"),
   r_e_m: require("./artists/R_E_M.jpg"),
 };
