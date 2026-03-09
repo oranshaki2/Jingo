@@ -601,13 +601,15 @@ function escapeRegExp(s: string) {
  * in a Text node with `highlightStyle`. Returns an array of <Text/> nodes.
  */
 function renderHighlightedParts(
-  text: string,
+  text: string | undefined,
   highlights: string[],
   baseStyle: any,
   activeStyle: any,
   highlightStyle: any,
   isActive: boolean,
 ) {
+  if (!text) return null;
+
   if (!highlights || highlights.length === 0) {
     return <Text style={[baseStyle, isActive && activeStyle]}>{text}</Text>;
   }
