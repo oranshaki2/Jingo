@@ -17,6 +17,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 24,
     justifyContent: "space-between",
+    direction: "rtl",
   },
   contentContainer: {
     flexGrow: 1,
@@ -83,6 +84,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "700",
     marginBottom: 12,
+    textAlign: "right",
   },
   successText: {
     color: COLORS.success,
@@ -102,6 +104,7 @@ const styles = StyleSheet.create({
   wordText: {
     fontSize: 14,
     fontWeight: "500",
+    textAlign: "right",
   },
   buttonContainer: {
     gap: 12,
